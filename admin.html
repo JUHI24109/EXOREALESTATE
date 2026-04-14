@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
   <style>
     :root {
       --bg: #f1f3f8;
@@ -1127,7 +1129,20 @@
                 <div class="form-group"><label class="form-label" data-i18n="fLatitude">Latitude *</label><input id="af-lat" required type="number" step="any" class="form-input" /></div>
                 <div class="form-group"><label class="form-label" data-i18n="fLongitude">Longitude *</label><input id="af-lng" required type="number" step="any" class="form-input" /></div>
               </div>
+
+              <!-- Map Preview -->
+              <div id="admin-prop-map" style="height: 250px; border-radius: var(--radius-md); border: 1px solid var(--border); margin: 15px 0;"></div>
+              <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">
+                <i class="fas fa-info-circle"></i> Drag the marker to fine-tune the exact location.
+              </p>
+
+              <div style="margin-top: 12px; margin-bottom: 12px;">
+                <button type="button" class="btn btn-outline btn-sm" id="btn-admin-get-coords" style="width: 100%; justify-content: center; background: #f8fafc;">
+                  <i class="fas fa-crosshairs"></i> <span data-i18n="formGetCoordinates">Fetch precise coordinates from Address</span>
+                </button>
+              </div>
             </div>
+
 
             <div>
               <h3 style="margin-bottom:12px; font-size:16px; border-bottom:1px solid var(--border-light); padding-bottom:8px;" data-i18n="formDescriptionMedia">8. Description & Media</h3>
@@ -1320,7 +1335,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="js/i18n.js"></script>
+
   <script src="js/firebase.js"></script>
   <script src="js/app-data.js"></script>
   <script>
@@ -1388,6 +1405,16 @@
         document.getElementById(item.dataset.section).classList.add('active');
         const key = SECTION_TITLE_KEYS[item.dataset.section];
         pageTitle.textContent = key ? __t(key) : item.textContent.trim();
+
+        // Fix map rendering when switching to property form
+        if (item.dataset.section === 'sec-property-form-admin') {
+          setTimeout(() => {
+            if (typeof initAdminPropertyMap === 'function') initAdminPropertyMap();
+          }, 300);
+          setTimeout(() => {
+            if (adminPreviewMap) adminPreviewMap.invalidateSize();
+          }, 600);
+        }
       });
     });
 
@@ -1530,11 +1557,12 @@
     }
 
     function isPropertyOwnedByCurrentAdmin(prop) {
-      const uid = String(currentAdminUid || '');
-      if (!uid || !prop) return false;
-      const owners = [prop.agentId, prop.ownerId, prop.createdBy, prop.createdByUid];
-      return owners.some((owner) => String(owner || '') === uid);
+      // In the admin dashboard, administrators should be able to edit ALL properties.
+      // This function previously restricted edits to only properties "owned" by the admin UID.
+      // We'll allow all admins to edit any property.
+      return true;
     }
+
 
     document.getElementById('open-agent-modal').addEventListener('click', () => agentModal.classList.add('open'));
     if (openPropertyFormBtn) {
@@ -2147,31 +2175,39 @@
           const today = new Date().toISOString().slice(0, 10);
           const todayViews = Number((p.viewsByDate && p.viewsByDate[today]) || 0);
 
-          return `
-            <div class="prop-card">
-              <div class="prop-card-img" style="background-image: url('${img}')">
-                <div class="price-tag">€${Number(p.price||0).toLocaleString()}</div>
-                <div style="position:absolute;top:10px;left:10px;background:rgba(15,23,42,0.78);backdrop-filter:blur(6px);border-radius:8px;padding:5px 10px;display:flex;gap:12px;align-items:center;">
-                  <span style="color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;">
-                    <i class="fas fa-eye" style="color:#a5b4fc;"></i> ${totalViews.toLocaleString()}
-                  </span>
-                  <span style="color:#86efac;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;" title="Views today">
-                    <i class="fas fa-arrow-trend-up"></i> +${todayViews} today
-                  </span>
-                </div>
-              </div>
-              <div class="prop-card-body">
-                <h4>${p.title}</h4>
-                <div class="prop-addr"><i class="fas fa-map-marker-alt" style="margin-right:4px;"></i>${p.address || ''}</div>
-                <div class="prop-agent">${p.agentName ? '<i class="fas fa-user" style="margin-right:4px;"></i>' + p.agentName : ''}${p.featured ? ' · <span style="color:var(--accent);font-weight:700;">Featured</span>' : ''}</div>
-                <div style="display:flex; gap:8px;">
-                  ${canEditOwnPost ? '<button onclick="editPropAdmin(\'' + safeId + '\')" class="btn btn-amber-soft btn-sm" style="flex:1;"><i class="fas fa-pen"></i> ' + __t('actionEdit') + '</button>' : ''}
-                  <button onclick="deleteProp('${p.id}')" class="btn btn-danger-soft btn-sm" style="flex:1;${isDeletingProp ? 'opacity:.6;pointer-events:none;' : ''}" ${isDeletingProp ? 'disabled' : ''}>
-                    <i class="fas fa-trash-can"></i> ${__t('actionDelete')}
-                  </button>
-                </div>
-              </div>
-            </div>`;
+           const status = String(p.status || 'For Sale');
+           const statusClass = status.replace(/\s+/g, '-').toLowerCase();
+           const currentLang = typeof window.getLang === 'function' ? window.getLang() : 'en';
+           const translatedStatus = (typeof window.translateListingStatus === 'function') 
+             ? window.translateListingStatus(status, currentLang) 
+             : status;
+
+           return `
+             <div class="prop-card">
+               <div class="prop-card-img" style="background-image: url('${img}')">
+                 <div class="status-badge status-${statusClass}">${translatedStatus}</div>
+                 <div class="price-tag">€${Number(p.price||0).toLocaleString()}</div>
+                 <div style="position:absolute;top:10px;right:10px;background:rgba(15,23,42,0.78);backdrop-filter:blur(6px);border-radius:8px;padding:5px 10px;display:flex;gap:12px;align-items:center;">
+                   <span style="color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;">
+                     <i class="fas fa-eye" style="color:#a5b4fc;"></i> ${totalViews.toLocaleString()}
+                   </span>
+                   <span style="color:#86efac;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;" title="Views today">
+                     <i class="fas fa-arrow-trend-up"></i> +${todayViews}
+                   </span>
+                 </div>
+               </div>
+               <div class="prop-card-body">
+                 <h4>${p.title}</h4>
+                 <div class="prop-addr"><i class="fas fa-map-marker-alt" style="margin-right:4px;"></i>${p.address || ''}</div>
+                 <div class="prop-agent">${p.agentName ? '<i class="fas fa-user" style="margin-right:4px;"></i>' + p.agentName : ''}${p.featured ? ' · <span style="color:var(--accent);font-weight:700;">' + __t('featuredBadge') + '</span>' : ''}</div>
+                 <div style="display:flex; gap:8px;">
+                   ${canEditOwnPost ? '<button onclick="editPropAdmin(\'' + safeId + '\')" class="btn btn-amber-soft btn-sm" style="flex:1;"><i class="fas fa-pen"></i> ' + __t('actionEdit') + '</button>' : ''}
+                   <button onclick="deleteProp('${p.id}')" class="btn btn-danger-soft btn-sm" style="flex:1;${isDeletingProp ? 'opacity:.6;pointer-events:none;' : ''}" ${isDeletingProp ? 'disabled' : ''}>
+                     <i class="fas fa-trash-can"></i> ${__t('actionDelete')}
+                   </button>
+                 </div>
+               </div>
+             </div>`;
         }).join('');
 
       }
@@ -2617,7 +2653,9 @@
           `en|${targetLang}`,
           `pt|${targetLang}`,
           `fr|${targetLang}`,
-          `nl|${targetLang}`
+          `nl|${targetLang}`,
+          `zh|${targetLang}`,
+          `ar|${targetLang}`
         ];
 
         for (const langpair of langPairs) {
@@ -2677,7 +2715,7 @@
     }
 
     async function buildInitialTranslations(payload) {
-      const supported = ['en', 'pt', 'fr', 'nl'];
+      const supported = ['en', 'pt', 'fr', 'nl', 'zh', 'ar'];
       const title = String(payload.title || '').trim();
       const description = String(payload.description || '').trim();
       const neighbourhood = String(payload.neighbourhoodDesc || payload.neighbourhood || '').trim();
@@ -2704,7 +2742,7 @@
     }
 
     async function buildInitialBlogTranslations(payload) {
-      const supported = ['en', 'pt', 'fr', 'nl'];
+      const supported = ['en', 'pt', 'fr', 'nl', 'zh', 'ar'];
       const title = String(payload.title || '').trim();
       const excerpt = String(payload.excerpt || '').trim();
       const content = String(payload.content || '').trim();
@@ -2840,18 +2878,18 @@
       if (isEditing) {
         newDocId = adminEditingPropertyId;
       } else {
-        try {
-          const allSnap = await db.collection('properties').get();
-          const exoNums = [];
-          allSnap.forEach(doc => {
-            const match = (doc.id || '').match(/^EXO(\d+)$/i);
-            if (match) exoNums.push(parseInt(match[1], 10));
-          });
-          const nextNum = exoNums.length > 0 ? Math.max(...exoNums) + 1 : 2601;
-          newDocId = 'EXO' + nextNum;
-        } catch (e) {
-          newDocId = 'EXO' + (2601 + Math.floor(Math.random() * 100));
-        }
+        // Use a transaction on a central counter to ensure sequential, unique IDs
+        const counterRef = db.collection('metadata').doc('property_counter');
+        newDocId = await db.runTransaction(async (transaction) => {
+          const counterDoc = await transaction.get(counterRef);
+          let nextNum = 2601;
+          if (counterDoc.exists) {
+            const lastId = parseInt(counterDoc.data().lastId);
+            if (!isNaN(lastId)) nextNum = lastId + 1;
+          }
+          transaction.set(counterRef, { lastId: nextNum }, { merge: true });
+          return 'EXO' + nextNum;
+        }).catch(() => 'EXO' + (2601 + Math.floor(Math.random() * 10000)));
       }
       const docRef = isEditing
         ? db.collection('properties').doc(adminEditingPropertyId)
@@ -2944,18 +2982,31 @@
       const needsTranslationRefresh = !isEditing ||
         !existingProp ||
         !existingProp.translations ||
+        !existingProp.translations.zh ||
+        !existingProp.translations.ar ||
         String(existingProp.title || '') !== title ||
         String(existingProp.description || '') !== description ||
         String((existingProp.neighbourhoodDesc || existingProp.neighbourhood || '')) !== String((neighbourhoodDesc || neighbourhood || ''));
 
       if (needsTranslationRefresh) {
-        newProp.translations = await buildInitialTranslations(newProp);
+        // Add timeout to translation
+        const translationPromise = buildInitialTranslations(newProp);
+        const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 8000));
+        
+        try {
+          const results = await Promise.race([translationPromise, timeoutPromise]);
+          newProp.translations = results || (existingProp ? (existingProp.translations || {}) : {});
+        } catch (trErr) {
+          console.error('Admin translation error:', trErr);
+          newProp.translations = existingProp ? (existingProp.translations || {}) : {};
+        }
       } else {
-        newProp.translations = existingProp.translations;
+        newProp.translations = existingProp ? existingProp.translations : {};
       }
 
       try {
-        await docRef.set(newProp, { merge: true });
+        const firestore = firebase.firestore();
+        await firestore.collection('properties').doc(newProp.id).set(newProp, { merge: true });
         const st = window.ExoStore.getState();
         if (isEditing) {
           st.properties = (st.properties || []).map((p) => String((p && p.id) || '') === String(docRef.id) ? { ...p, ...newProp } : p);
@@ -2972,7 +3023,121 @@
       }
     });
 
+    /* ====== Map and Coordinate logic ====== */
+    let adminPreviewMap, adminPreviewMarker;
+
+    function initAdminPropertyMap() {
+      const mapEl = document.getElementById('admin-prop-map');
+      if (!mapEl) return;
+
+      if (adminPreviewMap && mapEl._leaflet_id) {
+        setTimeout(() => { 
+          adminPreviewMap.invalidateSize(); 
+          // Re-center if we have values
+          const lat = parseFloat(document.getElementById('af-lat').value);
+          const lng = parseFloat(document.getElementById('af-lng').value);
+          if (!isNaN(lat) && !isNaN(lng)) {
+              adminPreviewMap.setView([lat, lng], 19);
+              if (adminPreviewMarker) adminPreviewMarker.setLatLng([lat, lng]);
+          }
+        }, 200);
+        return;
+      }
+
+      // Leaflet marker fix
+      if (typeof L !== 'undefined' && L.Icon && L.Icon.Default) {
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png'
+        });
+      }
+
+      const defaultPos = [38.7223, -9.1393]; // Lisbon
+      adminPreviewMap = L.map('admin-prop-map').setView(defaultPos, 19);
+      // Standardize map layers across all dashboards
+      L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: 'Imagery &copy; Google'
+      }).addTo(adminPreviewMap);
+
+      adminPreviewMarker = L.marker(defaultPos, { draggable: true }).addTo(adminPreviewMap);
+
+      adminPreviewMarker.on('dragend', () => {
+        const pos = adminPreviewMarker.getLatLng();
+        document.getElementById('af-lat').value = pos.lat.toFixed(7);
+        document.getElementById('af-lng').value = pos.lng.toFixed(7);
+      });
+
+      ['af-lat', 'af-lng'].forEach(id => {
+        document.getElementById(id).addEventListener('change', () => {
+          const lat = parseFloat(document.getElementById('af-lat').value);
+          const lng = parseFloat(document.getElementById('af-lng').value);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            const newPos = [lat, lng];
+            adminPreviewMarker.setLatLng(newPos);
+            adminPreviewMap.setView(newPos, 19);
+            setTimeout(() => adminPreviewMap.invalidateSize(), 50);
+          }
+        });
+      });
+    }
+
+    document.getElementById('btn-admin-get-coords')?.addEventListener('click', async () => {
+      const address = document.getElementById('af-address').value.trim();
+      const city = document.getElementById('af-city').value.trim();
+      if (!address) {
+        showToast('Please enter an address first.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('btn-admin-get-coords');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching...';
+      btn.disabled = true;
+
+      try {
+        const query = [address, city, 'Portugal'].filter(Boolean).join(', ');
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+        const res = await fetch(url, { headers: { 'User-Agent': 'ExoRealEstate/1.2' } });
+        const data = await res.json();
+        
+        if (data && data.length > 0) {
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+          document.getElementById('af-lat').value = lat.toFixed(7);
+          document.getElementById('af-lng').value = lon.toFixed(7);
+          const newPos = [lat, lon];
+          if (adminPreviewMarker) {
+            adminPreviewMarker.setLatLng(newPos);
+            adminPreviewMap.setView(newPos, 19);
+            setTimeout(() => adminPreviewMap.invalidateSize(), 50);
+          }
+          showToast('Location updated!', 'success');
+        } else {
+          showToast('Location not found.', 'error');
+        }
+      } catch (err) {
+        showToast('Connection error.', 'error');
+        console.error(err);
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    });
+
+    const adminMapObserver = new MutationObserver(() => {
+      const addSection = document.getElementById('sec-property-form-admin');
+      if (addSection && addSection.classList.contains('active')) {
+        setTimeout(initAdminPropertyMap, 300);
+      }
+    });
+    adminMapObserver.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class'] });
+
     /* ====== Init ====== */
+
     async function initAdmin() {
       fetchAgents();
       fetchUsers();
@@ -2994,7 +3159,3 @@
   <script src="js/site-chatbot.js"></script>
 </body>
 </html>
-
-
-
-

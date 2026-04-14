@@ -19,7 +19,9 @@
     en: 'Hello! I would like to learn more about available properties in Portugal, please.',
     fr: 'Bonjour ! Je souhaite en savoir plus sur les propriétés disponibles au Portugal, s’il vous plaît.',
     nl: 'Hallo! Ik wil graag meer weten over beschikbare woningen in Portugal, alsjeblieft.',
-    de: 'Hallo! Ich möchte bitte mehr über verfügbare Immobilien in Portugal erfahren.'
+    de: 'Hallo! Ich möchte bitte mehr über verfügbare Immobilien in Portugal erfahren.',
+    zh: '您好！我想了解更多关于葡萄牙房产的信息，谢谢。',
+    ar: 'مرحباً! أود معرفة المزيد عن العقارات المتاحة في البرتغال، من فضلك.'
   };
 
   const LANGUAGE_INSTRUCTIONS = {
@@ -46,7 +48,17 @@
     de: {
       label: 'Deutsch',
       prompt: 'Bitte antworten Sie ausschließlich auf Deutsch. Verwenden Sie kein Englisch.',
-      acknowledgement: 'Super! Ich werde auf Deutsch antworten. Wie kann ich Ihnen heute helfen?'
+      acknowledgement: 'Super! Ich werde auf Deutsch antworten. Wie kann Ihen heute helfen?'
+    },
+    zh: {
+      label: 'Chinese (Mandarin)',
+      prompt: '请务必仅使用中文回答。不要使用英文、葡萄牙文或任何其他语言。',
+      acknowledgement: '太棒了！我将使用中文为您服务。请问今天有什么可以帮您的？'
+    },
+    ar: {
+      label: 'Arabic',
+      prompt: 'يرجى الرد باللغة العربية حصراً. لا تستخدم اللغة الإنجليزية أو أي لغة أخرى.',
+      acknowledgement: 'ممتاز! سأجيب باللغة العربية. كيف يمكنني مساعدتك اليوم؟'
     }
   };
 
@@ -100,6 +112,26 @@
       languageTitle: 'Wählen Sie Ihre Sprache',
       whatsAppPrompt: 'Für schnelleren Support klicken Sie auf die Schaltfläche unten und senden Sie Ihre Nachricht direkt über WhatsApp.',
       whatsAppButton: 'Auf WhatsApp senden'
+    },
+    zh: {
+      welcomeTitle: '欢迎来到 Exo Real Estate',
+      welcomeText: '我是您的虚拟房产顾问。请先选择您的常用语言。',
+      inputPlaceholder: '咨询房产、服务等...',
+      quickActions: ['房产列表', '黄金签证', '联系我们', '办公地点'],
+      status: '在线 — 随时为您服务',
+      languageTitle: '选择您的语言',
+      whatsAppPrompt: '如需更快捷的支持，请点击下方按钮直接通过 WhatsApp 发送消息。',
+      whatsAppButton: '通过 WhatsApp 发送'
+    },
+    ar: {
+      welcomeTitle: 'مرحباً بكم في إكسو العقارية',
+      welcomeText: 'أنا مستشارك العقاري الافتراضي. يرجى اختيار لغتك المفضلة أولاً.',
+      inputPlaceholder: 'اسأل عن العقارات، الخدمات...',
+      quickActions: ['العقارات', 'التأشيرة الذهبية', 'اتصل بنا', 'مكاتبنا'],
+      status: 'متصل — جاهز للمساعدة',
+      languageTitle: 'اختر لغتك',
+      whatsAppPrompt: 'للحصول على دعم أسرع، انقر على الزر أدناه وأرسل رسالتك مباشرة عبر واتساب.',
+      whatsAppButton: 'إرسال عبر واتساب'
     }
   };
 
@@ -164,6 +196,30 @@
       portugal: "Portugal zählt zu den sichersten Ländern der Welt (Global Peace Index) und bietet eine außergewöhnliche Lebensqualität. Es ist ein Top-Ziel für Expats, mit mildem Klima, ausgezeichneter Gesundheitsversorgung und starkem Immobilieninvestmentpotenzial. Wir helfen Ihnen gerne, Ihre Optionen zu erkunden.",
       project: "Wir haben mehrere exklusive Entwicklungsprojekte, darunter **Sporting Club (Évora)**, **Abrantes Luxury Living Apartments**, **Project Santarém** und **Padel & Fitness Santarém**. Entdecken Sie sie auf unserer **[Über uns Seite](about.html)** oder kontaktieren Sie uns für Details.",
       default: "Danke für Ihre Nachricht! Ich helfe Ihnen gerne mit Informationen zu unseren Luxusimmobilien, Investitionsmöglichkeiten, Golden-Visa-Programmen oder einem unserer Services. Für persönliche Unterstützung können Sie die WhatsApp-Schaltfläche unten verwenden oder unsere **[Kontaktseite](contact.html)** besuchen."
+    },
+    zh: {
+      properties: "我们提供葡萄牙全境的豪华别墅、海滨公寓和商业房产，包括里斯本、阿尔加维、波尔图和马德拉群岛。您可以浏览我们的**[房产页面](properties.html)**查看完整列表，或点击下方的 WhatsApp 按钮向我们发送消息。",
+      goldenvisa: "Exo Real Estate 专注于符合黄金签证条件的房产。我们的团队可以为您提供从选房到签证申请的全程指导。请**[联系我们](contact.html)**或使用 WhatsApp 发送您的咨询。",
+      contact: "联系我们的最佳方式是通过**[联系页面](contact.html)**，或点击下方的 WhatsApp 按钮直接发送消息。",
+      team: "我们经验丰富的房产顾问团队包括 Aline Uebe、Micaela Morgado、Maria Lúcia Maia、Vanessa Oliveira、Eduardo Almeida 和 Cícera Ribeiro。请在我们的**[团队页面](team.html)**了解他们。",
+      about: "Exo Real Estate 是一家获得许可的葡萄牙房地产代理公司 (AMI 18166)，拥有12年以上的专业经验，已完成250多个项目。我们专注于葡萄牙的奢华房产和投资咨询。请在我们的**[关于页面](about.html)**了解更多信息。",
+      office: "我们的总部位于 **Av. da Liberdade, 144, 2 DTO, 1250-146 Lisboa, Portugal**。请访问我们的**[联系页面](contact.html)**查看地图和路线。",
+      price: "房产价格因地点、类型和面积而异。我们的投资组合包括不同投资级别的选择。如需了解当前价格和个性化建议，请通过下方的 WhatsApp 按钮发送消息或访问我们的联系页面。",
+      portugal: "葡萄牙在全球最安全国家排名中名列第7位（全球和平指数），并提供卓越的生活质量。这里是外籍人士的首选目的地，气候温和，拥有卓越的医疗保健系统和强大的房产投资潜力。我们很乐意帮助您探索各种选择。",
+      project: "我们有多个独特的开发项目，包括 **Sporting Club (Évora)**、**Abrantes Luxury Living Apartments**、**Project Santarém** 和 **Padel & Fitness Santarém**。请在我们的**[关于页面](about.html)**进行探索，或联系我们了解详情。",
+      default: "感谢您的联系！我很乐意为您提供有关我们奢华房产、投资机会、黄金签证计划或任何服务的信息。如需个性化帮助，请使用下方的 WhatsApp 按钮或访问我们的**[联系页面](contact.html)**。"
+    },
+    ar: {
+      properties: "نحن نقدم فيلات فاخرة، شققاً مطلة على البحر، وعقارات تجارية في جميع أنحاء البرتغال — بما في ذلك لشبونة، ألغارف، بورتو، وماديرا. يمكنك تصفح مجموعتنا الكاملة على **[صفحة العقارات](properties.html)** أو مراسلتنا عبر زر واتساب أدناه.",
+      goldenvisa: "تتخصص إكسو العقارية في العقارات المؤهلة للحصول على التأشيرة الذهبية. يمكن لفريقنا إرشادك خلال عملية الاستثمار بأكملها، من اختيار العقار إلى طلب التأشيرة. يرجى **[الاتصال بنا](contact.html)** أو استخدام زر واتساب لإرسال استفسارك.",
+      contact: "أفضل طريقة للوصول إلينا هي عبر **[صفحة الاتصال](contact.html)** أو بالضغط على زر واتساب أدناه لإرسال رسالة مباشرة.",
+      team: "يضم فريقنا من مستشاري العقارات ذوي الخبرة كلاً من ألين أويبي، ميكايلا مورغادو، ماريا لوسيا مايا، فانيسا أوليفيرا، إدواردو ألميدا، وسيسيرا ريبيرو. تعرف عليهم في **[صفحة الفريق](team.html)**.",
+      about: "إكسو العقارية هي وكالة عقارية برتغالية مرخصة (AMI 18166) بخبرة تزيد عن 12 عاماً وأكثر من 250 مشروعاً تم تسليمه. نحن متخصصون في العقارات الفاخرة والاستشارات الاستثمارية في البرتغال. تعرف على المزيد في **[صفحة عنا](about.html)**.",
+      office: "يقع مكتبنا الرئيسي في **Av. da Liberdade, 144, 2 DTO, 1250-146 Lisboa, Portugal**. قم بزيارة **[صفحة الاتصال](contact.html)** للحصول على خريطة واتجاهات.",
+      price: "تختلف أسعار العقارات حسب الموقع والنوع والمساحة. تضم محفظتنا خيارات عبر مستويات استثمارية مختلفة. للحصول على الأسعار الحالية والتوصيات الشخصية، يرجى إرسال رسالة عبر زر واتساب أدناه أو زيارة صفحة الاتصال الخاصة بنا.",
+      portugal: "تصنف البرتغال كـ **سابع أمن دولة عالمياً** (مؤشر السلام العالمي) وتقدم جودة حياة استثنائية. إنها وجهة رئيسية للمغتربين، مع مناخ دافئ ورعاية صحية ممتازة وإمكانيات استثمار عقاري قوية. يسعدنا مساعدتك في استكشاف خياراتك.",
+      project: "لدينا العديد من المشاريع التطويرية الحصرية بما في ذلك **Sporting Club (Évora)** و **Abrantes Luxury Living Apartments** و **Project Santarém** و **Padel & Fitness Santarém**. استكشفها على **[صفحة عنا](about.html)** أو اتصل بنا للحصول على التفاصيل.",
+      default: "شكراً لتواصلك معنا! سأكون سعيداً بمساعدتك في الحصول على معلومات حول عقاراتنا الفاخرة، أو فرص الاستثمار، أو برامج التأشيرة الذهبية، أو أي من خدماتنا. للحصول على مساعدة شخصية، يرجى استخدام زر واتساب أدناه أو زيارة **[صفحة الاتصال](contact.html)**."
     }
   };
 
@@ -180,7 +236,9 @@
       pt: "Estou com muita procura no momento. Por favor, tente novamente em cerca de 30 segundos. Enquanto isso, sinta-se à vontade para navegar em nossas **[Propriedades](properties.html)** ou **[Contacte-nos](contact.html)**.",
       fr: "Je rencontre une forte demande en ce moment. Veuillez réessayer dans environ 30 secondes. En attendant, n'hésitez pas à consulter nos **[Propriétés](properties.html)** ou **[Contactez-nous](contact.html)**.",
       nl: "Ik heb momenteel veel verzoeken. Probeer het over ongeveer 30 seconden opnieuw. Bekijk intussen gerust onze **[Eigendom](properties.html)** of **[Contacteer ons](contact.html)**.",
-      de: "Ich habe derzeit eine hohe Nachfrage. Bitte versuchen Sie es in etwa 30 Sekunden erneut. In der Zwischenzeit können Sie gerne unsere **[Properties](properties.html)** oder **[Contact us](contact.html)** besuchen."
+      de: "Ich habe derzeit eine hohe Nachfrage. Bitte versuchen Sie es in etwa 30 Sekunden erneut. In der Zwischenzeit können Sie gerne unsere **[Properties](properties.html)** oder **[Contact us](contact.html)** besuchen.",
+      zh: "目前咨询量较大，请在大约 30 秒后重试。与此同时，您可以浏览我们的**[房产列表](properties.html)**或直接**[联系我们](contact.html)**。",
+      ar: "أواجه طلباً كبيراً في الوقت الحالي. يرجى المحاولة مرة أخرى خلال 30 ثانية. في غضون ذلك، لا تتردد في تصفح **[عقاراتنا](properties.html)** أو **[الاتصال بنا](contact.html)** مباشرة."
     };
     return messages[lang] || messages.en;
   }
@@ -191,7 +249,9 @@
       pt: "Desculpe, não posso responder a essa pergunta específica. Pergunte-me sobre nossas propriedades, serviços ou como entrar em contato com nossa equipe.",
       fr: "Désolé, je ne peux pas répondre à cette question particulière. N'hésitez pas à me poser des questions sur nos propriétés, services ou comment contacter notre équipe.",
       nl: "Sorry, ik kan niet op die specifieke vraag antwoorden. Vraag me gerust over onze woningen, diensten of hoe je contact kunt opnemen met ons team.",
-      de: "Entschuldigung, ich kann auf diese spezielle Frage nicht antworten. Fragen Sie mich gerne nach unseren Immobilien, Dienstleistungen oder wie Sie unser Team erreichen können."
+      de: "Entschuldigung, ich kann auf diese spezielle Frage nicht antworten. Fragen Sie mich gerne nach unseren Immobilien, Dienstleistungen oder wie Sie unser Team erreichen können.",
+      zh: "抱歉，我无法回答该特定问题。您可以向我咨询有关我们的房产、服务或如何联系我们团队的信息。",
+      ar: "عذراً، لا يمكنني الرد على هذا السؤال بالتحديد. لا تتردد في سؤالي عن عقاراتنا أو خدماتنا أو كيفية التواصل مع فريقنا."
     };
     return messages[lang] || messages.en;
   }
@@ -973,6 +1033,8 @@ You are the official AI assistant for **Exo Real Estate**, a premier licensed re
               <button class="exo-cb-language-btn" data-lang="fr">Français</button>
               <button class="exo-cb-language-btn" data-lang="nl">Nederlands</button>
               <button class="exo-cb-language-btn" data-lang="de">Deutsch</button>
+              <button class="exo-cb-language-btn" data-lang="zh">中文</button>
+              <button class="exo-cb-language-btn" data-lang="ar">العربية</button>
             </div>
           </div>
           <div class="exo-cb-quick-actions" id="exo-cb-quick-actions" style="display:none;">
@@ -1045,6 +1107,22 @@ You are the official AI assistant for **Exo Real Estate**, a premier licensed re
         if (question) {
           this.input.value = question;
           this.sendMessage();
+        }
+      });
+      
+      // Listen for external language change events
+      document.addEventListener('exo:languageChanged', (e) => {
+        if (e.detail && e.detail.lang) {
+          const newLang = e.detail.lang;
+          const label = UI_LABELS[newLang]?.label || newLang;
+          console.log(`[ExoChatbot] Language synced to ${newLang} via event`);
+          this.selectedLanguage = newLang;
+          this.updateUIForLanguage(newLang);
+          this.hideLanguagePanel();
+          if (this.isOpen) {
+            this.inputArea.style.display = 'flex';
+            this.quickActions.style.display = 'flex';
+          }
         }
       });
 

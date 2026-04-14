@@ -12,7 +12,7 @@
   }
 
   const savedLang = (typeof window.getLang === 'function' ? window.getLang() : (localStorage.getItem('exo-lang') || 'en'));
-  const langLabels = { en: 'EN', pt: 'PT', fr: 'FR', nl: 'NL' };
+  const langLabels = { en: 'EN', pt: 'PT', fr: 'FR', nl: 'NL', zh: 'ZH', ar: 'AR' };
 
   const navHTML = `
     <nav class="exo-navbar" id="exo-navbar">
@@ -41,6 +41,8 @@
               <a href="#" class="exo-lang-option${savedLang === 'pt' ? ' active' : ''}" data-lang="pt"><span>Português</span><span class="exo-lang-code">PT</span></a>
               <a href="#" class="exo-lang-option${savedLang === 'fr' ? ' active' : ''}" data-lang="fr"><span>Français</span><span class="exo-lang-code">FR</span></a>
               <a href="#" class="exo-lang-option${savedLang === 'nl' ? ' active' : ''}" data-lang="nl"><span>Dutch</span><span class="exo-lang-code">NL</span></a>
+              <a href="#" class="exo-lang-option${savedLang === 'zh' ? ' active' : ''}" data-lang="zh"><span>中文</span><span class="exo-lang-code">ZH</span></a>
+              <a href="#" class="exo-lang-option${savedLang === 'ar' ? ' active' : ''}" data-lang="ar"><span>العربية</span><span class="exo-lang-code">AR</span></a>
             </div>
           </div>
 

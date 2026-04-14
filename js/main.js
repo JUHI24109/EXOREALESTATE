@@ -96,7 +96,6 @@ function init() {
   initSearch();
   initChatbot();
   loadProperties(); // Loads Firebase or uses hardcoded
-  renderProperties(properties.slice(0,6)); // Show featured immediately
   // Page specific
   if (document.querySelector('.properties-page')) initProperties();
   if (document.getElementById('admin-password')) initAdmin();
@@ -142,6 +141,7 @@ function initLangSwitcher() {
 
 function updateLanguage(lang) {
   document.documentElement.lang = lang;
+  currentLang = lang;
   // i18n.js handles data-i18n DOM translation; keep main.js in sync for local widgets.
   const chatLangSelect = document.querySelector('.chat-lang-select');
   if (chatLangSelect) chatLangSelect.value = lang;
@@ -327,26 +327,27 @@ function renderProperties(props) {
   const grid = document.querySelector('.properties-grid') || document.querySelector('.featured-grid');
   if (!grid) return;
   
-  grid.innerHTML = props.slice(0, 12).map(p => `
+  const lang = currentLang;
+
+  grid.innerHTML = (props || []).slice(0, 12).map(p => `
     <div class="property-card fade-in" data-id="${p.id}">
-      <div class="property-image" style="background-image: url(${p.images[0]})">
-        <div class="property-badge">${p.status}</div>
+      <div class="property-image" style="background-image: url(${p.images && p.images[0] ? p.images[0] : 'images/artboard1.jpg'})">
+        <div class="property-badge">${window.translateListingStatus ? window.translateListingStatus(p.status, lang) : p.status}</div>
         ${p.niche ? `<div class="property-badge niche-badge"><i class="fas fa-star"></i> ${p.niche.toUpperCase()}</div>` : ''}
       </div>
       <div class="property-info">
         <h3 class="property-title">${p.title}</h3>
-        <div class="property-price">€${p.price.toLocaleString()}</div>
+        <div class="property-price">${p.priceOnRequest ? window.t('formPriceOnRequest', lang) : '€' + Number(p.price || 0).toLocaleString()}</div>
         <div class="property-meta">
-          <span>T${p.bedrooms}</span>
-          <span>${p.bathrooms} Baths</span>
-          <span>${p.size} SqFt</span>
+          <span>T${p.bedrooms || 0}</span>
+          <span>${p.bathrooms || 0} ${window.t('cardBaths', lang)}</span>
+          <span>${p.areaInternal || p.size || 0} ${window.t('cardSqm', lang)}</span>
         </div>
-        <div>${p.address.split(',')[0]}</div>
+        <div class="property-address"><i class="fas fa-map-marker-alt"></i> ${p.address ? p.address.split(',')[0] : ''}</div>
       </div>
     </div>
   `).join('');
 
-  
   // Card clicks
   grid.querySelectorAll('.property-card').forEach(card => {
     card.addEventListener('click', () => openPropertyModal(card.dataset.id));
@@ -355,12 +356,20 @@ function renderProperties(props) {
 
 // Firebase Properties
 async function loadProperties() {
-  // firebase.js handles
-  if (typeof firebase !== 'undefined') {
-    const snapshot = await firebase.firestore().collection('properties').get();
-    properties = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    filteredProperties = [...properties];
-    renderProperties(properties);
+  if (typeof firebase !== 'undefined' && window.db) {
+    try {
+      const snapshot = await window.db.collection('properties').get();
+      properties = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      filteredProperties = [...properties];
+      
+      if (document.querySelector('.properties-grid')) {
+        renderProperties(properties);
+      } else if (document.querySelector('.featured-grid')) {
+        renderProperties(properties.slice(0, 6));
+      }
+    } catch (e) {
+      console.error("Firebase load error:", e);
+    }
   }
 }
 
@@ -440,7 +449,7 @@ function addMessage(sender, text) {
 
 // Admin
 function initAdmin() {
-  document.getElementById('admin-password-form').addEventListener('submit', (e) => {
+  document.getElementById('admin-password-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
     showMessage('Legacy password admin is disabled. Redirecting to secure admin login...');
     setTimeout(() => {
@@ -448,7 +457,8 @@ function initAdmin() {
     }, 400);
   });
   
-  document.getElementById('property-form').addEventListener('submit', handleAddProperty);
+  document.getElementById('property-form')?.addEventListener('submit', handleAddProperty);
+  initMapPicker();
 }
 
 async function loadAdminProperties() {
@@ -463,18 +473,69 @@ async function loadAdminProperties() {
 
 async function handleAddProperty(e) {
   e.preventDefault();
-  const formData = new FormData(e.target);
-  const propData = Object.fromEntries(formData);
-  propData.images = Array.from(document.getElementById('images').files).map(f => f); // Files for upload
-  
-  // firebase.js upload
-  await addPropertyToFirebase(propData);
-  e.target.reset();
-  loadAdminProperties();
+  try {
+    const formData = new FormData(e.target);
+    const propData = Object.fromEntries(formData);
+    
+    // Normalize numeric fields for search/filter consistency
+    if (propData.price) propData.price = parseFloat(propData.price);
+    if (propData.bedrooms) propData.bedrooms = parseInt(propData.bedrooms);
+    if (propData.bathrooms) propData.bathrooms = parseInt(propData.bathrooms);
+    
+    // Image handling placeholder
+    propData.images = propData.images ? propData.images.split(',').map(s => s.trim()) : ['images/artboard1.jpg'];
+    
+    // firebase.js integration
+    await window.addPropertyToFirebase(propData);
+    
+    showMessage(window.t('formSuccess'));
+    e.target.reset();
+    
+    // Refresh lists immediately after update
+    await loadProperties();
+    if (typeof loadAdminProperties === 'function') loadAdminProperties();
+  } catch (error) {
+    console.error("Property submission failed:", error);
+    showMessage(window.t('formError'));
+  }
 }
 
 function deleteProperty(id) {
-  // firebase.js delete
+  if (confirm(window.t('agentDeleteConfirm'))) {
+    window.deletePropertyFromFirebase(id)
+      .then(() => {
+        showMessage('Property deleted');
+        loadProperties();
+      })
+      .catch(err => showMessage('Delete failed'));
+  }
+}
+
+function initMapPicker() {
+  const mapEl = document.getElementById('map-picker');
+  if (!mapEl || typeof google === 'undefined') return;
+
+  const map = new google.maps.Map(mapEl, {
+    center: { lat: 38.7369, lng: -9.1427 }, // Lisbon Default
+    zoom: 12
+  });
+
+  let marker = new google.maps.Marker({
+    map: map,
+    draggable: true,
+    position: { lat: 38.7369, lng: -9.1427 }
+  });
+
+  map.addListener('click', (e) => {
+    marker.setPosition(e.latLng);
+    if (document.querySelector('[name="lat"]')) document.querySelector('[name="lat"]').value = e.latLng.lat();
+    if (document.querySelector('[name="lng"]')) document.querySelector('[name="lng"]').value = e.latLng.lng();
+  });
+
+  marker.addListener('dragend', (e) => {
+    if (document.querySelector('[name="lat"]')) document.querySelector('[name="lat"]').value = e.latLng.lat();
+    if (document.querySelector('[name="lng"]')) document.querySelector('[name="lng"]').value = e.latLng.lng();
+  });
 }
 
 // Utils
@@ -507,4 +568,3 @@ function initContactForm() {
 }
 
 // Google Maps - placeholder YOUR_KEY
-

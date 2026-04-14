@@ -1884,10 +1884,13 @@
         var baths = p.bathrooms ? '<div class="card-spec"><i class="fas fa-bath"></i> ' + p.bathrooms + ' ' + tt('cardBaths') + '</div>' : '';
         var size = (p.sizeSqFt || p.size) ? '<div class="card-spec"><i class="fas fa-ruler-combined"></i> ' + (p.sizeSqFt || p.size) + ' ' + tt('sqm') + '</div>' : '';
         var isFav = isFavoriteProperty(p.id);
+        var nicheBadge = p.niche ? '<div class="card-badge niche-badge" style="right: auto; left: 12px; background: var(--brand-gold);">' + p.niche.toUpperCase() + '</div>' : '';
         return '<a class="property-card" href="property-detail.html?id=' + encodeURIComponent(p.id) + '">' +
           '<div class="card-img" style="background-image:url(\'' + img + '\')">' +
           '<div class="card-badge">' + (window.translateListingStatus ? window.translateListingStatus(p.status) : (p.status || tt('cardForSale'))) + '</div>' +
+          nicheBadge +
           '<div class="card-actions">' +
+
           '<button class="card-action-btn ' + (isFav ? 'favorited' : '') + '" type="button" data-card-action="favorite" data-property-id="' + escapeHtmlAttr(p.id || '') + '" data-property-title="' + escapeHtmlAttr(p.title || '') + '" aria-label="' + tt('cardSaveHeart') + '" title="' + tt('cardSaveHeart') + '">' +
           '<i class="' + (isFav ? 'fas' : 'far') + ' fa-heart"></i>' +
           '</button>' +
