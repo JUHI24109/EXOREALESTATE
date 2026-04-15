@@ -128,12 +128,21 @@ service cloud.firestore {
 
     match /users/{uid} {
       allow read: if isSelf(uid) || isAdmin();
-      allow create: if isSelf(uid) &&
+      allow create: if (
+        isSelf(uid) &&
         request.resource.data.keys().hasOnly(['uid', 'name', 'email', 'role', 'active', 'createdAt', 'favorites', 'favourites']) &&
         request.resource.data.uid == uid &&
         request.resource.data.email is string &&
         request.resource.data.role == 'user' &&
-        request.resource.data.active == true;
+        request.resource.data.active == true
+      ) || (
+        isAdmin() &&
+        request.resource.data.keys().hasOnly(['uid', 'name', 'phone', 'email', 'role', 'active', 'createdAt']) &&
+        request.resource.data.uid == uid &&
+        request.resource.data.email is string &&
+        (request.resource.data.role == 'agent' || request.resource.data.role == 'dealer' || request.resource.data.role == 'user') &&
+        request.resource.data.active == true
+      );
       allow update: if isAdmin() || canSelfEditUser(uid);
       allow delete: if isAdmin();
     }

@@ -35,6 +35,21 @@ if (typeof firebase !== 'undefined') {
     firebase.initializeApp(window.firebaseConfig);
   }
   db = firebase.firestore();
+  try {
+    if (firebase.firestore && typeof firebase.firestore.CACHE_SIZE_UNLIMITED !== 'undefined') {
+      db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+    }
+  } catch (_) {
+    // Ignore settings errors when Firestore was already initialized elsewhere.
+  }
+
+  if (!window.__exoFirestorePersistenceInit && db && typeof db.enablePersistence === 'function') {
+    window.__exoFirestorePersistenceInit = true;
+    db.enablePersistence({ synchronizeTabs: true }).catch(function () {
+      // Persistence can fail in some browser modes; app should continue online-only.
+    });
+  }
+
   window.db = db;
 
   if (firebase.auth) {
@@ -97,9 +112,7 @@ function canManageProperties(role) {
 window.loadPropertiesFromFirebase = async function() {
   try {
     if (!db) return null;
-    const fetchPromise = db.collection('properties').get();
-    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase timeout')), 10000));
-    const snapshot = await Promise.race([fetchPromise, timeoutPromise]);
+    const snapshot = await db.collection('properties').get();
 
     const loadedProps = snapshot.docs.map(doc => {
       const data = doc.data() || {};

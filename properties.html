@@ -2586,13 +2586,33 @@
        FIREBASE + INITIAL RENDER
     ────────────────────────────────────────────── */
     async function initFirestoreData() {
-      propertiesLoading = true;
-      renderPropertiesLoadingState();
+      var cachedProps = getProps();
+      propertiesLoading = !(Array.isArray(cachedProps) && cachedProps.length > 0);
+      if (propertiesLoading) {
+        renderPropertiesLoadingState();
+      } else {
+        applyFilters();
+      }
       hydrateFavoritesFromFirestore();
       try {
+        var fbProps = [];
         if (typeof window.getPropertiesFromFirestore === 'function') {
-          var fbProps = await window.getPropertiesFromFirestore(true);
-          if (Array.isArray(fbProps) && window.ExoStore && typeof window.ExoStore.getState === 'function') {
+          fbProps = await window.getPropertiesFromFirestore(false);
+        }
+
+        // Fallback: direct Firestore read when helper returns empty due cache/helper issues.
+        if ((!Array.isArray(fbProps) || fbProps.length === 0) && typeof window.db !== 'undefined' && window.db) {
+          var snap = await window.db.collection('properties').get();
+          fbProps = snap.docs.map(function (doc) {
+            var data = doc.data() || {};
+            return Object.assign({ id: data.id || doc.id, __docId: doc.id }, data);
+          });
+        }
+
+        if (Array.isArray(fbProps)) {
+          window.__exoPropertiesCache = fbProps;
+          window.__exoPropertiesLoadedAt = Date.now();
+          if (window.ExoStore && typeof window.ExoStore.getState === 'function') {
             var st = window.ExoStore.getState();
             st.properties = fbProps;
             window.ExoStore.setState(st);

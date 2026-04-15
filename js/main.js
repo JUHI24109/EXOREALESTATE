@@ -3,84 +3,11 @@
  * Multilingual, Search/Filter, Slider, Chatbot, Modal, Admin
  */
 
-// Sample properties data with niche field (shows in cards)
-let properties = [
-  {
-    id: 'VFX01',
-    niche: 'luxury',
-    title: 'Renovated 3-bedroom apartment in the heart of Lisbon',
-    type: 'Apartment',
-    status: 'For Sale',
-    bedrooms: 3,
-    bathrooms: 4,
-    areaInternal: 110,
-    areaExternal: 15,
-    price: 600000,
-    elevator: true,
-    carCharging: true,
-    energyRating: 'A',
-    energyKwh: 45,
-    communityFees: 120,
-    ibiTax: 450,
-    investmentYield: 4.5,
-    address: 'Rua dos Fanqueiros, 207, Lisbon, Portugal',
-    description: 'Discover this incredible, fully renovated apartment in the heart of Lisbon. High-end finishes, open-plan living, and state-of-the-art amenities.',
-    lat: 38.7094,
-    lng: -9.1365,
-    images: ['images/artboard1.jpg', 'images/artboard1.jpg']
-  },
-  {
-    id: 'PTG02',
-    niche: 'beachfront',
-    title: 'Luxury Algarve Beachfront Villa',
-    type: 'Villa',
-    status: 'For Sale',
-    bedrooms: 5,
-    bathrooms: 6,
-    areaInternal: 450,
-    areaPlot: 1200,
-    price: 2500000,
-    elevator: false,
-    carCharging: true,
-    energyRating: 'A+',
-    energyKwh: 25,
-    communityFees: 0,
-    ibiTax: 1200,
-    investmentYield: 6.2,
-    address: 'Praia da Rocha, Portimão, Algarve, Portugal',
-    description: 'Exclusive oceanfront villa with private pool and direct beach access. Golden Visa eligible.',
-    lat: 37.1167,
-    lng: -8.3833,
-    images: ['images/artboard1.jpg', 'images/artboard1.jpg']
-  },
-  {
-    id: 'PTG03',
-    niche: 'golden-visa',
-    title: 'Porto Historic Golden Visa Apartment',
-    type: 'Apartment',
-    status: 'For Sale',
-    bedrooms: 2,
-    bathrooms: 2,
-    areaInternal: 120,
-    price: 850000,
-    elevator: true,
-    carCharging: false,
-    energyRating: 'B',
-    energyKwh: 85,
-    communityFees: 80,
-    ibiTax: 300,
-    investmentYield: 5.5,
-    address: 'Rua de Cedofeita, Porto, Portugal',
-    description: 'Elegant renovated apartment in Porto center. Perfect for investment and Golden Visa program.',
-    lat: 41.1496,
-    lng: -8.6100,
-    images: ['images/artboard1.jpg', 'images/artboard1.jpg']
-  }
-];
+let properties = [];
 
 
 let currentLang = (window.getLang && typeof window.getLang === 'function') ? window.getLang() : 'en';
-let filteredProperties = [...properties];
+let filteredProperties = [];
 let chatbotMessages = [];
 let heroFallbackInterval = null;
 let heroSwiperInstance = null;
@@ -95,10 +22,59 @@ function init() {
   initScrollAnimations();
   initSearch();
   initChatbot();
-  loadProperties(); // Loads Firebase or uses hardcoded
+  loadProperties();
   // Page specific
   if (document.querySelector('.properties-page')) initProperties();
   if (document.getElementById('admin-password')) initAdmin();
+}
+
+function getPropertySizeValue(property) {
+  if (!property) return 0;
+  var rawSize = property.size;
+  if (rawSize === undefined || rawSize === null || rawSize === '') {
+    rawSize = property.areaInternal !== undefined && property.areaInternal !== null && property.areaInternal !== ''
+      ? property.areaInternal
+      : (property.areaPlot !== undefined && property.areaPlot !== null && property.areaPlot !== ''
+        ? property.areaPlot
+        : (property.totalArea !== undefined && property.totalArea !== null && property.totalArea !== ''
+          ? property.totalArea
+          : 0));
+  }
+  var numericSize = typeof rawSize === 'string' ? parseFloat(rawSize.replace(/,/g, '')) : Number(rawSize);
+  return Number.isFinite(numericSize) ? numericSize : 0;
+}
+
+function getPropertyKitchenValue(property) {
+  if (!property) return 0;
+  var rawKitchen = property.kitchen !== undefined && property.kitchen !== null && property.kitchen !== ''
+    ? property.kitchen
+    : (property.kitchens !== undefined && property.kitchens !== null && property.kitchens !== '' ? property.kitchens : 0);
+  var numericKitchen = typeof rawKitchen === 'string' ? parseInt(rawKitchen, 10) : Number(rawKitchen);
+  return Number.isFinite(numericKitchen) ? numericKitchen : 0;
+}
+
+function getPropertyTitle(property) {
+  return property && typeof property.title === 'string' && property.title.trim() ? property.title.trim() : 'Untitled property';
+}
+
+function getPropertyAddress(property) {
+  return property && typeof property.address === 'string' ? property.address : '';
+}
+
+function getPropertyStatusLabel(property, lang) {
+  var status = property && property.status ? property.status : window.t('statusForSale', lang);
+  return window.translateListingStatus ? window.translateListingStatus(status, lang) : status;
+}
+
+function syncPropertyCache(list) {
+  if (!Array.isArray(list)) return;
+  if (window.ExoStore && typeof window.ExoStore.getState === 'function' && typeof window.ExoStore.setState === 'function') {
+    var state = window.ExoStore.getState() || {};
+    state.properties = list;
+    window.ExoStore.setState(state);
+  }
+  window.__exoPropertiesCache = list;
+  window.__exoPropertiesLoadedAt = Date.now();
 }
 
 // Multilingual
@@ -306,10 +282,10 @@ function performSearch() {
     (!status || p.status === status) &&
     (beds === 0 || p.bedrooms >= beds) &&
     (baths === 0 || p.bathrooms >= baths) &&
-    (size === 0 || parseFloat(p.size.replace(/,/g, '')) >= size) &&
-    (kitchen === 0 || p.kitchen >= kitchen) &&
+    (size === 0 || getPropertySizeValue(p) >= size) &&
+    (kitchen === 0 || getPropertyKitchenValue(p) >= kitchen) &&
     (p.price >= minPrice && p.price <= maxPrice) &&
-    (query === '' || p.title.toLowerCase().includes(query) || p.address.toLowerCase().includes(query))
+    (query === '' || String(p.title || '').toLowerCase().includes(query) || String(p.address || '').toLowerCase().includes(query))
   );
 
   
@@ -329,21 +305,26 @@ function renderProperties(props) {
   
   const lang = currentLang;
 
+  if (!Array.isArray(props) || props.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;padding:40px 20px;text-align:center;color:#64748b;">' + (window.t ? window.t('noResults', lang) : 'No properties available') + '</div>';
+    return;
+  }
+
   grid.innerHTML = (props || []).slice(0, 12).map(p => `
     <div class="property-card fade-in" data-id="${p.id}">
       <div class="property-image" style="background-image: url(${p.images && p.images[0] ? p.images[0] : 'images/artboard1.jpg'})">
-        <div class="property-badge">${window.translateListingStatus ? window.translateListingStatus(p.status, lang) : p.status}</div>
+        <div class="property-badge">${getPropertyStatusLabel(p, lang)}</div>
         ${p.niche ? `<div class="property-badge niche-badge"><i class="fas fa-star"></i> ${p.niche.toUpperCase()}</div>` : ''}
       </div>
       <div class="property-info">
-        <h3 class="property-title">${p.title}</h3>
+        <h3 class="property-title">${getPropertyTitle(p)}</h3>
         <div class="property-price">${p.priceOnRequest ? window.t('formPriceOnRequest', lang) : '€' + Number(p.price || 0).toLocaleString()}</div>
         <div class="property-meta">
           <span>T${p.bedrooms || 0}</span>
           <span>${p.bathrooms || 0} ${window.t('cardBaths', lang)}</span>
-          <span>${p.areaInternal || p.size || 0} ${window.t('cardSqm', lang)}</span>
+          <span>${getPropertySizeValue(p) || 0} ${window.t('cardSqm', lang)}</span>
         </div>
-        <div class="property-address"><i class="fas fa-map-marker-alt"></i> ${p.address ? p.address.split(',')[0] : ''}</div>
+        <div class="property-address"><i class="fas fa-map-marker-alt"></i> ${getPropertyAddress(p).split(',')[0]}</div>
       </div>
     </div>
   `).join('');
@@ -356,20 +337,28 @@ function renderProperties(props) {
 
 // Firebase Properties
 async function loadProperties() {
-  if (typeof firebase !== 'undefined' && window.db) {
-    try {
-      const snapshot = await window.db.collection('properties').get();
-      properties = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      filteredProperties = [...properties];
-      
-      if (document.querySelector('.properties-grid')) {
-        renderProperties(properties);
-      } else if (document.querySelector('.featured-grid')) {
-        renderProperties(properties.slice(0, 6));
-      }
-    } catch (e) {
-      console.error("Firebase load error:", e);
+  let loadedProperties = [];
+  try {
+    if (typeof window.getPropertiesFromFirestore === 'function') {
+      loadedProperties = await window.getPropertiesFromFirestore(false);
     }
+
+    if ((!Array.isArray(loadedProperties) || loadedProperties.length === 0) && typeof window.db !== 'undefined' && window.db) {
+      const snapshot = await window.db.collection('properties').get();
+      loadedProperties = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
+  } catch (e) {
+    console.error('Property load error:', e);
+  }
+
+  properties = Array.isArray(loadedProperties) ? loadedProperties : [];
+  filteredProperties = [...properties];
+  syncPropertyCache(properties);
+
+  if (document.querySelector('.properties-grid')) {
+    renderProperties(properties);
+  } else if (document.querySelector('.featured-grid')) {
+    renderProperties(properties.slice(0, 6));
   }
 }
 

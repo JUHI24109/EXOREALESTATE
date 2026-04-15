@@ -458,6 +458,49 @@
     .prop-card-body .prop-agent {
       font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;
     }
+    .status-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid transparent;
+      box-shadow: 0 8px 18px rgba(15,23,42,0.08);
+      text-transform: uppercase;
+    }
+    .status-for-sale { background: rgba(79,110,247,0.92); color: #fff; border-color: rgba(191,219,254,0.6); }
+    .status-for-rent { background: rgba(16,185,129,0.92); color: #fff; border-color: rgba(167,243,208,0.6); }
+    .status-sold { background: rgba(244,63,94,0.92); color: #fff; border-color: rgba(254,202,202,0.6); }
+    .status-new-development { background: rgba(245,158,11,0.92); color: #fff; border-color: rgba(253,230,138,0.65); }
+    .status-investment { background: rgba(139,92,246,0.92); color: #fff; border-color: rgba(221,214,254,0.7); }
+    .status-default { background: rgba(15,23,42,0.88); color: #fff; border-color: rgba(226,232,240,0.55); }
+    .prop-card.loading,
+    .stat-card.loading,
+    .card.loading {
+      position: relative;
+      overflow: hidden;
+    }
+    .prop-card.loading::after,
+    .stat-card.loading::after,
+    .card.loading::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+      animation: loadingShimmer 1.15s infinite;
+    }
+    @keyframes loadingShimmer {
+      100% { transform: translateX(100%); }
+    }
 
     /* ==================== MESSAGES ==================== */
     .msg-item {
@@ -2770,6 +2813,30 @@
 
     document.getElementById('admin-property-form').addEventListener('submit', async function(e) {
       e.preventDefault();
+
+      if (window.__adminPropertySubmitInFlight) {
+        showToast(__t('loading'), 'info');
+        return;
+      }
+
+      const submitBtn = e.target && typeof e.target.querySelector === 'function'
+        ? e.target.querySelector('button[type="submit"]')
+        : null;
+      const submitOriginalHtml = submitBtn ? submitBtn.innerHTML : '';
+      window.__adminPropertySubmitInFlight = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + __t('loading');
+      }
+
+      const finishAdminPropertySubmit = function () {
+        window.__adminPropertySubmitInFlight = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = submitOriginalHtml;
+        }
+      };
+
       const title = document.getElementById('af-title').value.trim();
       const price = Number(document.getElementById('af-price').value) || 0;
       const type = document.getElementById('af-type').value || 'Apartment';
@@ -2843,6 +2910,7 @@
 
       if (!title || !address || !price) {
         showToast(__t('toastTitleAddressPriceRequired'), 'error');
+        finishAdminPropertySubmit();
         return;
       }
 
@@ -2854,6 +2922,7 @@
 
       if (isEditing && (!existingProp || !isPropertyOwnedByCurrentAdmin(existingProp))) {
         showToast(__t('toastOnlyEditOwnProperty'), 'error');
+        finishAdminPropertySubmit();
         return;
       }
 
@@ -2870,6 +2939,7 @@
         }
       } catch (uploadErr) {
         showToast(__t('toastFailedUploadMedia'), 'error');
+        finishAdminPropertySubmit();
         return;
       }
 
@@ -3021,6 +3091,8 @@
       } catch (err) {
         showToast(isEditing ? __t('toastFailedUpdateProperty') : __t('toastFailedAddProperty'), 'error');
       }
+
+      finishAdminPropertySubmit();
     });
 
     /* ====== Map and Coordinate logic ====== */
@@ -3142,14 +3214,27 @@
       fetchAgents();
       fetchUsers();
       fetchBlogs();
+      const cachedState = window.ExoStore && typeof window.ExoStore.getState === 'function' ? window.ExoStore.getState() : null;
+      if (cachedState && Array.isArray(cachedState.properties) && cachedState.properties.length > 0) {
+        renderPropsAndMessages();
+      }
       if (typeof window.loadPropertiesFromFirebase === "function") {
         document.getElementById("properties-list").innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-spinner fa-spin"></i>' + __t('loadingPropertiesFromFirebase') + '</div>';
-        const fbProps = await window.loadPropertiesFromFirebase();
-        if (fbProps && fbProps.length > 0) {
-          const state = window.ExoStore.getState();
-          state.properties = fbProps;
-          window.ExoStore.setState(state);
-        }
+        window.loadPropertiesFromFirebase()
+          .then((fbProps) => {
+            if (fbProps && fbProps.length > 0) {
+              const state = window.ExoStore.getState();
+              state.properties = fbProps;
+              window.ExoStore.setState(state);
+            }
+          })
+          .catch((err) => {
+            console.error('Admin property refresh error:', err);
+          })
+          .finally(() => {
+            renderPropsAndMessages();
+          });
+        return;
       }
       renderPropsAndMessages();
     }

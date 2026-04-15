@@ -1507,35 +1507,7 @@
     }
 
     /* ===== Blog Data & Render ===== */
-    var blogPosts = [
-      {
-        id: 1,
-        title: "Why Portugal\u2019s Safety Makes It an Attractive Property Investment Destination",
-        excerpt: "In times of global uncertainty, safety becomes one of the most important factors people consider when deciding where to invest in property.",
-        image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&fit=crop",
-        date: "2025",
-        author: "Exo Real Estate",
-        content: "In times of global uncertainty, safety becomes one of the most important factors people consider when deciding where to live, retire, or invest in property.\n\nWith geopolitical tensions frequently making headlines, many international buyers are reassessing where they want their future homes or investments to be located. Increasingly, Portugal stands out as a destination that offers something rare: a combination of lifestyle, stability, and security.\n\nPortugal consistently ranks among the safest countries globally. According to the Global Peace Index, Portugal is currently ranked 7th safest country in the world. The index measures factors such as crime rates, political stability, militarisation, and internal and external conflicts.\n\nSafety and stability often go hand in hand with strong property markets. When people feel confident about the long-term security of a country, they are more willing to purchase homes, relocate their families, or invest in real estate.\n\nPortugal benefits from a long-standing democratic political system, membership of the European Union, low levels of social unrest, and a welcoming culture toward international residents.\n\nMany coastal towns and cities are known for their relaxed pace, strong community atmosphere, and friendly local culture. In regions like the Algarve, residents often describe a lifestyle where children play safely outdoors, evening walks along the marina are common, and neighbours know each other."
-      },
-      {
-        id: 2,
-        title: "Is Now a Good Time to Buy or Sell Property in Portugal?",
-        excerpt: "After years of economic recession, Portugal is seeing a resurgence in its property market with favorable conditions for buyers.",
-        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&fit=crop",
-        date: "October 2022",
-        author: "Exo Real Estate",
-        content: "After years of economic recession, Portugal is seeing a resurgence in its property market. Although prices have begun to rise, there are still good deals to be found for those interested in buying or selling property in Portugal.\n\nThe current market conditions in Portugal are very favorable for buyers. Prices have come down significantly from their peak a few years ago, and there is a large selection of properties available on the market.\n\nThe current state of the Portuguese economy is strong, with solid GDP growth. This has led to increases in property prices across the country, especially in Lisbon.\n\nHowever, prices are still relatively low compared to other Western European countries. If you're looking for a long-term investment, there is potential for significant growth in the future.\n\nUltimately, the decision of whether or not to buy property in Portugal depends on your individual circumstances and goals."
-      },
-      {
-        id: 3,
-        title: "Housing Markets That Changed the Most This Decade",
-        excerpt: "A look at how global housing markets have shifted dramatically over the past decade and what it means for investors.",
-        image: "https://images.unsplash.com/photo-1605392002841-0959ed1bb98c?w=600&fit=crop",
-        date: "2024",
-        author: "Exo Real Estate",
-        content: "The past decade has seen remarkable shifts in housing markets around the world. From the rapid urbanisation of previously overlooked cities to the transformation of rural retreats into prime investment destinations, the landscape has changed significantly.\n\nPortugal, in particular, has emerged as one of the most dynamic property markets in Europe. Cities like Lisbon and Porto have seen property values surge, driven by a combination of foreign investment, tourism growth, and government incentive programs like the Golden Visa.\n\nThe Algarve region continues to attract buyers looking for coastal living with excellent infrastructure, while emerging areas in the Silver Coast and Alentejo offer new opportunities for early investors.\n\nUnderstanding these market shifts is key for making informed investment decisions in the coming years."
-      }
-    ];
+    var blogPosts = [];
 
     var currentOpenBlogId = null;
 
@@ -1567,6 +1539,10 @@
       var grid = document.getElementById('blog-grid');
       if (!grid) return;
       var lang = getRuntimeLang();
+      if (!blogPosts.length) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;padding:40px 20px;text-align:center;color:#64748b;">' + (window.t ? window.t('noResults', lang) : 'No blog posts available') + '</div>';
+        return;
+      }
       grid.innerHTML = blogPosts.map(function (post) {
         var localized = resolveLocalizedBlogPost(post, lang);
         return '<div class="blog-card" onclick="openBlogModal(\'' + escapeHtmlAttr(localized.id) + '\')">' +
@@ -1599,9 +1575,11 @@
 
         if (loaded.length) {
           blogPosts = loaded;
+        } else {
+          blogPosts = [];
         }
       } catch (e) {
-        // Keep local fallback posts when firestore fetch fails.
+        blogPosts = [];
       }
 
       renderBlogCards();

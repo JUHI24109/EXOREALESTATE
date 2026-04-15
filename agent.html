@@ -294,6 +294,49 @@
     }
     .prop-card-actions { display: flex; gap: 8px; }
     .prop-card-actions .btn { flex: 1; }
+    .status-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid transparent;
+      box-shadow: 0 8px 18px rgba(15,23,42,0.08);
+      text-transform: uppercase;
+    }
+    .status-for-sale { background: rgba(79,110,247,0.92); color: #fff; border-color: rgba(191,219,254,0.6); }
+    .status-for-rent { background: rgba(16,185,129,0.92); color: #fff; border-color: rgba(167,243,208,0.6); }
+    .status-sold { background: rgba(244,63,94,0.92); color: #fff; border-color: rgba(254,202,202,0.6); }
+    .status-new-development { background: rgba(245,158,11,0.92); color: #fff; border-color: rgba(253,230,138,0.65); }
+    .status-investment { background: rgba(139,92,246,0.92); color: #fff; border-color: rgba(221,214,254,0.7); }
+    .status-default { background: rgba(15,23,42,0.88); color: #fff; border-color: rgba(226,232,240,0.55); }
+    .prop-card.loading,
+    .stat-card.loading,
+    .card.loading {
+      position: relative;
+      overflow: hidden;
+    }
+    .prop-card.loading::after,
+    .stat-card.loading::after,
+    .card.loading::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+      animation: loadingShimmer 1.15s infinite;
+    }
+    @keyframes loadingShimmer {
+      100% { transform: translateX(100%); }
+    }
 
     /* ===== TOAST ===== */
     .toast-container {
@@ -1579,8 +1622,26 @@
     async function renderMine(forceRefresh) {
       if (!currentUser) return;
 
+      const hasPropsCache = Array.isArray(myPropertiesCache) && myPropertiesCache.length > 0;
+      const hasInquiriesCache = Array.isArray(myInquiriesCache) && myInquiriesCache.length > 0;
       const shouldReload = forceRefresh !== false || (!Array.isArray(myPropertiesCache) || !Array.isArray(myInquiriesCache));
-      if (shouldReload) {
+
+      if (hasPropsCache && hasInquiriesCache && forceRefresh !== true && !window.__agentDashboardRefreshPending) {
+        window.__agentDashboardRefreshPending = true;
+        Promise.all([loadMyProperties(), loadMyInquiries()])
+          .then(([fetchedProps, fetchedInquiries]) => {
+            if (Array.isArray(fetchedProps) && fetchedProps.length) myPropertiesCache = fetchedProps;
+            if (Array.isArray(fetchedInquiries) && fetchedInquiries.length) myInquiriesCache = fetchedInquiries;
+          })
+          .catch((err) => {
+            console.error('Agent background refresh error:', err);
+          })
+          .finally(() => {
+            window.__agentDashboardRefreshPending = false;
+          });
+      }
+
+      if (shouldReload && (!hasPropsCache || !hasInquiriesCache)) {
         const [fetchedProps, fetchedInquiries] = await Promise.all([
           loadMyProperties(),
           loadMyInquiries()
@@ -1658,6 +1719,8 @@
         const isDeletingProp = pendingPropertyDeleteIds.has(String(p.id || ''));
         const price = Number(p.price || 0);
         const title = String(p.title || p.id || 'Untitled');
+        const status = String(p.status || 'For Sale');
+        const statusClass = status.replace(/\s+/g, '-').toLowerCase();
         const currentLang = typeof window.getLang === 'function' ? window.getLang() : 'en';
         const translatedStatus = (typeof window.translateListingStatus === 'function') 
           ? window.translateListingStatus(status, currentLang) 
@@ -1773,10 +1836,10 @@
 
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  formData.append('upload_preset', uploadPreset);
       if (folderPath) formData.append('folder', folderPath);
 
-      const endpoint = 'https://api.cloudinary.com/v1_1/' + encodeURIComponent(CLOUDINARY_CLOUD_NAME) + '/image/upload';
+  const endpoint = 'https://api.cloudinary.com/v1_1/' + encodeURIComponent(cloudName) + '/image/upload';
       const res = await fetch(endpoint, { method: 'POST', body: formData });
       const data = await res.json();
 
@@ -2198,9 +2261,16 @@
     const propForm = document.getElementById('main-property-form');
     propForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      if (window.__agentPropertySubmitInFlight) {
+        showToast(__t('loading'), 'info');
+        return;
+      }
+
       const btn = document.getElementById('f-submit-btn');
       const textSpan = document.getElementById('f-submit-text');
       const originalHtml = btn.innerHTML;
+      window.__agentPropertySubmitInFlight = true;
       btn.disabled = true;
       textSpan.textContent = __t('loading');
 
@@ -2347,6 +2417,19 @@
           customViews: Array.from(document.querySelectorAll('input[name="customViews"]:checked')).map(el => el.value)
         };
 
+        // Keep agent writes aligned with Firestore rules for create/update.
+        payload.featured = isEditing ? !!(existingData && existingData.featured) : false;
+
+        if (!payload.title || payload.title.length < 3) {
+          throw new Error('Title must be at least 3 characters.');
+        }
+        if (!payload.address || payload.address.length < 3) {
+          throw new Error('Address must be at least 3 characters.');
+        }
+        if (!Number.isFinite(payload.price) || payload.price <= 0) {
+          throw new Error('Price must be greater than 0.');
+        }
+
         // Media and ownership
         payload.images = imageUrls;
         payload.image = imageUrls[0] || '';
@@ -2434,6 +2517,7 @@
       } finally {
         btn.innerHTML = originalHtml;
         btn.disabled = false;
+        window.__agentPropertySubmitInFlight = false;
       }
     });
 
