@@ -1,0 +1,156 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isAgentLike() {
+      return isSignedIn() && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'agent' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'dealer'
+      );
+    }
+
+    function canManageProperties() {
+      return isAdmin() || isAgentLike();
+    }
+
+    function isShortString(v, maxLen) {
+      return v is string && v.size() > 0 && v.size() <= maxLen;
+    }
+
+    function canSelfEditUser(uid) {
+      return isSelf(uid) &&
+        request.resource.data.keys().hasOnly([
+          'uid', 'name', 'phone', 'email', 'role', 'active', 'createdAt', 'favorites', 'favourites', 'profilePhoto'
+        ]) &&
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.email == resource.data.email &&
+        request.resource.data.role == resource.data.role &&
+        request.resource.data.active == resource.data.active &&
+        request.resource.data.createdAt == resource.data.createdAt &&
+        (
+          !(
+            resource.data.role == 'agent' ||
+            resource.data.role == 'dealer'
+          ) ||
+          (
+            request.resource.data.phone == resource.data.phone &&
+            request.resource.data.profilePhoto == resource.data.profilePhoto &&
+            request.resource.data.favorites == resource.data.favorites &&
+            request.resource.data.favourites == resource.data.favourites
+          )
+        );
+    }
+
+    function isValidPropertyWrite() {
+      return request.resource.data.agentId is string &&
+        request.resource.data.agentId.size() > 0 &&
+        request.resource.data.id is string &&
+        request.resource.data.id.size() > 0 &&
+        request.resource.data.title is string &&
+        request.resource.data.title.size() > 2 &&
+        request.resource.data.title.size() <= 180 &&
+        request.resource.data.address is string &&
+        request.resource.data.address.size() > 2 &&
+        request.resource.data.address.size() <= 500 &&
+        request.resource.data.price is number &&
+        request.resource.data.price >= 0;
+    }
+
+    function isTranslationOnlyUpdate() {
+      return request.resource.data.diff(resource.data).changedKeys().hasOnly(['translations']) &&
+        request.resource.data.translations is map &&
+        request.resource.data.id == resource.data.id &&
+        request.resource.data.agentId == resource.data.agentId &&
+        request.resource.data.title == resource.data.title &&
+        request.resource.data.address == resource.data.address &&
+        request.resource.data.price == resource.data.price;
+    }
+
+    function isValidInquiryPayload() {
+      return request.resource.data.keys().hasOnly([
+        'source',
+        'propertyId',
+        'propertyTitle',
+        'agentId',
+        'agentName',
+        'name',
+        'email',
+        'phone',
+        'message',
+        'status',
+        'createdAt'
+      ]) &&
+      isShortString(request.resource.data.name, 120) &&
+      request.resource.data.email is string &&
+      request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$') &&
+      request.resource.data.email.size() <= 200 &&
+      isShortString(request.resource.data.message, 4000) &&
+      (!('source' in request.resource.data) || (request.resource.data.source is string && request.resource.data.source.size() <= 80)) &&
+      (!('propertyTitle' in request.resource.data) || (request.resource.data.propertyTitle is string && request.resource.data.propertyTitle.size() <= 200)) &&
+      (!('agentName' in request.resource.data) || (request.resource.data.agentName is string && request.resource.data.agentName.size() <= 120)) &&
+      (!('phone' in request.resource.data) || (request.resource.data.phone is string && request.resource.data.phone.size() <= 40)) &&
+      (!('agentId' in request.resource.data) || (request.resource.data.agentId is string && request.resource.data.agentId.size() <= 100)) &&
+      (!('propertyId' in request.resource.data) || (request.resource.data.propertyId is string && request.resource.data.propertyId.size() <= 120)) &&
+      (!('status' in request.resource.data) || (request.resource.data.status is string && request.resource.data.status.size() <= 40)) &&
+      (!('createdAt' in request.resource.data) || request.resource.data.createdAt is timestamp);
+    }
+
+    match /properties/{propertyId} {
+      allow read: if true;
+      allow create: if isSignedIn() && (isAdmin() || (
+          request.resource.data.agentId == request.auth.uid &&
+          (!('featured' in request.resource.data) || request.resource.data.featured == false)
+        ));
+      allow update: if isAdmin() || (
+        isSignedIn() && resource.data.agentId == request.auth.uid &&
+        request.resource.data.agentId == request.auth.uid &&
+        request.resource.data.featured == resource.data.featured
+      ) || isTranslationOnlyUpdate();
+      allow delete: if isAdmin() || (
+        isSignedIn() && resource.data.agentId == request.auth.uid
+      );
+    }
+
+    match /users/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isAdmin());
+      allow create, update: if isAdmin() || (isSignedIn() && request.auth.uid == uid);
+      allow delete: if isAdmin();
+    }
+
+    match /metadata/{docId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /inquiries/{inquiryId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin() || (isSignedIn() && (resource.data.agentId == request.auth.uid || resource.data.agentUID == request.auth.uid));
+    }
+
+    match /heroSlides/{slideId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /blogPosts/{postId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

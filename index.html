@@ -1,0 +1,2389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="pageTitleHomeProfessional">Exo Real Estate | Premium Luxury Properties Portugal</title>
+  <meta name="description"
+    content="Exo Real Estate - Golden Visa eligible luxury villas, beachfront apartments in Lisbon, Algarve, Porto, Madeira. AMI licensed." />
+  <meta property="og:title" content="Exo Real Estate - Portugal's Premier Property Agency" />
+  <meta property="og:description" content="Discover investment-ready luxury properties in Portugal's best locations." />
+  <meta property="og:image" content="logo.png" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    "name": "Exo Real Estate",
+    "url": "https://exorealestate.pt",
+    "telephone": "+351 918 445 899",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Av. da Liberdade 144",
+      "addressLocality": "Lisboa",
+      "addressCountry": "PT"
+    },
+    "areaServed": "Portugal"
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Leaflet CSS in head — required for map to render correctly -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: #1e293b;
+      background: #f8fafc;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      height: 92vh;
+      min-height: 600px;
+      overflow: hidden;
+    }
+
+    .hero .swiper,
+    .hero .swiper-wrapper,
+    .hero .swiper-slide {
+      height: 100%;
+    }
+
+    .hero .swiper-wrapper {
+      display: flex;
+      width: 100%;
+    }
+
+    .hero .swiper-slide {
+      flex: 0 0 100%;
+      width: 100%;
+    }
+
+    .hero-slide-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.06);
+      transition: transform 8s ease-out;
+    }
+
+    .swiper-slide-active .hero-slide-bg {
+      transform: scale(1);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.35) 0%, rgba(15, 23, 42, 0.65) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      color: #fff;
+      padding: 0 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-accent {
+      width: 48px;
+      height: 3px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2));
+      border-radius: 3px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 600px;
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: #fff;
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-hero-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-hero-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+
+    .btn-hero-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ===== SECTIONS ===== */
+    .section {
+      padding: 80px 0;
+    }
+
+    .section-alt {
+      background: #fff;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 16px;
+      position: relative;
+      padding: 0 20px;
+    }
+
+    .section-label::before,
+    .section-label::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 28px;
+      height: 1px;
+      background: #cbd5e1;
+    }
+
+    .section-label::before {
+      right: 100%;
+    }
+
+    .section-label::after {
+      left: 100%;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 14px;
+      line-height: 1.15;
+    }
+
+    .section-desc {
+      font-size: 15px;
+      color: #94a3b8;
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ===== SEARCH ===== */
+    .search-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+      border: 1px solid #f1f5f9;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .search-tabs {
+      display: flex;
+      background: #f8fafc;
+      border-radius: 100px;
+      padding: 4px;
+      margin-bottom: 28px;
+      border: 1px solid #f1f5f9;
+    }
+
+    .search-tab {
+      flex: 1;
+      padding: 11px 16px;
+      border: none;
+      background: none;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .search-tab.active {
+      background: #fff;
+      color: #0f172a;
+      font-weight: 600;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .search-tab:hover:not(.active) {
+      color: #64748b;
+    }
+
+    .search-tab i {
+      font-size: 12px;
+    }
+
+    .search-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .search-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .search-field-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 13px 20px;
+      height: 48px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 100px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #1e293b;
+      background: #fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: #b0bec5;
+    }
+
+    .search-input:focus {
+      border-color: #0f172a;
+      box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
+    }
+
+    select.search-input {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 20px center;
+      background-size: 16px;
+      padding-right: 48px;
+      cursor: pointer;
+    }
+
+    .search-btn-row {
+      grid-column: 1 / -1;
+    }
+
+    .search-btn {
+      width: 100%;
+      padding: 14px 32px;
+      background: #0f172a;
+      color: #fff;
+      border: none;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .search-btn:hover {
+      background: #1e293b;
+      transform: translateY(-1px);
+    }
+
+    /* map draw instruction */
+    .map-instruction {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #64748b;
+      margin-bottom: 10px;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border: 1px solid #f1f5f9;
+    }
+
+    .map-instruction i {
+      color: #4f6ef7;
+      font-size: 14px;
+    }
+
+    .map-clear-btn {
+      width: 100%;
+      border: 1.5px solid #e2e8f0;
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      margin-top: 12px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .map-clear-btn:hover {
+      border-color: #ef4444;
+      color: #ef4444;
+      background: #fef2f2;
+    }
+
+    /* drawing cursor */
+    .drawing-active {
+      cursor: crosshair !important;
+    }
+
+    .drawing-active .leaflet-interactive {
+      cursor: crosshair !important;
+    }
+
+    /* nearby */
+    .nearby-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .nearby-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .nearby-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nearby-location-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 20px;
+      background: #f8fafc;
+      color: #475569;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nearby-location-btn:hover {
+      border-color: #0f172a;
+      color: #0f172a;
+      background: #fff;
+    }
+
+    .nearby-results-box {
+      margin-top: 4px;
+      padding: 24px;
+      background: #f8fafc;
+      border-radius: 12px;
+      color: #94a3b8;
+      font-size: 14px;
+      border: 1px solid #f1f5f9;
+      text-align: center;
+    }
+
+    .search-results-wrap {
+      display: grid;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .search-results-head {
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin: 2px 2px 4px;
+    }
+
+    .search-result-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid #e9eef7;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .search-result-card:hover {
+      transform: translateY(-2px);
+      border-color: #d5def7;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .search-result-card:focus-visible {
+      outline: 2px solid rgba(79, 110, 247, 0.55);
+      outline-offset: 2px;
+    }
+
+    .search-result-thumb {
+      width: 82px;
+      height: 68px;
+      border-radius: 10px;
+      background-size: cover;
+      background-position: center;
+      background-color: #e2e8f0;
+      flex-shrink: 0;
+      border: 1px solid #eef2f8;
+    }
+
+    .search-result-content {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .search-result-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .search-result-meta {
+      font-size: 12px;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .search-result-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .search-result-price {
+      font-size: 14px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .search-result-arrow {
+      color: #4f6ef7;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    /* ===== FEATURED PROPERTIES ===== */
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .property-card {
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #f1f5f9;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .property-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 44px rgba(15, 23, 42, 0.1);
+      border-color: #d9e2ff;
+    }
+
+    .property-card:focus-visible {
+      outline: 2px solid rgba(79, 110, 247, 0.55);
+      outline-offset: 2px;
+    }
+
+    .property-card-img {
+      height: 220px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .property-card-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      padding: 6px 14px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      border-radius: 8px;
+    }
+
+    .property-card-actions {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      display: flex;
+      gap: 8px;
+      z-index: 4;
+    }
+
+    .property-card-action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(226, 232, 240, 0.94);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      transition: transform 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .property-card-action-btn i {
+      font-size: 13px;
+    }
+
+    .property-card-action-btn:hover {
+      transform: translateY(-1px);
+      border-color: #c7d2fe;
+      color: #4f6ef7;
+    }
+
+    .property-card-action-btn.favorited {
+      border-color: rgba(244, 63, 94, 0.3);
+      color: #f43f5e;
+      background: rgba(255, 241, 242, 0.96);
+    }
+
+    .property-card-body {
+      padding: 22px;
+    }
+
+    .property-card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .property-card-location {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .property-card-location i {
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+
+    .property-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 16px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .property-card-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .view-all-wrap {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .btn-view-all {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 36px;
+      background: #fff;
+      color: #1e293b;
+      border: 1.5px solid #e2e8f0;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-view-all:hover {
+      background: #1e293b;
+      color: #fff;
+      border-color: #1e293b;
+    }
+
+    /* ===== BLOG ===== */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .blog-card {
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #f1f5f9;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      cursor: pointer;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .blog-card-img {
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .blog-card-body {
+      padding: 24px;
+    }
+
+    .blog-card-meta {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+    }
+
+    .blog-card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .blog-card-excerpt {
+      font-size: 14px;
+      color: #64748b;
+      line-height: 1.6;
+      display: -webkit-box;
+      line-clamp: 3;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .blog-card-read {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #0f172a;
+      text-decoration: none;
+    }
+
+    .blog-card:hover .blog-card-read {
+      gap: 10px;
+    }
+
+    .blog-empty-state {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, #f8fbff, #f4f7ff);
+      border: 1px solid #dbe4ff;
+      border-radius: 18px;
+      padding: 34px 26px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .blog-empty-state::before {
+      content: '';
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      top: -180px;
+      right: -120px;
+      background: radial-gradient(circle, rgba(79, 110, 247, 0.18), rgba(79, 110, 247, 0));
+    }
+
+    .blog-empty-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(79, 110, 247, 0.12);
+      color: #4f6ef7;
+      font-size: 22px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .blog-empty-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      color: #0f172a;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .blog-empty-text {
+      font-size: 14px;
+      color: #64748b;
+      max-width: 440px;
+      margin: 0 auto;
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* blog modal */
+    .blog-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+      padding: 24px;
+    }
+
+    .blog-modal-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .blog-modal {
+      background: #fff;
+      border-radius: 20px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 40px;
+      position: relative;
+      transform: translateY(16px);
+      transition: transform 0.25s ease;
+    }
+
+    .blog-modal-overlay.open .blog-modal {
+      transform: translateY(0);
+    }
+
+    .blog-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: #f1f5f9;
+      border-radius: 10px;
+      font-size: 18px;
+      color: #64748b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .blog-modal-close:hover {
+      background: #e2e8f0;
+    }
+
+    .blog-modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 20px;
+      padding-right: 40px;
+    }
+
+    .blog-modal-body {
+      font-size: 15px;
+      color: #475569;
+      line-height: 1.8;
+    }
+
+    /* Image Modal */
+    .image-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50000;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      padding: 16px;
+    }
+
+    .image-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .image-modal-container {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      background: #fff;
+      border-radius: 12px;
+      overflow: auto;
+    }
+
+    .image-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      border: none;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 50%;
+      font-size: 24px;
+      color: #0f172a;
+      cursor: pointer;
+      z-index: 50001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .image-modal-close:hover {
+      background: #0f172a;
+      color: #fff;
+      transform: scale(1.1);
+    }
+
+    .image-modal-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ===== CTA ===== */
+    .cta-banner {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border-radius: 24px;
+      padding: 64px 40px;
+      text-align: center;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(79, 110, 247, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .cta-banner h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 700;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .cta-banner p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 15px;
+      margin-bottom: 28px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+
+    .cta-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: #fff;
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: transform 0.2s ease;
+      position: relative;
+    }
+
+    .cta-banner a:hover {
+      transform: translateY(-2px);
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 64px 0 32px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-brand-logo {
+      height: 40px;
+      margin-bottom: 16px;
+      filter: brightness(10);
+    }
+
+    .footer-brand-desc {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #64748b;
+      max-width: 300px;
+    }
+
+    .footer h4 {
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: #64748b;
+      font-size: 14px;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: #e2e8f0;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #1e293b;
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-bottom p {
+      font-size: 13px;
+      color: #475569;
+    }
+
+    .footer-socials {
+      display: flex;
+      gap: 10px;
+    }
+
+    .footer-socials a {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1e293b;
+      color: #64748b;
+      border-radius: 10px;
+      font-size: 14px;
+      text-decoration: none;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .footer-socials a:hover {
+      background: #4f6ef7;
+      color: #fff;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .search-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nearby-row {
+        grid-template-columns: 1fr;
+      }
+
+      .featured-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .blog-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero {
+        height: 80vh;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
+      }
+
+      .cta-banner {
+        padding: 48px 24px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <a href="#main" class="sr-only" data-i18n="skipToMain">Skip to main</a>
+  <script src="js/i18n.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="swiper hero-swiper" id="hero-swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="hero-slide-bg"
+              style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2070&q=80');">
+            </div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+              <div class="hero-accent"></div>
+              <h1 data-i18n="heroTitle">Luxury Properties in Portugal</h1>
+              <p data-i18n="heroSubtitle">Beachfront villas &amp; apartments across Lisbon, Algarve,
+                Porto, and Madeira.</p>
+              <div class="hero-ctas">
+                <a href="#search" class="btn-hero-primary"><i class="fas fa-search"></i> <span
+                    data-i18n="heroCtaPrimary">Find Your Dream Home</span></a>
+                <a href="properties.html" class="btn-hero-secondary"><i class="fas fa-th-large"></i> <span
+                    data-i18n="heroCtaSecondary">View All Properties</span></a>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="hero-slide-bg"
+              style="background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2070&q=80');">
+            </div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+              <div class="hero-accent"></div>
+              <h1 data-i18n="heroSlide2Title">Algarve Beachfront Villas</h1>
+              <p data-i18n="heroSlide2Subtitle">Exclusive coastal properties with panoramic ocean views and high ROI
+                potential.</p>
+              <div class="hero-ctas">
+                <a href="#search" class="btn-hero-primary"><i class="fas fa-search"></i> <span
+                    data-i18n="heroSlide2CtaPrimary">Explore Now</span></a>
+                <a href="properties.html" class="btn-hero-secondary"><i class="fas fa-th-large"></i> <span
+                    data-i18n="heroSlide2CtaSecondary">View Collection</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEARCH -->
+    <section id="search" class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label" data-i18n="searchBtn">Search</div>
+          <h2 class="section-title" data-i18n="searchTitle">Explore Properties</h2>
+          <p class="section-desc" data-i18n="searchSubtitle">Search by location, draw on the map, or discover what's
+            nearby.</p>
+        </div>
+
+        <div class="search-card">
+          <div class="search-tabs">
+            <button class="search-tab active location-tab" data-tab="text"><i class="fas fa-keyboard"></i> <span
+                data-i18n="tabText">Text Search</span></button>
+            <button class="search-tab location-tab" data-tab="map"><i class="fas fa-draw-polygon"></i> <span
+                data-i18n="tabMap">Draw Area</span></button>
+            <button class="search-tab location-tab" data-tab="nearby"><i class="fas fa-map-marker-alt"></i> <span
+                data-i18n="tabNearby">Nearby</span></button>
+          </div>
+
+          <!-- TEXT TAB -->
+          <div id="text-tab" class="tab-content active">
+            <div class="search-grid">
+              <div class="search-field">
+                <span class="search-field-label" data-i18n="fLocation">Location</span>
+                <input id="area-text" type="text" placeholder="City, neighbourhood, or address"
+                  data-i18n-placeholder="searchPlaceholder" class="search-input" />
+              </div>
+              <div class="search-field">
+                <span class="search-field-label" data-i18n="filterPropertyType">Property Type</span>
+                <select id="type-select" class="search-input">
+                  <option value="" data-i18n="optAllTypes">All Types</option>
+                  <option value="Villa" data-i18n="optVilla">Villa</option>
+                  <option value="Apartment" data-i18n="optApartment">Apartment</option>
+                  <option value="Commercial" data-i18n="optCommercial">Commercial</option>
+                </select>
+              </div>
+              <div class="search-btn-row">
+                <button
+                  onclick="window.location.href='properties.html?q='+encodeURIComponent(document.getElementById('area-text').value)+'&type='+encodeURIComponent(document.getElementById('type-select').value)"
+                  class="search-btn">
+                  <i class="fas fa-search"></i> <span data-i18n="searchBtn">Search Properties</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- MAP / DRAW TAB -->
+          <div id="map-tab" class="tab-content">
+            <div class="map-instruction">
+              <i class="fas fa-info-circle"></i>
+              <span data-i18n="mapInstructionFreehand">Select 'DRAW MODE' to draw your search area on the map, or select
+                'DRAG MODE' to move the map.</span>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+              <button id="btn-draw-mode" type="button" class="map-clear-btn"
+                style="margin-top: 0; background: #0f172a; color: #fff; border-color: #0f172a; flex: 1;"><i
+                  class="fas fa-pencil-alt"></i> <span>DRAW MODE</span></button>
+              <button id="btn-pan-mode" type="button" class="map-clear-btn" style="margin-top: 0; flex: 1;"><i
+                  class="fas fa-arrows-alt"></i> <span>DRAG MODE</span></button>
+            </div>
+            <div id="map-search" style="height:380px; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden;">
+            </div>
+            <button class="map-clear-btn" onclick="clearDrawArea()">
+              <i class="fas fa-times"></i> <span data-i18n="btnClearDrawingReset">Clear Drawing and Reset</span>
+            </button>
+            <div id="map-results" style="margin-top:12px; font-size:14px; color:#64748b;"></div>
+          </div>
+
+          <!-- NEARBY TAB -->
+          <div id="nearby-tab" class="tab-content">
+            <div class="nearby-layout">
+              <div class="nearby-row">
+                <div class="search-field">
+                  <span class="search-field-label" data-i18n="fLocation">Location</span>
+                  <input id="nearby-location" type="text" placeholder="Type a location"
+                    data-i18n-placeholder="nearbyPlaceholder" class="search-input" />
+                </div>
+                <div class="search-field">
+                  <span class="search-field-label" data-i18n="radiusLabel">Radius</span>
+                  <select id="nearby-radius" class="search-input">
+                    <option value="2" data-i18n="option2km">2 km</option>
+                    <option value="5" data-i18n="option5km">5 km</option>
+                    <option value="10" data-i18n="option10km">10 km</option>
+                  </select>
+                </div>
+              </div>
+              <div class="nearby-actions">
+                <button id="use-current-location" class="nearby-location-btn">
+                  <i class="fas fa-location-crosshairs"></i> <span data-i18n="btnMyLocation">Use My Location</span>
+                </button>
+              </div>
+              <div id="nearby-results" class="nearby-results-box">
+                <span data-i18n="nearbyInitialPrompt">Enter a location above or use your current location to find
+                  properties nearby.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED PROPERTIES -->
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label" data-i18n="filterResults">Portfolio</div>
+          <h2 class="section-title" data-i18n="featuredTitle">Featured Properties</h2>
+          <p class="section-desc" data-i18n="featuredSubtitle">Handpicked listings from our curated collection across
+            Portugal.</p>
+        </div>
+        <div class="featured-grid" id="featured-grid">
+          <div style="text-align:center; padding:60px; color:#94a3b8; grid-column:1/-1;">
+            <i class="fas fa-spinner fa-spin" style="font-size:24px; margin-bottom:12px; display:block;"></i>
+            <p data-i18n="loading">Loading...</p>
+          </div>
+        </div>
+        <div class="view-all-wrap">
+          <a href="properties.html" class="btn-view-all"><i class="fas fa-th-large"></i> <span
+              data-i18n="heroCtaSecondary">View All Properties</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOG -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label" data-i18n="adminOverview">Insights</div>
+          <h2 class="section-title" data-i18n="adminBlogPosts">From Our Blog</h2>
+          <p class="section-desc" data-i18n="blogSectionSubtitle">Market trends, investment advice, and lifestyle guides
+            for buyers in Portugal.</p>
+        </div>
+        <div class="blog-grid" id="blog-grid"></div>
+      </div>
+    </section>
+
+    <div class="blog-modal-overlay" id="blog-modal-overlay">
+      <div class="blog-modal">
+        <button class="blog-modal-close" id="blog-modal-close">&times;</button>
+        <h2 id="blog-modal-title"></h2>
+        <div class="blog-modal-body" id="blog-modal-body"></div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <section class="section">
+      <div class="container">
+        <div class="cta-banner">
+          <h2 data-i18n="ctaBannerTitle">Ready to Find Your Dream Property?</h2>
+          <p data-i18n="ctaBannerSubtitle">Get personalized recommendations from our expert advisors. No obligation, no
+            commitment.</p>
+          <a href="contact.html"><i class="fas fa-arrow-right"></i> <span data-i18n="ctaBannerAction">Schedule a
+              Consultation</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal-overlay">
+      <div class="image-modal-container" onclick="event.stopPropagation()">
+        <button class="image-modal-close" onclick="closeImageModal()" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+        <img id="modalImage" class="image-modal-img" src="" alt="Enlarged property image" />
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts — Leaflet JS after CSS (CSS already in head) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/app-data.js"></script>
+  <script src="js/search-functions.js"></script>
+
+  <script>
+    /* ── hero swiper ── */
+    var heroSwiperInstance = null;
+
+    function initHeroSwiper() {
+      if (heroSwiperInstance && typeof heroSwiperInstance.destroy === 'function') {
+        heroSwiperInstance.destroy(true, true);
+      }
+      heroSwiperInstance = new Swiper('#hero-swiper', {
+        loop: true,
+        autoplay: { delay: 6000, disableOnInteraction: false },
+        speed: 1200,
+        effect: 'fade',
+        fadeEffect: { crossFade: true }
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"']/g, function (ch) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
+      });
+    }
+
+    function renderHeroSlides(slides) {
+      var wrapper = document.querySelector('#hero-swiper .swiper-wrapper');
+      if (!wrapper) return;
+      if (!Array.isArray(slides) || !slides.length) {
+        initHeroSwiper();
+        return;
+      }
+      wrapper.innerHTML = slides.map(function (slide) {
+        var title = slide.title || 'Luxury Properties in Portugal';
+        var subtitle = slide.subtitle || '';
+        var image = slide.image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2070&q=80';
+        var cta1 = (slide.ctaPrimary && slide.ctaPrimary.label) || 'Find Your Dream Home';
+        var cta1Url = (slide.ctaPrimary && slide.ctaPrimary.url) || '#search';
+        var cta2 = (slide.ctaSecondary && slide.ctaSecondary.label) || 'View All Properties';
+        var cta2Url = (slide.ctaSecondary && slide.ctaSecondary.url) || 'properties.html';
+
+        return '<div class="swiper-slide">' +
+          '<div class="hero-slide-bg" style="background-image: url(\'' + escapeHtmlAttr(image) + '\');"></div>' +
+          '<div class="hero-overlay"></div>' +
+          '<div class="hero-content">' +
+          '<div class="hero-accent"></div>' +
+          '<h1>' + escapeHtml(title) + '</h1>' +
+          '<p>' + escapeHtml(subtitle) + '</p>' +
+          '<div class="hero-ctas">' +
+          '<a href="' + escapeHtmlAttr(cta1Url) + '" class="btn-hero-primary"><i class="fas fa-search"></i> ' + escapeHtml(cta1) + '</a>' +
+          '<a href="' + escapeHtmlAttr(cta2Url) + '" class="btn-hero-secondary"><i class="fas fa-th-large"></i> ' + escapeHtml(cta2) + '</a>' +
+          '</div>' +
+          '</div>' +
+          '</div>';
+      }).join('');
+
+      initHeroSwiper();
+    }
+
+    /* ===== Blog Data & Render ===== */
+    var blogPosts = [];
+
+    var currentOpenBlogId = null;
+
+    function getRuntimeLang() {
+      return (window.getLang ? window.getLang() : (localStorage.getItem('exo-lang') || 'en')) || 'en';
+    }
+
+    function getLocalizedBlogField(post, field, lang) {
+      var selectedLang = lang || getRuntimeLang();
+      var translated = post && post.translations && post.translations[selectedLang] && post.translations[selectedLang][field];
+      if (typeof translated === 'string' && translated.trim()) return translated.trim();
+      var base = post && post[field];
+      return typeof base === 'string' ? base : (base || '');
+    }
+
+    function resolveLocalizedBlogPost(post, lang) {
+      return {
+        id: String((post && post.id) || ''),
+        image: (post && post.image) || '',
+        date: (post && post.date) || '',
+        author: (post && post.author) || 'Exo Real Estate',
+        title: getLocalizedBlogField(post, 'title', lang),
+        excerpt: getLocalizedBlogField(post, 'excerpt', lang),
+        content: getLocalizedBlogField(post, 'content', lang)
+      };
+    }
+
+    function renderBlogCards() {
+      var grid = document.getElementById('blog-grid');
+      if (!grid) return;
+      var lang = getRuntimeLang();
+      if (!blogPosts.length) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;padding:40px 20px;text-align:center;color:#64748b;">' + (window.t ? window.t('noResults', lang) : 'No blog posts available') + '</div>';
+        return;
+      }
+      grid.innerHTML = blogPosts.map(function (post) {
+        var localized = resolveLocalizedBlogPost(post, lang);
+        return '<div class="blog-card" onclick="openBlogModal(\'' + escapeHtmlAttr(localized.id) + '\')">' +
+          '<div class="blog-card-img" style="background-image:url(\'' + localized.image + '\')"></div>' +
+          '<div class="blog-card-body">' +
+          '<div class="blog-card-meta">' + localized.author + ' &middot; ' + localized.date + '</div>' +
+          '<div class="blog-card-title">' + localized.title + '</div>' +
+          '<div class="blog-card-excerpt">' + localized.excerpt + '</div>' +
+          '<span class="blog-card-read">' + window.t('readMore') + ' <i class="fas fa-arrow-right"></i></span>' +
+          '</div>' +
+          '</div>';
+      }).join('');
+    }
+    renderBlogCards();
+
+    async function loadBlogPostsFromFirestore() {
+      if (typeof db === 'undefined' || !db) return;
+      try {
+        var snap = await db.collection('blogPosts').get();
+        var loaded = snap.docs
+          .map(function (doc) {
+            return { id: String(doc.id), docId: doc.id, ...doc.data() };
+          })
+          .filter(function (post) {
+            return post.active !== false;
+          })
+          .sort(function (a, b) {
+            return (Number(a.order) || 0) - (Number(b.order) || 0);
+          });
+
+        if (loaded.length) {
+          blogPosts = loaded;
+        } else {
+          blogPosts = [];
+        }
+      } catch (e) {
+        blogPosts = [];
+      }
+
+      renderBlogCards();
+      if (currentOpenBlogId) {
+        openBlogModal(currentOpenBlogId);
+      }
+    }
+
+    async function loadHeroSlidesFromFirestore() {
+      if (typeof db === 'undefined' || !db) {
+        initHeroSwiper();
+        return;
+      }
+      try {
+        var snap = await db.collection('heroSlides').get();
+        var slides = snap.docs.map(function (doc) {
+          return { id: doc.id, ...doc.data() };
+        }).filter(function (slide) {
+          return slide.active !== false;
+        }).sort(function (a, b) {
+          return (Number(a.order) || 0) - (Number(b.order) || 0);
+        });
+        renderHeroSlides(slides);
+      } catch (e) {
+        initHeroSwiper();
+      }
+    }
+
+    function openBlogModal(id) {
+      var targetId = String(id || '');
+      var lang = getRuntimeLang();
+      var post = blogPosts.find(function (p) { return String(p.id) === targetId; });
+      if (!post) return;
+      var localized = resolveLocalizedBlogPost(post, lang);
+      currentOpenBlogId = targetId;
+      document.getElementById('blog-modal-title').textContent = localized.title;
+      document.getElementById('blog-modal-body').innerHTML = String(localized.content || '').replace(/\n/g, '<br><br>');
+      document.getElementById('blog-modal-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    document.getElementById('blog-modal-close').addEventListener('click', function () {
+      document.getElementById('blog-modal-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+      currentOpenBlogId = null;
+    });
+    document.getElementById('blog-modal-overlay').addEventListener('click', function (e) {
+      if (e.target === this) {
+        this.classList.remove('open');
+        document.body.style.overflow = '';
+        currentOpenBlogId = null;
+      }
+    });
+
+    /* ── data helper ── */
+    function getPropertiesData() {
+      if (Array.isArray(window.__exoPropertiesCache) && window.__exoPropertiesCache.length) {
+        return window.__exoPropertiesCache;
+      }
+      if (window.ExoStore && typeof window.ExoStore.getState === 'function') {
+        var st = window.ExoStore.getState();
+        if (Array.isArray(st.properties) && st.properties.length) return st.properties;
+      }
+      return [];
+    }
+
+    function formatEuro(v) { return '\u20AC' + Number(v || 0).toLocaleString(); }
+
+    function escapeHtmlAttr(str) {
+      return String(str || '').replace(/[&<>'"]/g, function (ch) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;' })[ch];
+      });
+    }
+
+    function getFavoriteIds() {
+      try {
+        var parsed = JSON.parse(localStorage.getItem('exo-favorites') || '[]');
+        return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function isFavoriteProperty(id) {
+      if (!id) return false;
+      return getFavoriteIds().includes(String(id));
+    }
+
+    function setFavoriteIds(ids) {
+      localStorage.setItem('exo-favorites', JSON.stringify(ids));
+    }
+
+    async function syncFavoritesToFirestore(ids) {
+      try {
+        var fbUser = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+        if (!fbUser || typeof db === 'undefined' || !db) return;
+        await db.collection('users').doc(fbUser.uid).set({ favorites: ids }, { merge: true });
+      } catch (e) {
+        // Keep local favorites even if sync fails.
+      }
+    }
+
+    function toggleFavoriteProperty(id) {
+      var nextId = String(id || '').trim();
+      if (!nextId) return false;
+      var ids = getFavoriteIds();
+      var idx = ids.indexOf(nextId);
+      var isFav;
+      if (idx >= 0) {
+        ids.splice(idx, 1);
+        isFav = false;
+      } else {
+        ids.push(nextId);
+        isFav = true;
+      }
+      setFavoriteIds(ids);
+      syncFavoritesToFirestore(ids);
+      return isFav;
+    }
+
+    function updateFavoriteButtonUi(btn, isFav) {
+      if (!btn) return;
+      btn.classList.toggle('favorited', !!isFav);
+      var icon = btn.querySelector('i');
+      if (!icon) return;
+      icon.classList.toggle('fas', !!isFav);
+      icon.classList.toggle('far', !isFav);
+    }
+
+    function notifyCardAction(message) {
+      var node = document.createElement('div');
+      node.textContent = message;
+      node.style.position = 'fixed';
+      node.style.bottom = '24px';
+      node.style.right = '24px';
+      node.style.zIndex = '9999';
+      node.style.padding = '10px 14px';
+      node.style.borderRadius = '10px';
+      node.style.background = 'rgba(15,23,42,0.92)';
+      node.style.color = '#fff';
+      node.style.fontSize = '13px';
+      node.style.fontWeight = '700';
+      node.style.boxShadow = '0 10px 28px rgba(15,23,42,0.25)';
+      document.body.appendChild(node);
+      setTimeout(function () {
+        node.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        node.style.opacity = '0';
+        node.style.transform = 'translateY(8px)';
+        setTimeout(function () { node.remove(); }, 220);
+      }, 1500);
+    }
+
+    async function sharePropertyCard(id, title) {
+      var url = window.location.origin + '/property-detail.html?id=' + encodeURIComponent(id || '');
+      var shareTitle = (typeof title === 'string' && title.trim()) ? title : window.t('propertyListing');
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: shareTitle, url: url });
+          return;
+        } catch (e) {
+          // Fall through to clipboard when share is canceled or unavailable.
+        }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(url);
+          notifyCardAction(window.t('linkCopied'));
+          return;
+        } catch (e) {
+          // fallback below
+        }
+      }
+      var ta = document.createElement('textarea');
+      ta.value = url;
+      ta.setAttribute('readonly', 'readonly');
+      ta.style.position = 'absolute';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e) { }
+      document.body.removeChild(ta);
+      notifyCardAction(window.t('linkCopied'));
+    }
+
+    /* ── featured render ── */
+    function renderFeatured(list) {
+      var tt = window.t;
+      var grid = document.getElementById('featured-grid');
+      var featuredOnly = list.filter(function (p) { return p && p.featured === true; });
+      var standardProps = list.filter(function (p) { return !p || p.featured !== true; });
+      var items = featuredOnly.concat(standardProps).slice(0, 6);
+      if (!items.length) {
+        grid.innerHTML = '<p style="text-align:center;color:#94a3b8;grid-column:1/-1;padding:40px;">' + tt('noResults') + '</p>';
+        return;
+      }
+      grid.innerHTML = items.map(function (p) {
+        var img = (p.images && p.images[0]) ? p.images[0] : 'images/artboard1.jpg';
+        var isFav = isFavoriteProperty(p.id);
+        return '<a class="property-card" href="property-detail.html?id=' + encodeURIComponent(p.id) + '">' +
+          '<div class="property-card-img" style="background-image:url(\'' + img + '\')">' +
+          '<div class="property-card-badge">' + (window.translateListingStatus ? window.translateListingStatus(p.status) : (p.status || tt('statusForSale'))) + '</div>' +
+          '<div class="property-card-actions">' +
+          '<button class="property-card-action-btn ' + (isFav ? 'favorited' : '') + '" type="button" data-card-action="favorite" data-property-id="' + escapeHtmlAttr(p.id || '') + '" data-property-title="' + escapeHtmlAttr(p.title || '') + '" aria-label="' + escapeHtmlAttr(tt('actionToggleFavorite')) + '" title="' + escapeHtmlAttr(tt('actionFavorite')) + '">' +
+          '<i class="' + (isFav ? 'fas' : 'far') + ' fa-heart"></i>' +
+          '</button>' +
+          '<button class="property-card-action-btn" type="button" data-card-action="share" data-property-id="' + escapeHtmlAttr(p.id || '') + '" data-property-title="' + escapeHtmlAttr(p.title || '') + '" aria-label="' + escapeHtmlAttr(tt('actionShareProperty')) + '" title="' + escapeHtmlAttr(tt('actionShare')) + '">' +
+          '<i class="fas fa-share-nodes"></i>' +
+          '</button>' +
+          '</div>' +
+          '</div>' +
+          '<div class="property-card-body">' +
+          '<div class="property-card-title">' + (p.title || tt('propertyUntitled')) + '</div>' +
+          '<div class="property-card-location"><i class="fas fa-map-marker-alt"></i> ' + (p.address || '') + '</div>' +
+          '<div class="property-card-footer">' +
+          '<div class="property-card-price">' + formatEuro(p.price) + '</div>' +
+          '</div>' +
+          '</div></a>';
+      }).join('');
+    }
+
+    var featuredGridEl = document.getElementById('featured-grid');
+    if (featuredGridEl) {
+      featuredGridEl.addEventListener('click', function (e) {
+        var actionBtn = e.target.closest('[data-card-action]');
+        if (!actionBtn) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        var action = actionBtn.getAttribute('data-card-action');
+        var id = actionBtn.getAttribute('data-property-id') || '';
+        var rawTitle = actionBtn.getAttribute('data-property-title') || '';
+        var title = (typeof rawTitle === 'string' && rawTitle.trim()) ? rawTitle : window.t('propertyListing');
+
+        if (action === 'favorite') {
+          var isFav = toggleFavoriteProperty(id);
+          updateFavoriteButtonUi(actionBtn, isFav);
+          return;
+        }
+
+        if (action === 'share') {
+          sharePropertyCard(id, title);
+        }
+      });
+    }
+
+    function hydrateFavoritesFromFirestore() {
+      if (typeof firebase === 'undefined' || !firebase.auth || typeof db === 'undefined' || !db) return;
+      firebase.auth().onAuthStateChanged(async function (user) {
+        if (!user) return;
+        try {
+          var doc = await db.collection('users').doc(user.uid).get();
+          if (!doc.exists) return;
+          var data = doc.data() || {};
+          var serverFavs = Array.isArray(data.favorites) ? data.favorites : (Array.isArray(data.favourites) ? data.favourites : []);
+          if (!serverFavs.length) return;
+          setFavoriteIds(serverFavs.map(function (id) { return String(id); }));
+          renderFeatured(getPropertiesData());
+        } catch (e) {
+          // Use local fallback silently.
+        }
+      });
+    }
+    renderFeatured(getPropertiesData());
+    hydrateFavoritesFromFirestore();
+
+    /* ── tabs ── */
+    document.addEventListener('DOMContentLoaded', function () {
+      if (typeof window.applyLanguage === 'function') {
+        window.applyLanguage(window.getLang ? window.getLang() : (localStorage.getItem('exo-lang') || 'en'));
+      }
+
+      document.querySelectorAll('.location-tab').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          document.querySelectorAll('.location-tab').forEach(function (t) { t.classList.remove('active'); });
+          document.querySelectorAll('.tab-content').forEach(function (c) { c.classList.remove('active'); });
+          tab.classList.add('active');
+          var target = document.getElementById(tab.dataset.tab + '-tab');
+          if (target) target.classList.add('active');
+          if (tab.dataset.tab === 'map') {
+            // small delay so the tab is visible before init
+            setTimeout(initMapSearch, 100);
+          }
+        });
+      });
+
+      /* nearby — search on Enter */
+      var nearbyTimer;
+      document.getElementById('nearby-location').addEventListener('keypress', function (e) {
+        if (e.key !== 'Enter') return;
+        clearTimeout(nearbyTimer);
+        var val = this.value.trim();
+        if (!val) return;
+        document.getElementById('nearby-results').innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + window.t('actionSearching');
+        nearbyTimer = setTimeout(async function () {
+          try {
+            var res = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(val), { headers: { 'User-Agent': 'ExoRealEstate/1.0' } });
+            var data = await res.json();
+            if (!data || !data.length) { document.getElementById('nearby-results').innerHTML = window.t('locationNotFound'); return; }
+            renderNearby(parseFloat(data[0].lat), parseFloat(data[0].lon));
+          } catch (err) { document.getElementById('nearby-results').innerHTML = window.t('errorFindingLocation'); }
+        }, 300);
+      });
+
+      document.getElementById('use-current-location').addEventListener('click', async function () {
+        document.getElementById('nearby-results').innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + window.t('actionGettingLocation');
+        try {
+          var res = await fetch('https://get.geojs.io/v1/ip/geo.json');
+          var data = await res.json();
+          if (data && data.latitude && data.longitude) {
+            var locInput = document.getElementById('nearby-location');
+            if (locInput) locInput.value = 'My Location (' + data.city + ')';
+            renderNearby(parseFloat(data.latitude), parseFloat(data.longitude));
+          } else {
+            document.getElementById('nearby-results').innerHTML = window.t('locationNotFound');
+          }
+        } catch (e) {
+          document.getElementById('nearby-results').innerHTML = window.t('errorFindingLocation');
+        }
+      });
+
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          e.preventDefault();
+          var el = document.querySelector(this.getAttribute('href'));
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+    });
+
+    /* ── nearby render ── */
+    function haversineDist(lat1, lon1, lat2, lon2) {
+      var R = 6371;
+      var dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
+      var a = 0.5 - Math.cos(dLat) / 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * (1 - Math.cos(dLon)) / 2;
+      return R * 2 * Math.asin(Math.sqrt(a));
+    }
+
+    function renderNearby(lat, lng) {
+      var radiusKm = Number(document.getElementById('nearby-radius').value || 2);
+      var filtered = getPropertiesData().filter(function (p) {
+        if (!p.lat || !p.lng) return false;
+        return haversineDist(lat, lng, Number(p.lat), Number(p.lng)) <= radiusKm;
+      });
+      document.getElementById('nearby-results').innerHTML = filtered.length
+        ? ('<div class="search-results-wrap">' +
+          '<div class="search-results-head">' + window.t('nearbyResultsHeading') + ' · ' + filtered.length + '</div>' +
+          filtered.map(function (p) {
+            var img = (p.images && p.images[0]) ? p.images[0] : (p.image || 'images/artboard1.jpg');
+            return '<a class="search-result-card" href="property-detail.html?id=' + encodeURIComponent(p.id || '') + '">' +
+              '<div class="search-result-thumb" style="background-image:url(\'' + img + '\')"></div>' +
+              '<div class="search-result-content">' +
+              '<div class="search-result-title">' + ((typeof p.title === 'string' && p.title.trim()) ? p.title : window.t('propertyUntitled')) + '</div>' +
+              '<div class="search-result-meta">' + (p.address || '') + '</div>' +
+              '<div class="search-result-bottom">' +
+              '<div class="search-result-price">' + formatEuro(p.price) + '</div>' +
+              '<div class="search-result-arrow">' + window.t('open') + ' <i class="fas fa-arrow-right"></i></div>' +
+              '</div>' +
+              '</div>' +
+              '</a>';
+          }).join('') +
+          '</div>')
+        : (window.t('noResults') + ' (' + radiusKm + ' km)');
+    }
+
+    /* ══════════════════════════════════════════════
+       FREEHAND MAP DRAWING
+       Uses native Leaflet mouse events — no external
+       FreeDraw library needed, nothing to fail to load
+    ══════════════════════════════════════════════ */
+    var map = null;
+    var drawnPolygon = null;
+    var isDrawing = false;
+    var drawnPoints = [];
+    var drawLayer = null;
+    var previewPolyline = null;
+
+    function initMapSearch() {
+      var mapEl = document.getElementById('map-search');
+      if (!mapEl) return;
+
+      // Leaflet not loaded yet — retry
+      if (typeof L === 'undefined') { setTimeout(initMapSearch, 300); return; }
+
+      // already initialised — just fix size
+      if (map) { map.invalidateSize(); return; }
+
+      map = L.map('map-search', { zoomControl: true }).setView([39.5, -8.0], 6);
+
+      // Use Google Maps Hybrid (Satellite + Labels) for a premium/photorealistic view
+      L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: 'Imagery &copy; Google'
+      }).addTo(map);
+
+      drawLayer = L.layerGroup().addTo(map);
+
+      var currentMode = 'draw';
+      var btnDraw = document.getElementById('btn-draw-mode');
+      var btnPan = document.getElementById('btn-pan-mode');
+      if (btnDraw && btnPan) {
+        btnDraw.onclick = function () {
+          currentMode = 'draw';
+          btnDraw.style.background = '#0f172a';
+          btnDraw.style.color = '#fff';
+          btnDraw.style.borderColor = '#0f172a';
+          btnPan.style.background = '#fff';
+          btnPan.style.color = '#64748b';
+          btnPan.style.borderColor = '#e2e8f0';
+          mapEl.style.cursor = 'crosshair';
+        };
+        btnPan.onclick = function () {
+          currentMode = 'pan';
+          btnPan.style.background = '#0f172a';
+          btnPan.style.color = '#fff';
+          btnPan.style.borderColor = '#0f172a';
+          btnDraw.style.background = '#fff';
+          btnDraw.style.color = '#64748b';
+          btnDraw.style.borderColor = '#e2e8f0';
+          mapEl.style.cursor = 'grab';
+        };
+      }
+
+      /* disable map drag while drawing so freehand works */
+      function startDraw(e) {
+        if (currentMode !== 'draw') return;
+        isDrawing = true;
+        drawnPoints = [];
+        drawLayer.clearLayers();
+        if (previewPolyline) { map.removeLayer(previewPolyline); previewPolyline = null; }
+        document.getElementById('map-results').innerHTML = '';
+        map.dragging.disable();
+        mapEl.style.cursor = 'crosshair';
+
+        var latlng = e.latlng || map.mouseEventToLatLng(e.originalEvent || e);
+        drawnPoints.push(latlng);
+
+        // live preview polyline
+        previewPolyline = L.polyline([latlng], {
+          color: '#4f6ef7', weight: 2.5, opacity: 0.9, dashArray: '6,4'
+        }).addTo(map);
+      }
+
+      function duringDraw(e) {
+        if (!isDrawing) return;
+        var latlng = e.latlng || map.mouseEventToLatLng(e.originalEvent || e);
+        // throttle — only add point if moved enough
+        var last = drawnPoints[drawnPoints.length - 1];
+        if (last && map.distance(last, latlng) < 3000) return; // ~3km threshold at zoom 6
+        drawnPoints.push(latlng);
+        if (previewPolyline) previewPolyline.addLatLng(latlng);
+      }
+
+      function endDraw() {
+        if (!isDrawing) return;
+        isDrawing = false;
+        map.dragging.enable();
+        mapEl.style.cursor = '';
+        if (previewPolyline) { map.removeLayer(previewPolyline); previewPolyline = null; }
+
+        if (drawnPoints.length < 3) {
+          document.getElementById('map-results').innerHTML = '<span style="color:#94a3b8;">' + window.t('drawLargerAreaPrompt') + '</span>';
+          return;
+        }
+
+        // close polygon
+        drawnPoints.push(drawnPoints[0]);
+
+        drawnPolygon = L.polygon(drawnPoints, {
+          color: '#4f6ef7', weight: 2, fillColor: '#4f6ef7', fillOpacity: 0.12
+        }).addTo(drawLayer);
+
+        filterByPolygon(drawnPoints);
+      }
+
+      map.on('mousedown', startDraw);
+      map.on('mousemove', duringDraw);
+      map.on('mouseup', endDraw);
+
+      // touch support
+      mapEl.addEventListener('touchstart', function (e) {
+        var touch = e.touches[0];
+        startDraw({ latlng: map.containerPointToLatLng(L.point(touch.clientX - mapEl.getBoundingClientRect().left, touch.clientY - mapEl.getBoundingClientRect().top)) });
+      }, { passive: true });
+      mapEl.addEventListener('touchmove', function (e) {
+        var touch = e.touches[0];
+        duringDraw({ latlng: map.containerPointToLatLng(L.point(touch.clientX - mapEl.getBoundingClientRect().left, touch.clientY - mapEl.getBoundingClientRect().top)) });
+      }, { passive: true });
+      mapEl.addEventListener('touchend', endDraw, { passive: true });
+
+      setTimeout(function () { map.invalidateSize(); }, 150);
+    }
+
+    /* point-in-polygon ray casting */
+    function isPointInPolygon(point, polygonLatLngs) {
+      var x = point.lat, y = point.lng, inside = false;
+      for (var i = 0, j = polygonLatLngs.length - 1; i < polygonLatLngs.length; j = i++) {
+        var xi = polygonLatLngs[i].lat, yi = polygonLatLngs[i].lng;
+        var xj = polygonLatLngs[j].lat, yj = polygonLatLngs[j].lng;
+        if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+      }
+      return inside;
+    }
+
+    function filterByPolygon(points) {
+      var props = getPropertiesData();
+      var filtered = props.filter(function (p) {
+        if (!p.lat || !p.lng) return false;
+        return isPointInPolygon({ lat: Number(p.lat), lng: Number(p.lng) }, points);
+      });
+
+      var resultsEl = document.getElementById('map-results');
+
+      if (!filtered.length) {
+        resultsEl.innerHTML = '<div style="text-align:center;padding:16px;color:#94a3b8;font-size:14px;">' + window.t('noResults') + '</div>';
+        return;
+      }
+
+      resultsEl.innerHTML =
+        '<div class="search-results-wrap">' +
+        '<div class="search-results-head">' + window.t('drawAreaResultsHeading') + ' · ' + filtered.length + '</div>' +
+        filtered.map(function (p) {
+          var img = (p.images && p.images[0]) ? p.images[0] : (p.image || 'images/artboard1.jpg');
+          return '<a class="search-result-card" href="property-detail.html?id=' + encodeURIComponent(p.id || '') + '">' +
+            '<div class="search-result-thumb" style="background-image:url(\'' + img + '\')"></div>' +
+            '<div class="search-result-content">' +
+            '<div class="search-result-title">' + ((typeof p.title === 'string' && p.title.trim()) ? p.title : window.t('propertyUntitled')) + '</div>' +
+            '<div class="search-result-meta">' + (p.address || '') + '</div>' +
+            '<div class="search-result-bottom">' +
+            '<div class="search-result-price">' + formatEuro(p.price) + '</div>' +
+            '<div class="search-result-arrow">' + window.t('open') + ' <i class="fas fa-arrow-right"></i></div>' +
+            '</div>' +
+            '</div>' +
+            '</a>';
+        }).join('') +
+        '</div>';
+
+      resultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    window.clearDrawArea = function () {
+      if (drawLayer) drawLayer.clearLayers();
+      drawnPoints = [];
+      drawnPolygon = null;
+      document.getElementById('map-results').innerHTML = '';
+    };
+
+    window.initMapSearch = initMapSearch;
+
+    /* ── Firebase + initial data ── */
+    async function initFirestoreData() {
+      await loadHeroSlidesFromFirestore();
+      await loadBlogPostsFromFirestore();
+      if (typeof window.getPropertiesFromFirestore === 'function') {
+        var fbProps = await window.getPropertiesFromFirestore(true);
+        if (Array.isArray(fbProps) && window.ExoStore && typeof window.ExoStore.getState === 'function') {
+          var state = window.ExoStore.getState();
+          state.properties = fbProps;
+          window.ExoStore.setState(state);
+        }
+      }
+      renderFeatured(getPropertiesData());
+    }
+    initHeroSwiper();
+    initFirestoreData();
+
+    window.addEventListener('exo:languageChanged', function () {
+      renderFeatured(getPropertiesData());
+      renderBlogCards();
+      if (currentOpenBlogId) {
+        openBlogModal(currentOpenBlogId);
+      }
+    });
+
+    /* Image Modal Functions */
+    window.openImageModal = function (imgSrc) {
+      var modal = document.getElementById('imageModal');
+      var img = document.getElementById('modalImage');
+      img.src = imgSrc;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeImageModal = function () {
+      var modal = document.getElementById('imageModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    };
+
+    document.getElementById('imageModal').addEventListener('click', function (e) {
+      if (e.target === this) {
+        window.closeImageModal();
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        window.closeImageModal();
+      }
+    });
+
+    /* Make property images clickable */
+    function makeImagesClickable() {
+      document.querySelectorAll('.property-card-image, .property-card-img, .gallery-main, [data-image-modal]').forEach(function (el) {
+        if (el.classList.contains('image-clickable')) return;
+        var bgImage = window.getComputedStyle(el).backgroundImage;
+        var imgElement = el.querySelector('img');
+
+        if (bgImage && bgImage !== 'none') {
+          var match = bgImage.match(/url\(["']?([^"']*)["']?\)/);
+          if (match && match[1]) {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', function (e) {
+              e.stopPropagation();
+              window.openImageModal(match[1]);
+            });
+            el.classList.add('image-clickable');
+          }
+        } else if (imgElement && imgElement.src) {
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', function (e) {
+            e.stopPropagation();
+            window.openImageModal(imgElement.src);
+          });
+          el.classList.add('image-clickable');
+        }
+      });
+    }
+
+    makeImagesClickable();
+    var observer = new MutationObserver(function (mutations) {
+      makeImagesClickable();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  </script>
+
+  <!-- Footer Section -->
+  <footer id="contact" class="bg-[#0B1120] text-slate-300 pt-24 pb-4 relative overflow-hidden mt-20">
+    <!-- Decorative background elements -->
+    <div
+      class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-gold to-transparent opacity-70">
+    </div>
+    <div
+      class="absolute -top-[500px] -right-[500px] w-[1000px] h-[1000px] bg-brand-gold/5 rounded-full blur-3xl pointer-events-none">
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-16 relative z-10 mb-20">
+
+      <!-- Brand & About -->
+      <div class="lg:col-span-1 flex flex-col items-start pr-4">
+        <img src="logo.png" alt="Exo Real Estate Logo"
+          class="w-64 md:w-80 lg:w-96 h-auto object-contain object-left mb-10"
+          style="filter: invert(1) hue-rotate(180deg) brightness(1.5); mix-blend-mode: screen;"
+          onerror="this.src='https://via.placeholder.com/400x150?text=Exo+Real+Estate';" />
+        <p class="text-slate-400 text-sm leading-relaxed mb-8">
+          <span data-i18n="aboutBrandJourneyText">Take your first step towards an exciting international journey.
+            Whether you are an aspiring investor, an entrepreneur with global ambitions, or someone seeking a new
+            adventure, Exo Real Estate guides you through each stage.</span>
+        </p>
+        <div class="flex gap-4">
+          <a href="#"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/exorealestate1/" target="_blank"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-instagram"></i></a>
+          <a href="#"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-tiktok"></i></a>
+          <a href="https://www.youtube.com/@EXORealEstate1" target="_blank"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="flex flex-col gap-10">
+        <div>
+          <h4 class="text-white font-serif font-bold text-xl mb-6 relative inline-block"><span
+              data-i18n="footerQuickLinksTitle">Quick Links</span><span
+              class="absolute -bottom-2 left-0 w-8 h-0.5 bg-brand-gold"></span></h4>
+          <ul class="space-y-4 text-sm mt-4">
+            <li><a href="about.html"
+                class="hover:text-brand-gold hover:translate-x-1 inline-block transition-transform duration-300"
+                data-i18n="footerAbout">About
+                Us</a></li>
+            <li><a href="team.html"
+                class="hover:text-brand-gold hover:translate-x-1 inline-block transition-transform duration-300"
+                data-i18n="footerTeamLink">Team</a>
+            </li>
+            <li><a href="#"
+                class="hover:text-brand-gold hover:translate-x-1 inline-block transition-transform duration-300"
+                data-i18n="footerBlogLink">Blog</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div>
+        <h4 class="text-white font-serif font-bold text-xl mb-6 relative inline-block"><span
+            data-i18n="footerFurtherQueries">For Further Queries</span><span
+            class="absolute -bottom-2 left-0 w-8 h-0.5 bg-brand-gold"></span></h4>
+
+        <div class="space-y-6 mt-4 opacity-90">
+          <div class="flex items-start gap-4 group cursor-pointer">
+            <div
+              class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center group-hover:bg-brand-gold transition-colors">
+              <i class="fa-solid fa-envelope text-brand-gold group-hover:text-white transition-colors"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="footerEmailUs">Email Us</p>
+              <p class="text-white font-medium text-sm transition-colors group-hover:text-brand-gold">
+                info@exorealestate.com
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4 group cursor-pointer">
+            <div
+              class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center group-hover:bg-brand-gold transition-colors">
+              <i class="fa-solid fa-phone text-brand-gold group-hover:text-white transition-colors"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="footerCallInfo">Call To Get
+                More Info</p>
+              <p class="text-white font-medium text-sm transition-colors group-hover:text-brand-gold">+351 918 445 899
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4 group cursor-pointer">
+            <div
+              class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center group-hover:bg-green-500 transition-colors">
+              <i class="fa-brands fa-whatsapp text-green-400 group-hover:text-white transition-colors"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="footerWhatsApp">WhatsApp</p>
+              <p class="text-white font-medium text-sm transition-colors group-hover:text-green-400">+351 918 445 899
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4 pt-2">
+            <div class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center">
+              <i class="fa-solid fa-id-card text-brand-gold"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="License Number">License
+                Number</p>
+              <p class="text-white font-medium text-sm" data-i18n="licenseAmiValue"> AMI 18166</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Offices & Map -->
+      <div>
+        <h4 class="text-white font-serif font-bold text-xl mb-6 relative inline-block"><span
+            data-i18n="footerOurOffices">Our Offices</span><span
+            class="absolute -bottom-2 left-0 w-8 h-0.5 bg-brand-gold"></span></h4>
+
+        <div class="space-y-6 mt-4">
+          <div class="group">
+            <p class="text-brand-gold font-semibold text-sm mb-2 uppercase tracking-wide"
+              data-i18n="footerHeadOfficePortugal">Head Office (Portugal)</p>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4 group-hover:text-slate-300 transition-colors">
+              Av. da Liberdade 144 2 DTO,<br />1250-146 Lisboa, Portugal
+            </p>
+            <div
+              class="h-32 w-full rounded-xl overflow-hidden ring-1 ring-white/10 shadow-lg group-hover:ring-brand-gold/50 transition-all">
+              <iframe
+                src="https://www.google.com/maps?q=EXO%20REAL%20ESTATE%20Av.%20da%20Liberdade%20144%20Lisboa&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="relative z-10 border-t border-slate-800/80 pt-8 text-center">
+      <p class="text-slate-500 text-sm">
+        <span data-i18n="footerCopyright2023">©2023 Exo Real Estate. All Rights Reserved.</span>
+      </p>
+    </div>
+  </footer>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-gold': '#D4AF37',
+          },
+          fontFamily: {
+            'serif': ['Playfair Display', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <script src="js/site-chatbot.js"></script>
+</body>
+
+</html>

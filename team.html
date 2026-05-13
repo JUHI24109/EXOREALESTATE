@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="pageTitleTeam">Team | Exo Real Estate</title>
+
+  <!-- SEO -->
+  <meta name="description"
+    content="Take your first step towards an exciting international journey. Exo Real Estate guides you through each stage of your investment with premium properties." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet" />
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['DM Sans', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+          },
+          colors: {
+            brand: {
+              gold: '#D4AF37',
+              dark: '#0F172A',
+              light: '#F8FAFC',
+              accent: '#3B82F6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Animations */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* Selection Color */
+    ::selection {
+      background: rgba(212, 175, 55, 0.3);
+      color: #0F172A;
+    }
+
+    /* Custom Transitions */
+    .transition-premium {
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .group:hover .img-zoom {
+      transform: scale(1.1);
+    }
+
+    /* Team Member Responsive Styles */
+    .team-member-name {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      line-height: 1.2;
+    }
+
+    @media (max-width: 640px) {
+      .text-xl {
+        font-size: 1.125rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .text-xl {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-brand-light text-slate-800 font-sans selection:bg-brand-gold selection:text-white pb-0">
+
+  <!-- Navbar -->
+  <script src="js/i18n.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <!-- Team Section -->
+  <section id="team" class="pt-40 pb-32 md:pt-52 bg-slate-50 relative overflow-hidden">
+    <!-- Sophisticated Background Elements -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+      <div class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-gold/5 rounded-full blur-[120px]"></div>
+      <div class="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-brand-accent/5 rounded-full blur-[120px]">
+      </div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-[0.02]"
+        style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png');"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <div class="text-center max-w-3xl mx-auto mb-24 fade-up">
+        <div class="inline-flex items-center gap-3 mb-6">
+          <span class="w-12 h-[1px] bg-brand-gold/50"></span>
+          <span class="text-brand-gold font-bold tracking-[0.3em] uppercase text-[10px]"
+            data-i18n="teamLabel">Excellence in Service</span>
+          <span class="w-12 h-[1px] bg-brand-gold/50"></span>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-serif font-bold text-brand-dark mb-8 leading-[1.1]"
+          data-i18n="teamHeroTitle">
+          Meet Our World-Class Team
+        </h1>
+        <p class="text-slate-500 text-xl leading-relaxed font-light max-w-2xl mx-auto" data-i18n="teamHeroSubtitle">
+          Behind every successful investment is a dedicated expert. Our team combines global market insight with
+          unmatched local expertise to guide you throughout your journey.
+        </p>
+      </div>
+
+      <!-- Team Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10 items-stretch">
+
+        <!-- Team Member: Aline Uebe -->
+        <div class="fade-up h-full" style="transition-delay: 100ms">
+          <div class="group relative h-full flex flex-col">
+            <div class="relative flex-grow overflow-hidden rounded-3xl bg-white border border-brand-gold/10 shadow-2xl shadow-slate-200/50 transition-all duration-500 group-hover:-translate-y-3 group-hover:border-brand-gold/30">
+              <div class="relative aspect-[4/5] overflow-hidden bg-slate-100">
+                <img src="team/alineuebe.jpeg" alt="Aline /n Uebe" 
+                     class="w-full h-full object-cover object-top transition-all duration-1000 group-hover:scale-110 grayscale-[30%] group-hover:grayscale-0"
+                     onerror="this.src='https://via.placeholder.com/600x800?text=Consultant'"/>
+              </div>
+              <div class="p-8 text-center bg-white relative z-20">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-brand-gold rounded-full transition-all duration-500 group-hover:w-24"></div>
+                <h3 class="text-xl font-serif font-bold text-brand-dark mb-1 group-hover:text-brand-gold transition-colors duration-300">Aline<br>Uebe</h3>
+                <p class="text-[10px] text-brand-gold font-bold tracking-[0.2em] uppercase opacity-70" data-i18n="roleConsultant">Property Consultant</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Member: Micaela Morgado -->
+        <div class="fade-up h-full" style="transition-delay: 200ms">
+          <div class="group relative h-full flex flex-col">
+            <div class="relative flex-grow overflow-hidden rounded-3xl bg-white border border-brand-gold/10 shadow-2xl shadow-slate-200/50 transition-all duration-500 group-hover:-translate-y-3 group-hover:border-brand-gold/30">
+              <div class="relative aspect-[4/5] overflow-hidden bg-slate-100">
+                <img src="team/micala%20morgado.jpeg" alt="Micaela Morgado" 
+                     class="w-full h-full object-cover object-top transition-all duration-1000 group-hover:scale-110 grayscale-[30%] group-hover:grayscale-0"
+                     onerror="this.src='https://via.placeholder.com/600x800?text=Consultant'"/>
+              </div>
+              <div class="p-8 text-center bg-white relative z-20">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-brand-gold rounded-full transition-all duration-500 group-hover:w-24"></div>
+                <h3 class="text-xl font-serif font-bold text-brand-dark mb-1 group-hover:text-brand-gold transition-colors duration-300">Micaela Morgado</h3>
+                <p class="text-[10px] text-brand-gold font-bold tracking-[0.2em] uppercase opacity-70" data-i18n="roleConsultant">Property Consultant</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Member: Maria Lúcia Maia -->
+        <div class="fade-up h-full" style="transition-delay: 300ms">
+          <div class="group relative h-full flex flex-col">
+            <div class="relative flex-grow overflow-hidden rounded-3xl bg-white border border-brand-gold/10 shadow-2xl shadow-slate-200/50 transition-all duration-500 group-hover:-translate-y-3 group-hover:border-brand-gold/30">
+              <div class="relative aspect-[4/5] overflow-hidden bg-slate-100">
+                <img src="team/marialucia.jpeg" alt="Maria Lúcia Maia" 
+                     class="w-full h-full object-cover object-top transition-all duration-1000 group-hover:scale-110 grayscale-[30%] group-hover:grayscale-0"
+                     onerror="this.src='https://via.placeholder.com/600x800?text=Consultant'"/>
+              </div>
+              <div class="p-8 text-center bg-white relative z-20">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-brand-gold rounded-full transition-all duration-500 group-hover:w-24"></div>
+                <h3 class="text-xl font-serif font-bold text-brand-dark mb-1 group-hover:text-brand-gold transition-colors duration-300">Maria Lúcia Maia</h3>
+                <p class="text-[10px] text-brand-gold font-bold tracking-[0.2em] uppercase opacity-70" data-i18n="roleConsultant">Property Consultant</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Member: Vanessa Oliveira -->
+        <div class="fade-up h-full" style="transition-delay: 400ms">
+          <div class="group relative h-full flex flex-col">
+            <div class="relative flex-grow overflow-hidden rounded-3xl bg-white border border-brand-gold/10 shadow-2xl shadow-slate-200/50 transition-all duration-500 group-hover:-translate-y-3 group-hover:border-brand-gold/30">
+              <div class="relative aspect-[4/5] overflow-hidden bg-slate-100">
+                <img src="team/venessa%20oliveira.jpeg" alt="Vanessa Oliveira" 
+                     class="w-full h-full object-cover object-top transition-all duration-1000 group-hover:scale-110 grayscale-[30%] group-hover:grayscale-0"
+                     onerror="this.src='https://via.placeholder.com/600x800?text=Consultant'"/>
+              </div>
+              <div class="p-8 text-center bg-white relative z-20">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-brand-gold rounded-full transition-all duration-500 group-hover:w-24"></div>
+                <h3 class="text-xl font-serif font-bold text-brand-dark mb-1 group-hover:text-brand-gold transition-colors duration-300">Vanessa Oliveira</h3>
+                <p class="text-[10px] text-brand-gold font-bold tracking-[0.2em] uppercase opacity-70" data-i18n="roleConsultant">Property Consultant</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Member: Eduardo Almeida -->
+        <div class="fade-up h-full" style="transition-delay: 500ms">
+          <div class="group relative h-full flex flex-col">
+            <div class="relative flex-grow overflow-hidden rounded-3xl bg-white border border-brand-gold/10 shadow-2xl shadow-slate-200/50 transition-all duration-500 group-hover:-translate-y-3 group-hover:border-brand-gold/30">
+              <div class="relative aspect-[4/5] overflow-hidden bg-slate-100">
+                <img src="team/edurdo.jpeg" alt="Eduardo Almeida" 
+                     class="w-full h-full object-cover object-top transition-all duration-1000 group-hover:scale-110 grayscale-[30%] group-hover:grayscale-0"
+                     onerror="this.src='https://via.placeholder.com/600x800?text=Consultant'"/>
+              </div>
+              <div class="p-8 text-center bg-white relative z-20">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-brand-gold rounded-full transition-all duration-500 group-hover:w-24"></div>
+                <h3 class="text-xl font-serif font-bold text-brand-dark mb-1 group-hover:text-brand-gold transition-colors duration-300">Eduardo Almeida</h3>
+                <p class="text-[10px] text-brand-gold font-bold tracking-[0.2em] uppercase opacity-70" data-i18n="roleConsultant">Property Consultant</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Member: CÍCERA RIBEIRO -->
+        <div class="fade-up h-full" style="transition-delay: 600ms">
+          <div class="group relative h-full flex flex-col">
+            <div class="relative flex-grow overflow-hidden rounded-3xl bg-white border border-brand-gold/10 shadow-2xl shadow-slate-200/50 transition-all duration-500 group-hover:-translate-y-3 group-hover:border-brand-gold/30">
+              <div class="relative aspect-[4/5] overflow-hidden bg-slate-100">
+                <img src="team/CÍCERA%20RIBEIRO.jpeg" alt="CÍCERA RIBEIRO" 
+                     class="w-full h-full object-cover object-top transition-all duration-1000 group-hover:scale-110 grayscale-[30%] group-hover:grayscale-0"
+                     onerror="this.src='https://via.placeholder.com/600x800?text=Consultant'"/>
+              </div>
+              <div class="p-8 text-center bg-white relative z-20">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-brand-gold rounded-full transition-all duration-500 group-hover:w-24"></div>
+                <h3 class="text-xl font-serif font-bold text-brand-dark mb-1 group-hover:text-brand-gold transition-colors duration-300">Cícera Ribeiro</h3>
+                <p class="text-[10px] text-brand-gold font-bold tracking-[0.2em] uppercase opacity-70" data-i18n="roleConsultant">Property Consultant</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <footer id="contact" class="bg-[#0B1120] text-slate-300 pt-24 pb-4 relative overflow-hidden">
+    <!-- Decorative background elements -->
+    <div
+      class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-gold to-transparent opacity-70">
+    </div>
+    <div
+      class="absolute -top-[500px] -right-[500px] w-[1000px] h-[1000px] bg-brand-gold/5 rounded-full blur-3xl pointer-events-none">
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-16 relative z-10 mb-20">
+
+      <!-- Brand & About -->
+      <div class="lg:col-span-1 flex flex-col items-start pr-4">
+        <img src="logo.png" alt="Exo Real Estate Logo"
+          class="w-64 md:w-80 lg:w-96 h-auto object-contain object-left mb-10"
+          style="filter: invert(1) hue-rotate(180deg) brightness(1.5); mix-blend-mode: screen;"
+          onerror="this.src='https://via.placeholder.com/400x150?text=Exo+Real+Estate';" />
+        <p class="text-slate-400 text-sm leading-relaxed mb-8" data-i18n="aboutBrandJourneyText">
+          Take your first step towards an exciting international journey. Whether you’re an aspiring investor, an
+          entrepreneur with global ambitions, or someone seeking a new adventure, Exo Real Estate guides you through each
+          stage.
+        </p>
+        <div class="flex gap-4">
+          <a href="#"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/exorealestate1/" target="_blank"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-instagram"></i></a>
+          <a href="#"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-tiktok"></i></a>
+          <a href="https://www.youtube.com/@EXORealEstate1" target="_blank"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="flex flex-col gap-10">
+        <div>
+          <h4 class="text-white font-serif font-bold text-xl mb-6 relative inline-block"><span data-i18n="footerQuickLinksTitle">Quick Links</span><span
+              class="absolute -bottom-2 left-0 w-8 h-0.5 bg-brand-gold"></span></h4>
+          <ul class="space-y-4 text-sm mt-4">
+            <li><a href="about.html"
+                class="hover:text-brand-gold hover:translate-x-1 inline-block transition-transform duration-300" data-i18n="footerAbout">
+                About
+                Us</a></li>
+            <li><a href="team.html"
+                class="hover:text-brand-gold hover:translate-x-1 inline-block transition-transform duration-300" data-i18n="footerTeamLink">Team</a>
+            </li>
+            <li><a href="#"
+                class="hover:text-brand-gold hover:translate-x-1 inline-block transition-transform duration-300" data-i18n="footerBlogLink">Blog</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div>
+        <h4 class="text-white font-serif font-bold text-xl mb-6 relative inline-block"><span data-i18n="footerFurtherQueries">For Further Queries</span><span
+            class="absolute -bottom-2 left-0 w-8 h-0.5 bg-brand-gold"></span></h4>
+
+        <div class="space-y-6 mt-4 opacity-90">
+          <div class="flex items-start gap-4 group cursor-pointer">
+            <div
+              class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center group-hover:bg-brand-gold transition-colors">
+              <i class="fa-solid fa-envelope text-brand-gold group-hover:text-white transition-colors"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="footerEmailUs">Email Us</p>
+              <p class="text-white font-medium text-sm transition-colors group-hover:text-brand-gold">info@exorealestate.com
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4 group cursor-pointer">
+            <div
+              class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center group-hover:bg-brand-gold transition-colors">
+              <i class="fa-solid fa-phone text-brand-gold group-hover:text-white transition-colors"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="footerCallInfo">Call To Get More Info</p>
+              <p class="text-white font-medium text-sm transition-colors group-hover:text-brand-gold">+351 918 445 899
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4 group cursor-pointer">
+            <div
+              class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center group-hover:bg-green-500 transition-colors">
+              <i class="fa-brands fa-whatsapp text-green-400 group-hover:text-white transition-colors"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="footerWhatsApp">WhatsApp</p>
+              <p class="text-white font-medium text-sm transition-colors group-hover:text-green-400">+351 918 445 899
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4 pt-2">
+            <div class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center">
+              <i class="fa-solid fa-id-card text-brand-gold"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="footerLicenseNum">License Number</p>
+              <p class="text-white font-medium text-sm" data-i18n="licenseAmiValue">Licença AMI 18166</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Offices & Map -->
+      <div>
+        <h4 class="text-white font-serif font-bold text-xl mb-6 relative inline-block"><span data-i18n="footerOurOffices">Our Offices</span><span
+            class="absolute -bottom-2 left-0 w-8 h-0.5 bg-brand-gold"></span></h4>
+
+        <div class="space-y-6 mt-4">
+          <div class="group">
+            <p class="text-brand-gold font-semibold text-sm mb-2 uppercase tracking-wide" data-i18n="footerHeadOfficePortugal">Head Office (Portugal)</p>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4 group-hover:text-slate-300 transition-colors">
+              Av. da Liberdade 144 2 DTO,<br />1250-146 Lisboa, Portugal
+            </p>
+            <div
+              class="h-32 w-full rounded-xl overflow-hidden ring-1 ring-white/10 shadow-lg group-hover:ring-brand-gold/50 transition-all">
+              <iframe
+                src="https://www.google.com/maps?q=EXO%20REAL%20ESTATE%20Av.%20da%20Liberdade%20144%20Lisboa&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="relative z-10 border-t border-slate-800/80 pt-8 text-center px-6">
+      <p class="text-slate-500 text-sm" data-i18n="footerCopyright2024">
+        ©2024 Exo Real Estate. All Rights Reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- App Logic -->
+  <script>
+    // Intersection Observer for scroll animations
+    function animateOnScroll() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    }
+
+    // Init Page View
+    window.addEventListener('DOMContentLoaded', () => {
+      // Small delay to ensure styles are loaded
+      setTimeout(animateOnScroll, 100);
+    });
+  </script>
+  <script src="js/site-chatbot.js"></script>
+</body>
+
+</html>

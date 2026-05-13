@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="pageTitlePropertyDetails">Property Details | Exo Real Estate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy:      #0d1b2a;
+      --navy-2:    #1a2e42;
+      --ink:       #2d3a4a;
+      --ink-2:     #4a5568;
+      --muted:     #8896a7;
+      --border:    #e4eaf0;
+      --border-2:  #f0f4f8;
+      --bg:        #f5f7fa;
+      --surface:   #ffffff;
+      --blue:      #1d4ed8;
+      --blue-2:    #2563eb;
+      --blue-light:#eff6ff;
+      --success:   #059669;
+      --gold:      #b8933f;
+    }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .detail-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(15, 23, 42, 0.14);
+      color: #0f172a;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      background: rgba(255, 255, 255, 0.7);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .detail-back-link:hover {
+      background: #0f172a;
+      color: #fff;
+      border-color: #0f172a;
+      transform: translateY(-1px);
+    }
+
+    /* ─── PAGE WRAP ─── */
+    .page { max-width: 1300px; margin: 0 auto; padding: 32px 28px 80px; width: 100%; box-sizing: border-box; overflow-x: hidden; }
+
+    /* ─── HERO ROW ─── */
+    .hero-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .hero-right {
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .prop-id { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+    .prop-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.15;
+      margin-bottom: 8px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .prop-address {
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+    }
+    .prop-address i {
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+    .prop-address span {
+      flex: 1;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .prop-price {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1;
+    }
+    .prop-price-sub { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 4px; }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .badge-sale { background: var(--blue-light); color: var(--blue-2); }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+    /* ─── GALLERY ─── */
+    .gallery-block { margin-bottom: 24px; }
+    .gallery-main-wrap {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      height: 560px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #1a2e42, #0d1b2a);
+      margin-bottom: 14px;
+      border: 1px solid rgba(13, 27, 42, 0.1);
+      box-shadow: 0 20px 48px rgba(13, 27, 42, 0.18);
+    }
+    .gallery-main-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease, opacity 0.3s ease;
+    }
+    .gallery-main-wrap:hover .gallery-main-img { transform: scale(1.03); }
+    .gallery-badge {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      background: rgba(13,27,42,0.75);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .gallery-count-btn {
+      position: absolute;
+      bottom: 18px;
+      right: 18px;
+      background: rgba(13,27,42,0.8);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      padding: 9px 18px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .gallery-count-btn:hover { background: rgba(29,78,216,0.85); }
+
+    .gallery-thumbs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .gallery-thumb {
+      height: 108px;
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      border: 2.5px solid transparent;
+      transition: border-color 0.2s, transform 0.2s;
+      box-shadow: 0 8px 16px rgba(13, 27, 42, 0.12);
+    }
+    .gallery-thumb.active { border-color: var(--blue-2); }
+    .gallery-thumb:hover { transform: translateY(-2px); }
+    .gallery-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .gallery-thumb:hover img { transform: scale(1.08); }
+    .gallery-thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(29,78,216,0.15);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .gallery-thumb.active .gallery-thumb-overlay { opacity: 1; }
+
+    .price-panel {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      margin: 16px 0 28px;
+      padding: 0 0 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .price-panel-main {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    /* ─── PILL STRIP ─── */
+    .pill-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+    .pill i { color: var(--blue-2); font-size: 13px; }
+    .pill-energy { border-color: #fbbf24; color: #b45309; background: #fffbeb; }
+    .pill-energy i { color: #d97706; }
+
+    /* ─── TABS ─── */
+    .tabs-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 32px;
+      overflow-x: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .tabs-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      padding: 13px 22px;
+      background: none;
+      border: none;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      transition: color 0.2s;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+    .tab-btn:hover { color: var(--ink); }
+    .tab-btn.active { color: var(--blue-2); border-bottom-color: var(--blue-2); }
+
+    /* ─── CONTENT GRID ─── */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 40px;
+      align-items: start;
+    }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; animation: fadeUp 0.3s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ─── DETAILS SECTION ─── */
+    .details-header {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .details-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .detail-row {
+      background: var(--surface);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.15s;
+    }
+    .detail-row:hover { background: var(--blue-light); }
+    .detail-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .detail-label i { width: 18px; text-align: center; color: var(--blue-2); font-size: 13px; }
+    .detail-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .detail-value.na { color: var(--muted); font-weight: 400; }
+
+    /* Amenity chips */
+    .amenity-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .amenity-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: var(--blue-light);
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--blue-2);
+      border: 1px solid #bfdbfe;
+    }
+    .amenity-chip i { font-size: 11px; }
+
+    /* ─── DESCRIPTION TAB ─── */
+    .desc-text {
+      font-size: 15px;
+      line-height: 1.85;
+      color: var(--ink-2);
+      white-space: pre-wrap;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      position: sticky;
+      top: 84px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .widget {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 28px;
+      border: 1px solid var(--border-2);
+      box-shadow: 0 8px 32px rgba(13,27,42,0.05);
+    }
+    .widget-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    /* Agent widget */
+    .agent-row { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .agent-ava {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--blue-2), var(--navy));
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: #fff;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .agent-ava img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .agent-ava.has-photo img { display: block; }
+    .agent-ava.has-photo i { display: none; }
+    .agent-name { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+    .agent-role { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: all 0.2s;
+      margin-bottom: 10px;
+    }
+    .btn:last-child { margin-bottom: 0; }
+    .btn-wa { background: #25D366; color: #fff; }
+    .btn-wa:hover { background: #1eb357; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,211,102,0.3); }
+    .btn-primary { background: var(--navy); color: #fff; }
+    .btn-primary:hover { background: var(--blue-2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(29,78,216,0.3); }
+
+    /* Mortgage calc */
+    .calc-field { margin-bottom: 12px; }
+    .calc-label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+    .calc-input-wrap { position: relative; }
+    .calc-input-wrap i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 12px; }
+    .calc-input {
+      width: 100%;
+      padding: 11px 12px 11px 32px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .calc-input:focus { border-color: var(--blue-2); }
+    .calc-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .calc-result {
+      margin-top: 16px;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue-2) 100%);
+      border-radius: 14px;
+      text-align: center;
+    }
+    .calc-result-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: rgba(255,255,255,0.6); text-transform: uppercase; margin-bottom: 4px; }
+    .calc-result-val { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; color: #fff; }
+
+    /* ─── ENERGY ─── */
+    .energy-wrap { padding: 20px 0; }
+    .energy-display { display: flex; align-items: center; gap: 24px; margin-bottom: 24px; }
+    .energy-grade {
+      width: 80px; height: 80px;
+      border-radius: 20px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-size: 36px; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .energy-grade-sub { font-size: 10px; letter-spacing: 1px; opacity: 0.8; margin-top: 2px; }
+    .energy-info h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .energy-info p { font-size: 13px; color: var(--muted); }
+    .energy-bar-outer { height: 28px; border-radius: 8px; overflow: hidden; display: flex; }
+    .energy-seg { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; position: relative; }
+    .energy-seg.active::after {
+      content: '▼';
+      position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+      font-size: 14px; color: var(--navy);
+    }
+    .energy-labels-row { display: flex; margin-top: 24px; }
+    .energy-labels-row span { flex: 1; font-size: 10px; font-weight: 700; text-align: center; color: var(--muted); }
+
+    /* ─── MAP ─── */
+    #property-map { height: 400px; border-radius: 16px; border: 1px solid var(--border); }
+
+    /* ─── INQUIRY FORM ─── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-field label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+    .form-field input, .form-field textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      color: var(--navy);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-field input:focus, .form-field textarea:focus { border-color: var(--blue-2); }
+    .inq-status {
+      display: none;
+      margin: 0 0 16px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .inq-status.pending {
+      display: block;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+    .inq-status.success {
+      display: block;
+      color: #047857;
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+    .inq-status.error {
+      display: block;
+      color: #b91c1c;
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    /* ─── FULLSCREEN MODAL ─── */
+    .fs-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 24px;
+    }
+    .fs-modal.open { display: flex; }
+    .fs-close {
+      position: absolute; top: 20px; right: 24px;
+      background: rgba(0,0,0,0.8); border: none; color: #fff;
+      width: 48px; height: 48px; border-radius: 50%;
+      font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      z-index: 1002;
+      transition: background 0.2s, transform 0.2s;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+    .fs-close:hover { background: rgba(0,0,0,0.95); transform: scale(1.05); }
+    .fs-counter { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 600; }
+    .fs-img { max-width: calc(100vw - 120px); max-height: calc(100vh - 120px); width: auto; height: auto; object-fit: contain; border-radius: 12px; }
+    .fs-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(0,0,0,0.55); border: none; color: #fff;
+      width: 56px; height: 56px; border-radius: 50%;
+      font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+      z-index: 1001;
+    }
+    .fs-nav:hover { background: rgba(0,0,0,0.8); transform: scale(1.05); }
+    .fs-prev { left: 24px; }
+    .fs-next { right: 24px; }
+
+    @media (max-width: 1024px) {
+      .content-grid { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+    }
+    @media (max-width: 768px) {
+      .page { padding: 24px 20px 60px; }
+      .prop-title { font-size: clamp(1.4rem, 2.5vw, 1.8rem); }
+      .prop-price { font-size: clamp(1.6rem, 2.5vw, 2rem); }
+      .gallery-main-wrap { height: 280px; }
+      .details-grid { grid-template-columns: 1fr; gap: 3px; }
+      .tabs-bar { margin-bottom: 24px; gap: 0; }
+      .tab-btn { padding: 12px 16px; font-size: 13px; }
+    }
+    @media (max-width: 640px) {
+      .page { padding: 20px 16px 50px; }
+      .hero-row { flex-direction: column; gap: 12px; align-items: center; }
+      .hero-right { margin-left: 0; align-self: flex-start; width: 100%; }
+      .prop-title { font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.2; word-break: break-word; }
+      .prop-price { font-size: clamp(1.4rem, 2.2vw, 1.8rem); }
+      .gallery-thumbs { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+      .gallery-main-wrap { height: 240px; }
+      .gallery-thumb { height: 56px; }
+      .details-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .price-panel { margin-bottom: 20px; flex-direction: column; align-items: flex-start; }
+      .pill { font-size: 12px; padding: 6px 12px; }
+      .sidebar { margin-top: 24px; }
+      .tab-btn { padding: 10px 12px; font-size: 12px; }
+    }
+    @media (max-width: 480px) {
+      .page { padding: 16px 12px 40px; }
+      .prop-title { font-size: 1.3rem; }
+      .prop-price { font-size: 1.5rem; }
+      .gallery-main-wrap { height: 200px; }
+      .gallery-thumb { height: 40px; }
+      .tab-btn { padding: 10px 8px; font-size: 11px; }
+      .form-grid { gap: 12px; }
+    }
+
+    /* Image Modal */
+    .image-modal-overlay {
+      position: fixed; inset: 0; z-index: 50000;
+      background: rgba(15,23,42,0.95); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; padding: 16px;
+    }
+    .image-modal-overlay.active { opacity: 1; visibility: visible; }
+    .image-modal-container {
+      position: relative; max-width: 90vw; max-height: 90vh;
+      background: #fff; border-radius: 12px; overflow: auto;
+    }
+    .image-modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 44px; height: 44px; border: none; 
+      background: rgba(255,255,255,0.95); border-radius: 50%;
+      font-size: 24px; color: #0f172a; cursor: pointer; z-index: 50001;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .image-modal-close:hover { 
+      background: #0f172a; color: #fff;
+      transform: scale(1.1);
+    }
+    .image-modal-img {
+      width: 100%; height: auto; display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="exo-navbar-placeholder"></div>
+
+  <!-- LOADING -->
+  <div id="loading-state" style="padding:120px 24px; text-align:center; color:#8896a7; font-size:16px; font-weight:500;">
+    <i class="fas fa-spinner fa-spin" style="font-size:28px; display:block; margin-bottom:12px;"></i>
+    <span data-i18n="detailLoadingProperty">Loading property...</span>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main-content" class="page" style="display:none;">
+
+    <!-- HERO ROW -->
+    <div class="hero-row">
+      <div class="hero-left">
+        <div class="prop-id" id="pd-id"><span data-i18n="detailIdLabel">ID</span> –</div>
+        <h1 class="prop-title" id="pd-title" data-i18n="detailPropertyTitlePlaceholder">Property Title</h1>
+        <div class="prop-address"><i class="fas fa-map-marker-alt" style="color:var(--blue-2)"></i> <span id="pd-address">–</span></div>
+      </div>
+      <div class="hero-right">
+        <a href="properties.html" class="detail-back-link" id="detail-back-link">
+          <i class="fas fa-arrow-left"></i>
+          <span data-i18n="detailBackToProperties">Back to properties</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="gallery-block">
+      <div class="gallery-main-wrap" id="gallery-main-wrap">
+        <img src="" class="gallery-main-img" id="gallery-main-img" alt="Property" onclick="openModal(currentThumbIdx)">
+        <div class="gallery-badge" id="gallery-badge-type" data-i18n="detailGalleryTypeApartment">APARTMENT</div>
+        <button class="gallery-count-btn" onclick="openModal(0)">
+          <i class="fas fa-images"></i> <span id="gallery-count-txt" data-i18n="detailViewAllPhotosFallback">View all photos</span>
+        </button>
+      </div>
+      <div class="gallery-thumbs" id="gallery-thumbs">
+        <!-- injected -->
+      </div>
+    </div>
+
+    <div class="price-panel">
+      <div class="price-panel-main">
+        <div class="badge-status badge-sale" id="pd-status"><span class="badge-dot"></span> <span data-i18n="detailStatusForSale">For Sale</span></div>
+        <div class="prop-price" id="pd-price">€0</div>
+      </div>
+    </div>
+
+    <!-- PILL STRIP -->
+    <div class="pill-strip" id="pill-strip">
+      <!-- injected -->
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="details" data-i18n="detailDetails">Details</button>
+      <button class="tab-btn" data-tab="desc" data-i18n="detailDescription">Description</button>
+      <button class="tab-btn" data-tab="energy" data-i18n="detailEnergy">Energy</button>
+      <button class="tab-btn" data-tab="map" data-i18n="detailMap">Map</button>
+      <button class="tab-btn" data-tab="contact" data-i18n="detailSendMessage">Send Inquiry</button>
+    </div>
+
+    <div class="content-grid">
+      <div class="main-col">
+
+        <!-- DETAILS TAB (default) -->
+        <div id="tab-details" class="tab-pane active">
+
+          <div class="details-header" data-i18n="detailGeneralInformation">General Information</div>
+          <div class="details-grid" id="pd-details-general"></div>
+
+          <div class="details-header" id="amenities-header" style="margin-top:20px;" data-i18n="detailAmenitiesFeatures">Amenities & Features</div>
+          <div class="amenity-chips" id="pd-amenity-chips"></div>
+
+        </div>
+
+        <!-- DESCRIPTION TAB -->
+        <div id="tab-desc" class="tab-pane">
+          <div class="details-header" data-i18n="detailPropertyDescription">Property Description</div>
+          <div class="desc-text" id="pd-desc"></div>
+          <div id="pd-hood-section" style="display:none; margin-top:32px;">
+            <div class="details-header" data-i18n="formNeighbourhood">The Neighbourhood</div>
+            <div class="desc-text" id="pd-hood"></div>
+          </div>
+        </div>
+
+        <!-- ENERGY TAB -->
+        <div id="tab-energy" class="tab-pane">
+          <div class="details-header" data-i18n="detailEnergyEfficiency">Energy Efficiency</div>
+          <div class="energy-wrap">
+            <div class="energy-display">
+              <div class="energy-grade" id="pd-e-box" style="background:#ffc000">
+                <span id="pd-e-grade">D</span>
+                <span class="energy-grade-sub" data-i18n="detailEnergyRatingCaption">RATING</span>
+              </div>
+              <div class="energy-info">
+                <h3 id="pd-e-label"><span data-i18n="detailEnergyClassPrefix">Energy Class</span> D</h3>
+                <p id="pd-e-kwh"><span data-i18n="detailConsumptionPrefix">Consumption:</span> 0 kWh/m²/year</p>
+                <p style="margin-top:8px; font-size:12px; color:var(--muted);" data-i18n="detailEnergyHelpText">
+                  Energy certification helps buyers understand potential utility costs and environmental impact.
+                </p>
+              </div>
+            </div>
+            <div class="energy-bar-outer" id="pd-e-bar">
+              <div class="energy-seg" data-grade="A+" style="background:#008000;">A+</div>
+              <div class="energy-seg" data-grade="A" style="background:#00b050;">A</div>
+              <div class="energy-seg" data-grade="B" style="background:#92d050;">B</div>
+              <div class="energy-seg" data-grade="C" style="background:#ffff00;color:#666">C</div>
+              <div class="energy-seg" data-grade="D" style="background:#ffc000;">D</div>
+              <div class="energy-seg" data-grade="E" style="background:#ff0000;">E</div>
+              <div class="energy-seg" data-grade="F" style="background:#c00000;">F</div>
+              <div class="energy-seg" data-grade="G" style="background:#7f1d1d;">G</div>
+            </div>
+            <div class="energy-labels-row">
+              <span>A+</span><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAP TAB -->
+        <div id="tab-map" class="tab-pane">
+          <div class="details-header" data-i18n="fLocation">Location</div>
+          <div id="property-map"></div>
+        </div>
+
+        <!-- INQUIRY TAB -->
+        <div id="tab-contact" class="tab-pane">
+          <div class="details-header" data-i18n="detailSendMessage">Send Inquiry</div>
+          <div style="background:#fff; padding:28px; border-radius:16px; border:1px solid var(--border-2);">
+            <form id="pd-form">
+              <div class="form-grid">
+                <div class="form-field">
+                  <label data-i18n="contactName">Name</label>
+                  <input id="pd-inq-name" name="name" type="text" placeholder="Your full name" data-i18n-placeholder="detailPlaceholderFullName" required>
+                </div>
+                <div class="form-field">
+                  <label data-i18n="contactEmail">Email</label>
+                  <input id="pd-inq-email" name="email" type="email" placeholder="your@email.com" data-i18n-placeholder="detailPlaceholderEmail" required>
+                </div>
+              </div>
+              <div class="form-field" style="margin-bottom:20px;">
+                <label data-i18n="contactPhone">Phone</label>
+                <input id="pd-inq-phone" name="phone" type="tel" placeholder="+351 000 000 000" data-i18n-placeholder="detailPlaceholderPhone">
+              </div>
+              <div class="form-field" style="margin-bottom:24px;">
+                <label data-i18n="contactMessage">Message</label>
+                <textarea id="pd-inq-message" name="message" rows="5" placeholder="I am interested in this property and would like more information..." data-i18n-placeholder="detailPlaceholderInquiryMessage" required></textarea>
+              </div>
+              <p id="pd-inq-status" class="inq-status" aria-live="polite"></p>
+              <button id="pd-inq-submit" type="submit" class="btn btn-primary" style="width:auto; padding:14px 40px; margin-bottom:0;">
+                <i class="fas fa-paper-plane"></i> <span data-i18n="contactSend">Send Message</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div><!-- /main-col -->
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <!-- Agent + Actions -->
+        <div class="widget">
+          <div class="widget-title" data-i18n="detailYourAgent">Your Agent</div>
+          <div class="agent-row">
+            <div class="agent-ava" id="pd-agent-avatar">
+              <img id="pd-agent-photo" alt="Agent photo" loading="lazy" />
+              <i class="fas fa-user-tie"></i>
+            </div>
+            <div>
+              <div class="agent-name" id="pd-agent-name" data-i18n="detailAgentDefaultName">Administrator</div>
+              <div class="agent-role" id="pd-agent-role" data-i18n="detailAgentRoleBroker">Real Estate Broker</div>
+            </div>
+          </div>
+          <a href="#" class="btn btn-wa" id="pd-whatsapp" target="_blank">
+            <i class="fab fa-whatsapp"></i> <span data-i18n="detailWhatsApp">Chat on WhatsApp</span>
+          </a>
+          <button class="btn btn-primary" onclick="document.querySelector('[data-tab=contact]').click()">
+            <i class="fas fa-envelope"></i> <span data-i18n="detailSendMessage">Send Inquiry</span>
+          </button>
+        </div>
+
+        <!-- Mortgage Calc -->
+        <div class="widget">
+          <div class="widget-title" data-i18n="detailMortgageTitle">Mortgage Calculator</div>
+          <div class="calc-field">
+            <span class="calc-label" data-i18n="detailPropertyPrice">Property Price</span>
+            <div class="calc-input-wrap"><i class="fas fa-euro-sign"></i><input type="number" id="mc-price" class="calc-input" value="975000"></div>
+          </div>
+          <div class="calc-field">
+            <span class="calc-label" data-i18n="detailDownPayment">Down Payment</span>
+            <div class="calc-input-wrap"><i class="fas fa-euro-sign"></i><input type="number" id="mc-down" class="calc-input" value="50000"></div>
+          </div>
+          <div class="calc-2col">
+            <div class="calc-field">
+              <span class="calc-label" data-i18n="detailRatePercent">Rate %</span>
+              <div class="calc-input-wrap"><i class="fas fa-percent"></i><input type="number" id="mc-rate" class="calc-input" step="0.1" value="4.5"></div>
+            </div>
+            <div class="calc-field">
+              <span class="calc-label" data-i18n="detailYearsLabel">Years</span>
+              <div class="calc-input-wrap"><i class="fas fa-calendar"></i><input type="number" id="mc-years" class="calc-input" value="25"></div>
+            </div>
+          </div>
+          <div class="calc-result">
+            <div class="calc-result-label" data-i18n="detailMonthlyPayment">Monthly Payment</div>
+            <div class="calc-result-val" id="mc-result">€0</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+  </div><!-- /page -->
+
+  <!-- FULLSCREEN MODAL -->
+  <div class="fs-modal" id="fs-modal">
+    <button class="fs-close" id="fs-close">&times;</button>
+    <div class="fs-counter" id="fs-counter">1 / 1</div>
+    <button class="fs-nav fs-prev" id="fs-prev"><i class="fas fa-chevron-left"></i></button>
+    <img src="" alt="" class="fs-img" id="fs-img">
+    <button class="fs-nav fs-next" id="fs-next"><i class="fas fa-chevron-right"></i></button>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <script>
+    let prop = null;
+    let map = null;
+    let mapMarker = null;
+    let currentThumbIdx = 0;
+    let fsIdx = 0;
+
+    function tr(key) {
+      if (typeof window.t === 'function') {
+        return window.t(key);
+      }
+      return key;
+    }
+
+    function getPropImages() {
+      const list = Array.isArray(prop && prop.images)
+        ? prop.images.filter((src) => typeof src === 'string' && src.trim())
+        : [];
+      if (list.length) return list;
+      if (prop && typeof prop.image === 'string' && prop.image.trim()) return [prop.image];
+      return ['https://via.placeholder.com/1400x900/e2e8f0/64748b?text=No+Image+Available'];
+    }
+
+    function parseCoordinateValue(value) {
+      if (value === null || value === undefined || value === '') return null;
+      if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+      if (typeof value === 'string') {
+        const raw = value.trim();
+        if (!raw) return null;
+        const compact = raw.replace(/\s+/g, '');
+        const normalized = compact.includes(',') && !compact.includes('.')
+          ? compact.replace(',', '.')
+          : compact;
+        let parsed = Number(normalized);
+        if (Number.isFinite(parsed)) return parsed;
+
+        // Keep only numeric-ish chars as a tolerant fallback for copied map values.
+        const cleaned = normalized.replace(/[^0-9eE+.,-]/g, '');
+        const cleanedNormalized = cleaned.includes(',') && !cleaned.includes('.')
+          ? cleaned.replace(',', '.')
+          : cleaned;
+        parsed = Number(cleanedNormalized);
+        return Number.isFinite(parsed) ? parsed : null;
+      }
+      return null;
+    }
+
+    function isValidLatLng(lat, lng) {
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
+      if (Math.abs(lat) < 1e-7 && Math.abs(lng) < 1e-7) return false;
+      return Number.isFinite(lat) && Number.isFinite(lng)
+        && lat >= -90 && lat <= 90
+        && lng >= -180 && lng <= 180;
+    }
+
+    function normalizeLatLng(rawLat, rawLng) {
+      const lat = parseCoordinateValue(rawLat);
+      const lng = parseCoordinateValue(rawLng);
+      if (isValidLatLng(lat, lng)) return { lat, lng };
+      if (isValidLatLng(lng, lat)) return { lat: lng, lng: lat };
+      return null;
+    }
+
+    function parseCoordinatePairText(value) {
+      if (typeof value !== 'string') return null;
+      const txt = value.trim();
+      if (!txt) return null;
+      const match = txt.match(/(-?\d+(?:[.,]\d+)?)\s*[,;|\s]\s*(-?\d+(?:[.,]\d+)?)/);
+      if (!match) return null;
+      return normalizeLatLng(match[1], match[2]);
+    }
+
+    function parseCoordinatesFromMapUrl(value) {
+      if (typeof value !== 'string') return null;
+      const txt = value.trim();
+      if (!txt) return null;
+
+      const atMatch = txt.match(/@(-?\d+(?:[.,]\d+)?),(-?\d+(?:[.,]\d+)?)/);
+      if (atMatch) {
+        const atPair = normalizeLatLng(atMatch[1], atMatch[2]);
+        if (atPair) return atPair;
+      }
+
+      const qpMatch = txt.match(/[?&](?:q|query|ll|center|sll|destination)=(-?\d+(?:[.,]\d+)?),(-?\d+(?:[.,]\d+)?)/i);
+      if (qpMatch) {
+        const queryPair = normalizeLatLng(qpMatch[1], qpMatch[2]);
+        if (queryPair) return queryPair;
+      }
+
+      const latMatch = txt.match(/lat(?:itude)?\s*[:=]\s*(-?\d+(?:[.,]\d+)?)/i);
+      const lngMatch = txt.match(/(?:lng|lon|longitude)\s*[:=]\s*(-?\d+(?:[.,]\d+)?)/i);
+      if (latMatch && lngMatch) {
+        const namedPair = normalizeLatLng(latMatch[1], lngMatch[1]);
+        if (namedPair) return namedPair;
+      }
+
+      if (/^[-+]?\d/.test(txt)) {
+        return parseCoordinatePairText(txt);
+      }
+      return null;
+    }
+
+    function extractPropertyCoordinates(data) {
+      if (!data || typeof data !== 'object') return null;
+
+      const pairCandidates = [
+        [data.lat, data.lng],
+        [data.latitude, data.longitude],
+        [data.locationLat, data.locationLng],
+        [data.mapLat, data.mapLng],
+        [data.geoLat, data.geoLng],
+        [data.mapLatitude, data.mapLongitude],
+        [data._lat, data._lng],
+        [data._latitude, data._longitude],
+
+        [data.location && data.location.lat, data.location && data.location.lng],
+        [data.location && data.location.latitude, data.location && data.location.longitude],
+        [data.location && data.location._latitude, data.location && data.location._longitude],
+        [data.location && data.location._lat, data.location && data.location._long],
+        [data.location && data.location.y, data.location && data.location.x],
+
+        [data.coordinates && data.coordinates.lat, data.coordinates && data.coordinates.lng],
+        [data.coordinates && data.coordinates.latitude, data.coordinates && data.coordinates.longitude],
+        [data.coordinates && data.coordinates._latitude, data.coordinates && data.coordinates._longitude],
+        [data.coordinates && data.coordinates._lat, data.coordinates && data.coordinates._long],
+
+        [data.coords && data.coords.lat, data.coords && data.coords.lng],
+        [data.coords && data.coords.latitude, data.coords && data.coords.longitude],
+
+        [data.geo && data.geo.lat, data.geo && data.geo.lng],
+        [data.geo && data.geo.latitude, data.geo && data.geo.longitude],
+
+        [data.geopoint && data.geopoint.latitude, data.geopoint && data.geopoint.longitude],
+        [data.geoPoint && data.geoPoint.latitude, data.geoPoint && data.geoPoint.longitude],
+
+        [data.position && data.position.lat, data.position && data.position.lng],
+        [data.position && data.position.latitude, data.position && data.position.longitude],
+      ];
+
+      for (const [rawLat, rawLng] of pairCandidates) {
+        const normalized = normalizeLatLng(rawLat, rawLng);
+        if (normalized) return normalized;
+      }
+
+      if (Array.isArray(data.coordinates) && data.coordinates.length >= 2) {
+        const asGeoJson = normalizeLatLng(data.coordinates[1], data.coordinates[0]);
+        if (asGeoJson) return asGeoJson;
+        const asLatLng = normalizeLatLng(data.coordinates[0], data.coordinates[1]);
+        if (asLatLng) return asLatLng;
+      }
+
+      const textCandidates = [
+        data.latLng,
+        data.latlng,
+        data.coord,
+        data.coordsText,
+        data.coordinatesText,
+        data.mapCoordinates,
+        data.locationCoordinates,
+        data.locationString,
+        data.googleMapsUrl,
+        data.mapUrl,
+        data.mapsUrl,
+        data.googleMaps,
+        data.location && data.location.mapUrl,
+        data.location && data.location.googleMapsUrl,
+        data.geo && data.geo.mapUrl
+      ];
+
+      for (const candidate of textCandidates) {
+        const parsedFromUrl = parseCoordinatesFromMapUrl(candidate);
+        if (parsedFromUrl) return parsedFromUrl;
+      }
+
+      return null;
+    }
+
+    function buildMapSearchQuery(data) {
+      if (!data || typeof data !== 'object') return '';
+      const parts = [
+        data.address,
+        data.neighbourhood,
+        data.city,
+        data.postalCode,
+        data.region,
+        data.country
+      ]
+        .map((v) => (v === null || v === undefined ? '' : String(v).trim()))
+        .filter(Boolean);
+      return parts.join(', ');
+    }
+
+    async function geocodeMapQuery(query) {
+      if (!query) return null;
+      const res = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(query), {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!res.ok) return null;
+
+      const data = await res.json();
+      if (!Array.isArray(data) || !data.length) return null;
+
+      const lat = parseCoordinateValue(data[0].lat);
+      const lng = parseCoordinateValue(data[0].lon);
+      return isValidLatLng(lat, lng) ? { lat, lng } : null;
+    }
+
+    function showMapUnavailable(message) {
+      const mapEl = document.getElementById('property-map');
+      if (!mapEl) return;
+      mapEl.innerHTML =
+        '<div style="height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;color:#8896a7;font-size:14px;padding:24px;">'
+        + '<i class="fas fa-map-marker-alt" style="font-size:22px;margin-bottom:10px;color:#94a3b8;"></i>'
+        + '<span>' + message + '</span>'
+        + '</div>';
+    }
+
+    function cleanAddressSnippet(addr) {
+      if (!addr) return '';
+      // Sometimes users paste long strings separated by hyphens or dashes.
+      // E.g. "Rua dos Fanqueiros, 207 – Ground floor – Postal Code 1100-227 – SANTA MARIA MAIOR - LISBOA - PORTUGAL"
+      // Nominatim usually only needs the first part (street + number).
+      return addr.split(/[-–|]/)[0].trim();
+    }
+
+    async function renderPropertyMap(data) {
+      const directCoords = extractPropertyCoordinates(data);
+      if (directCoords) {
+        setTimeout(() => initMap(directCoords.lat, directCoords.lng, 19), 500);
+        return;
+      }
+
+      const cleanAddr = cleanAddressSnippet(data.address);
+      const combos = [
+        { query: [data.address, data.neighbourhood, data.city, data.postalCode, data.region, data.country].filter(Boolean).join(', '), zoom: 17 },
+        { query: [cleanAddr, data.city, data.country].filter(Boolean).join(', '), zoom: 18 },
+        { query: [data.address, data.city, data.country].filter(Boolean).join(', '), zoom: 16 },
+        { query: [cleanAddr, data.country].filter(Boolean).join(', '), zoom: 17 },
+        { query: [data.neighbourhood, data.city, data.country].filter(Boolean).join(', '), zoom: 15 },
+        { query: [data.city, data.region, data.country].filter(Boolean).join(', '), zoom: 13 },
+        { query: [data.city, data.country].filter(Boolean).join(', '), zoom: 12 }
+      ];
+
+      const uniqueCombos = [];
+      const seen = new Set();
+      combos.forEach(c => {
+         if(c.query && !seen.has(c.query)) {
+             seen.add(c.query);
+             uniqueCombos.push(c);
+         }
+      });
+
+      if (!uniqueCombos.length) {
+        showMapUnavailable(tr('detailMapUnavailableNoLocationData'));
+        return;
+      }
+
+      for (let i = 0; i < uniqueCombos.length; i++) {
+        try {
+          const geocoded = await geocodeMapQuery(uniqueCombos[i].query);
+          if (geocoded) {
+            initMap(geocoded.lat, geocoded.lng, uniqueCombos[i].zoom);
+            return;
+          }
+        } catch (error) {
+          console.warn('Map geocoding failed for:', uniqueCombos[i].query, error);
+        }
+      }
+
+      showMapUnavailable(tr('detailMapUnavailableResolveAddress'));
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const propId = params.get('id');
+
+    async function loadProp() {
+      if (!propId) { showError(); return; }
+      try {
+        const doc = await firebase.firestore().collection('properties').doc(propId).get();
+        if (!doc.exists) { showError(); return; }
+        prop = doc.data();
+        prop.id = doc.id;
+        renderProp();
+
+        // ── View Tracking ────────────────────────────────
+        // Fire-and-forget: increment total views + today's views
+        try {
+          const today = new Date().toISOString().slice(0, 10); // e.g. "2026-04-08"
+          const viewUpdate = {
+            views: firebase.firestore.FieldValue.increment(1)
+          };
+          viewUpdate['viewsByDate.' + today] = firebase.firestore.FieldValue.increment(1);
+          firebase.firestore().collection('properties').doc(propId).update(viewUpdate);
+        } catch (ve) { /* silently ignore tracking errors */ }
+        // ─────────────────────────────────────────────────
+
+      } catch (e) {
+        console.error(e);
+        showError();
+      }
+    }
+
+    function showError() {
+      document.getElementById('loading-state').innerHTML = '<div style="padding:80px 24px;text-align:center"><h2 style="font-family:Fraunces,serif;color:#0d1b2a;margin-bottom:12px">' + tr('detailPropertyNotFound') + '</h2><a href="properties.html" style="color:#2563eb;font-weight:600">← ' + tr('detailBackToProperties') + '</a></div>';
+    }
+
+    function setDetailAgentPhoto(photoUrl) {
+      const avatar = document.getElementById('pd-agent-avatar');
+      const img = document.getElementById('pd-agent-photo');
+      if (!avatar || !img) return;
+
+      const clean = String(photoUrl || '').trim();
+      if (!clean) {
+        avatar.classList.remove('has-photo');
+        img.removeAttribute('src');
+        return;
+      }
+
+      img.onerror = function () {
+        avatar.classList.remove('has-photo');
+        img.removeAttribute('src');
+      };
+      img.src = clean;
+      avatar.classList.add('has-photo');
+    }
+
+    function toCleanString(value) {
+      if (value === null || value === undefined) return '';
+      if (typeof value === 'object') return '';
+      return String(value).trim();
+    }
+
+    function isLikelyFirebaseUid(value) {
+      const txt = toCleanString(value);
+      if (!txt) return false;
+      if (txt.includes('@')) return false;
+      if (/\s/.test(txt)) return false;
+      return /^[A-Za-z0-9_-]{16,128}$/.test(txt);
+    }
+
+    function resolveInquiryRecipient(data) {
+      if (!data || typeof data !== 'object') return { id: '', name: 'Exo Real Estate' };
+
+      const idCandidates = [
+        data.agentId,
+        data.ownerId,
+        data.createdByUid,
+        data.createdBy,
+        data.userId,
+        data.posterId,
+        data.posterUid,
+        data.agentUid,
+        data.ownerUid,
+
+        data.agent && data.agent.uid,
+        data.agent && data.agent.id,
+        data.owner && data.owner.uid,
+        data.owner && data.owner.id,
+        data.poster && data.poster.uid,
+        data.poster && data.poster.id,
+
+        data.metadata && data.metadata.agentId,
+        data.metadata && data.metadata.ownerId,
+        data.meta && data.meta.agentId,
+        data.meta && data.meta.ownerId
+      ];
+
+      let resolvedId = '';
+      for (const candidate of idCandidates) {
+        if (isLikelyFirebaseUid(candidate)) {
+          resolvedId = toCleanString(candidate);
+          break;
+        }
+      }
+
+      if (!resolvedId) {
+        for (const candidate of idCandidates) {
+          const txt = toCleanString(candidate);
+          if (txt && !txt.includes('@') && !/\s/.test(txt) && txt.length >= 8) {
+            resolvedId = txt;
+            break;
+          }
+        }
+      }
+
+      const nameCandidates = [
+        data.agentName,
+        data.ownerName,
+        data.createdByName,
+        data.posterName,
+        data.agent && data.agent.name,
+        data.owner && data.owner.name,
+        data.poster && data.poster.name,
+        data.agent,
+        data.owner
+      ];
+
+      let resolvedName = '';
+      for (const candidate of nameCandidates) {
+        const txt = toCleanString(candidate);
+        if (txt) {
+          resolvedName = txt;
+          break;
+        }
+      }
+
+      return {
+        id: resolvedId,
+        name: resolvedName || 'Exo Real Estate'
+      };
+    }
+
+    function setInquiryStatus(type, message) {
+      const statusEl = document.getElementById('pd-inq-status');
+      if (!statusEl) return;
+
+      if (!type || !message) {
+        statusEl.className = 'inq-status';
+        statusEl.textContent = '';
+        return;
+      }
+
+      statusEl.className = 'inq-status ' + type;
+      statusEl.textContent = message;
+    }
+
+    function prefillInquiryFromAuth() {
+      const nameEl = document.getElementById('pd-inq-name');
+      const emailEl = document.getElementById('pd-inq-email');
+      if (!nameEl || !emailEl) return;
+      if (!firebase || !firebase.auth) return;
+
+      firebase.auth().onAuthStateChanged((user) => {
+        if (!user) return;
+        if (!toCleanString(nameEl.value)) {
+          nameEl.value = toCleanString(user.displayName) || toCleanString(user.email);
+        }
+        if (!toCleanString(emailEl.value)) {
+          emailEl.value = toCleanString(user.email);
+        }
+      });
+    }
+
+    function bindInquiryForm() {
+      const form = document.getElementById('pd-form');
+      const submitBtn = document.getElementById('pd-inq-submit');
+      if (!form || !submitBtn) return;
+
+      const defaultBtnHtml = submitBtn.innerHTML;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const nameEl = document.getElementById('pd-inq-name');
+        const emailEl = document.getElementById('pd-inq-email');
+        const phoneEl = document.getElementById('pd-inq-phone');
+        const messageEl = document.getElementById('pd-inq-message');
+
+        const name = toCleanString(nameEl && nameEl.value);
+        const email = toCleanString(emailEl && emailEl.value);
+        const phone = toCleanString(phoneEl && phoneEl.value);
+        const message = toCleanString(messageEl && messageEl.value);
+
+        if (!name || !email || !message) {
+          setInquiryStatus('error', tr('detailInquiryMissingRequired'));
+          return;
+        }
+
+        const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+        if (!emailOk) {
+          setInquiryStatus('error', tr('detailInquiryInvalidEmail'));
+          return;
+        }
+
+        if (!prop || !prop.id) {
+          setInquiryStatus('error', tr('detailInquiryPropertyNotReady'));
+          return;
+        }
+
+        const recipient = resolveInquiryRecipient(prop);
+        if (!recipient.id) {
+          setInquiryStatus('error', tr('detailInquiryUnavailable'));
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + tr('detailSendingShort');
+        setInquiryStatus('pending', tr('detailInquirySending'));
+
+        try {
+          const firestore = window.db || firebase.firestore();
+          await firestore.collection('inquiries').add({
+            source: 'property_detail',
+            propertyId: String(prop.id),
+            propertyTitle: toCleanString(prop.title) || ('Property ' + prop.id),
+            agentId: recipient.id,
+            agentName: recipient.name,
+            name: name,
+            email: email,
+            phone: phone,
+            message: message,
+            status: 'new',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          const keepName = name;
+          const keepEmail = email;
+          form.reset();
+          if (nameEl) nameEl.value = keepName;
+          if (emailEl) emailEl.value = keepEmail;
+          setInquiryStatus('success', tr('detailInquirySuccess'));
+        } catch (error) {
+          console.error('Property inquiry submit error:', error);
+          setInquiryStatus('error', tr('detailInquiryError'));
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = defaultBtnHtml;
+        }
+      });
+    }
+
+    function renderProp() {
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+
+      const asNumber = (value) => {
+        if (value === null || value === undefined) return null;
+        if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+        if (typeof value === 'string') {
+          const raw = value.trim();
+          if (!raw) return null;
+          let normalized = raw.replace(/\s+/g, '');
+          if (normalized.includes(',') && normalized.includes('.')) {
+            normalized = normalized.replace(/,/g, '');
+          } else if (normalized.includes(',') && !normalized.includes('.')) {
+            normalized = normalized.replace(',', '.');
+          }
+          const n = Number(normalized);
+          return Number.isFinite(n) ? n : null;
+        }
+        return null;
+      };
+      const asPositive = (value) => {
+        const n = asNumber(value);
+        return n !== null && n > 0 ? n : null;
+      };
+      const asText = (value) => {
+        if (value === null || value === undefined) return null;
+        if (typeof value === 'object' || typeof value === 'boolean') return null;
+        const txt = String(value).trim();
+        return txt ? txt : null;
+      };
+      const asArray = (value) => {
+        if (Array.isArray(value)) {
+          return value.map((item) => String(item || '').trim()).filter(Boolean);
+        }
+        if (typeof value === 'string') {
+          return value.split(',').map((item) => item.trim()).filter(Boolean);
+        }
+        return [];
+      };
+      const pickPositive = (...values) => {
+        for (const value of values) {
+          const n = asPositive(value);
+          if (n !== null) return n;
+        }
+        return null;
+      };
+      const pickNumber = (...values) => {
+        for (const value of values) {
+          const n = asNumber(value);
+          if (n !== null) return n;
+        }
+        return null;
+      };
+      const pickText = (...values) => {
+        for (const value of values) {
+          const txt = asText(value);
+          if (txt) return txt;
+        }
+        return null;
+      };
+      const boolToText = (value) => {
+        if (typeof value === 'boolean') return value ? tr('valueYes') : tr('valueNo');
+        if (typeof value === 'number' && (value === 0 || value === 1)) return value === 1 ? tr('valueYes') : tr('valueNo');
+        if (typeof value === 'string') {
+          const normalized = value.trim().toLowerCase();
+          if (normalized === 'true' || normalized === 'yes' || normalized === '1' || normalized === 'on') return tr('valueYes');
+          if (normalized === 'false' || normalized === 'no' || normalized === '0' || normalized === 'off') return tr('valueNo');
+        }
+        return null;
+      };
+      const normalizeEnergyGrade = (value) => {
+        if (!value) return null;
+        const normalized = String(value).trim().toUpperCase().replace(/\s+/g, '');
+        const aliases = {
+          'A++': 'A+',
+          'A-': 'A',
+          'B+': 'B',
+          'B-': 'B',
+          'C+': 'C',
+          'C-': 'C',
+          'D+': 'D',
+          'D-': 'D',
+          'E+': 'E',
+          'E-': 'E',
+          'F+': 'F',
+          'F-': 'F',
+          'G+': 'G',
+          'G-': 'G'
+        };
+        return aliases[normalized] || normalized;
+      };
+
+      const lang = (window.getLang ? window.getLang() : 'en') || 'en';
+      const translated = prop.translations && prop.translations[lang] ? prop.translations[lang] : {};
+      const title = pickText(translated.title, prop.title, prop.name) || ('Property ' + prop.id);
+      const desc = pickText(translated.description, prop.description, prop.desc, prop.longDescription);
+      const hood = pickText(translated.neighbourhood, prop.neighbourhoodDesc, prop.neighbourhoodDescription, prop.neighbourhood, prop.district);
+      const addressText = pickText(
+        prop.address,
+        prop.locationAddress,
+        prop.streetAddress,
+        [pickText(prop.neighbourhood), pickText(prop.city)].filter(Boolean).join(', ')
+      );
+      const priceValue = pickNumber(prop.price, prop.listPrice, prop.askingPrice);
+      const propertyType = pickText(prop.type, prop.propertyType, prop.category);
+      const energyRatingRaw = pickText(
+        prop.energyRating,
+        prop.energyClass,
+        prop.energyGrade,
+        prop.energyCertificateRating,
+        prop.energy_class,
+        prop.energy_certificate_rating,
+        prop.energy && prop.energy.rating,
+        prop.energy && prop.energy.class
+      );
+      const energyKwhValue = pickPositive(
+        prop.energyKwh,
+        prop.energyConsumption,
+        prop.energyConsumptionKwh,
+        prop.energy_kwh,
+        prop.energy && prop.energy.kwh,
+        prop.energy && prop.energy.consumption
+      );
+
+      // Header
+      document.getElementById('pd-id').textContent = tr('detailIdLabel') + ' ' + prop.id;
+      document.getElementById('pd-title').textContent = title;
+      document.getElementById('pd-address').textContent = addressText || tr('detailNotProvided');
+      document.getElementById('pd-price').textContent = prop.priceOnRequest ? tr('formPriceOnRequest') : '€' + Number(priceValue || 0).toLocaleString();
+      const translatedStatus = typeof window.translateListingStatus === 'function'
+        ? window.translateListingStatus(prop.status || 'For Sale', lang)
+        : (prop.status || tr('cardForSale'));
+      document.getElementById('pd-status').innerHTML = `<span class="badge-dot"></span> ${translatedStatus}`;
+
+      const agentName = pickText(prop.agentName, prop.agent && prop.agent.name, prop.ownerName, prop.agent) || tr('navAdmin');
+      document.getElementById('pd-agent-name').textContent = agentName;
+      const agentRoleText = pickText(prop.agentRole, prop.role, prop.agent && prop.agent.role, prop.ownerRole) || '';
+      const isAdminProfile = /admin/i.test(agentRoleText) || /admin/i.test(agentName);
+      document.getElementById('pd-agent-role').textContent = isAdminProfile
+        ? tr('detailAgentRoleAdmin')
+        : tr('detailAgentRoleBroker');
+      const agentPhoto = pickText(
+        prop.agentPhoto,
+        prop.agentAvatar,
+        prop.agentImage,
+        prop.agentProfilePhoto,
+        prop.agent && prop.agent.photoUrl,
+        prop.agent && prop.agent.profilePhoto
+      );
+      setDetailAgentPhoto(agentPhoto);
+
+      // Gallery
+      const imgs = getPropImages();
+      document.getElementById('gallery-main-img').src = imgs[0] || '';
+      document.getElementById('gallery-badge-type').textContent = (propertyType || tr('fType')).toUpperCase();
+      document.getElementById('gallery-count-txt').textContent = tr('detailViewAllPhotos').replace('{count}', imgs.length);
+
+      // Thumbnails — show up to 4
+      const thumbContainer = document.getElementById('gallery-thumbs');
+      thumbContainer.innerHTML = '';
+      imgs.slice(0, 4).forEach((src, i) => {
+        const div = document.createElement('div');
+        div.className = 'gallery-thumb' + (i === 0 ? ' active' : '');
+        div.innerHTML = `<img src="${src}" alt="Photo ${i+1}"><div class="gallery-thumb-overlay"></div>`;
+        div.onclick = () => setMainPhoto(i, imgs);
+        thumbContainer.appendChild(div);
+      });
+
+      // Pill strip
+      const floorValue = pickText(prop.floor, prop.floorNumber, prop.level);
+      const totalFloorsValue = pickPositive(prop.totalFloors, prop.floors, prop.totalLevels);
+      const elevatorValue = boolToText(prop.elevator);
+      const chargingValue = boolToText(prop.carCharging);
+      const internalAreaValue = pickPositive(prop.areaInternal, prop.internalArea, prop.sizeSqFt, prop.size, prop.builtArea);
+      const externalAreaValue = pickPositive(prop.areaExternal, prop.areaPrivate, prop.areaPlot, prop.plotSize, prop.landArea, prop.terraceArea);
+      const usableAreaValue = pickPositive(prop.usableArea, prop.areaUsable, prop.livingArea);
+      const roomsValue = pickNumber(prop.rooms, prop.totalRooms, prop.bedrooms);
+      const bathroomsValue = pickPositive(prop.bathrooms, prop.totalBathrooms, prop.wc);
+      const storageValue = pickPositive(prop.storageRooms, prop.storage, prop.storageRoomCount);
+      const parkingValue = pickPositive(prop.parkingSpaces, prop.parking, prop.garageSpaces);
+      const yearBuiltValue = pickPositive(prop.yearBuilt, prop.yearOfConstruction, prop.constructionYear, prop.builtYear);
+      const furnishingValue = pickText(prop.furnishing, prop.furnishingStatus) || boolToText(prop.furnished);
+
+      const pills = [];
+      if (floorValue) pills.push(`<div class="pill"><i class="fas fa-layer-group"></i> ${tr('detailFloor')} ${floorValue}</div>`);
+      if (elevatorValue) pills.push(`<div class="pill"><i class="fas fa-elevator"></i> ${tr('detailElevator')}: ${elevatorValue}</div>`);
+      if (chargingValue) pills.push(`<div class="pill"><i class="fas fa-plug"></i> ${tr('detailElectricCarCharging')}: ${chargingValue}</div>`);
+      if (internalAreaValue) pills.push(`<div class="pill"><i class="fas fa-vector-square"></i> ${internalAreaValue} m²</div>`);
+      if (roomsValue !== undefined && roomsValue !== null) pills.push(`<div class="pill"><i class="fas fa-door-open"></i> T${roomsValue}</div>`);
+      if (bathroomsValue) pills.push(`<div class="pill"><i class="fas fa-bath"></i> ${bathroomsValue} ${tr('detailBathrooms')}</div>`);
+      if (yearBuiltValue) pills.push(`<div class="pill"><i class="fas fa-calendar-check"></i> ${tr('detailBuiltPrefix')} ${yearBuiltValue}</div>`);
+      if (energyRatingRaw) pills.push(`<div class="pill pill-energy"><i class="fas fa-bolt"></i> ${tr('detailEnergyClassPrefix')} ${String(energyRatingRaw).toUpperCase()}</div>`);
+      document.getElementById('pill-strip').innerHTML = pills.join('');
+
+      // ─── DETAILS GRID ───
+      const rows = [
+        { icon: 'fa-layer-group', label: tr('detailFloor'), val: floorValue },
+        { icon: 'fa-building', label: tr('detailTotalFloors'), val: totalFloorsValue },
+        { icon: 'fa-elevator', label: tr('detailElevator'), val: elevatorValue },
+        { icon: 'fa-plug', label: tr('detailElectricCarCharging'), val: chargingValue },
+        { icon: 'fa-calendar-check', label: tr('detailYearOfConstruction'), val: yearBuiltValue },
+        { icon: 'fa-house', label: tr('fType'), val: propertyType },
+        { icon: 'fa-location-dot', label: tr('detailAddress'), val: prop.address },
+        { icon: 'fa-city', label: tr('detailCity'), val: prop.city },
+        { icon: 'fa-map-pin', label: tr('detailPostalCode'), val: prop.postalCode },
+        { icon: 'fa-map-location-dot', label: tr('detailNeighbourhood'), val: prop.neighbourhood },
+        { icon: 'fa-location-dot', label: 'Latitude', val: prop.lat },
+        { icon: 'fa-location-dot', label: 'Longitude', val: prop.lng },
+
+
+        { icon: 'fa-vector-square', label: tr('detailInternalArea'), val: internalAreaValue ? internalAreaValue + ' m²' : null },
+        { icon: 'fa-expand', label: tr('detailExternalArea'), val: externalAreaValue ? externalAreaValue + ' m²' : null },
+        { icon: 'fa-ruler-combined', label: tr('detailUsableArea'), val: usableAreaValue ? usableAreaValue + ' m²' : null },
+        { icon: 'fa-door-open', label: tr('detailRooms'), val: 'T' + roomsValue },
+        { icon: 'fa-bath', label: tr('detailBathroomsWc'), val: bathroomsValue },
+        { icon: 'fa-box-archive', label: tr('detailStorageRooms'), val: storageValue },
+        { icon: 'fa-car', label: tr('detailParkingSpaces'), val: parkingValue },
+        { icon: 'fa-couch', label: tr('fFurnishing'), val: furnishingValue },
+      ];
+
+      const genGrid = document.getElementById('pd-details-general');
+      genGrid.innerHTML = rows.map((r) => {
+        const missing = r.val === null || r.val === undefined || r.val === '';
+        const shown = missing ? tr('detailNotProvided') : r.val;
+        return `
+        <div class="detail-row">
+          <div class="detail-label"><i class="fas ${r.icon}"></i> ${r.label}</div>
+          <div class="detail-value ${missing ? 'na' : ''}">${shown}</div>
+        </div>
+      `;
+      }).join('');
+
+      // Amenity chips
+      const chips = [];
+      if (prop.ac) chips.push('<div class="amenity-chip"><i class="fas fa-wind"></i> ' + tr('detailAC') + '</div>');
+      if (prop.heating) chips.push('<div class="amenity-chip"><i class="fas fa-fire-alt"></i> ' + tr('detailHeating') + '</div>');
+      if (prop.pool) chips.push('<div class="amenity-chip"><i class="fas fa-swimming-pool"></i> ' + tr('detailSwimmingPool') + '</div>');
+      if (prop.garden) chips.push('<div class="amenity-chip"><i class="fas fa-tree"></i> ' + tr('detailGarden') + '</div>');
+      if (prop.fireplace) chips.push('<div class="amenity-chip"><i class="fas fa-fire"></i> ' + tr('detailFireplace') + '</div>');
+      if (prop.security) chips.push('<div class="amenity-chip"><i class="fas fa-shield-alt"></i> ' + tr('detailSecurity') + '</div>');
+      if (prop.smartHome) chips.push('<div class="amenity-chip"><i class="fas fa-home"></i> ' + tr('detailSmartHome') + '</div>');
+      if (prop.solarPanels) chips.push('<div class="amenity-chip"><i class="fas fa-sun"></i> ' + tr('detailSolarPanels') + '</div>');
+      if (prop.gym) chips.push('<div class="amenity-chip"><i class="fas fa-dumbbell"></i> ' + tr('detailGym') + '</div>');
+      if (prop.seaView) chips.push('<div class="amenity-chip"><i class="fas fa-water"></i> ' + tr('detailSeaView') + '</div>');
+      if (prop.riverView) chips.push('<div class="amenity-chip"><i class="fas fa-water"></i> ' + tr('detailRiverView') + '</div>');
+      if (prop.cityView) chips.push('<div class="amenity-chip"><i class="fas fa-city"></i> ' + tr('detailCityView') + '</div>');
+      if (prop.mountainView) chips.push('<div class="amenity-chip"><i class="fas fa-mountain"></i> ' + tr('detailMountainView') + '</div>');
+      if (prop.countrysideView) chips.push('<div class="amenity-chip"><i class="fas fa-mountain"></i> ' + tr('detailCountryside') + '</div>');
+      const extras = [
+        ...asArray(prop.features),
+        ...asArray(prop.customAmenities),
+        ...asArray(prop.views),
+        ...asArray(prop.customViews),
+        ...asArray(prop.equipment)
+      ];
+      const seenExtras = new Set();
+      extras.forEach((e) => {
+        const txt = String(e || '').trim();
+        if (!txt) return;
+        const key = txt.toLowerCase();
+        if (seenExtras.has(key)) return;
+        seenExtras.add(key);
+        if (/kitchen|living\s*room/i.test(txt)) return;
+        chips.push(`<div class="amenity-chip"><i class="fas fa-check-circle"></i> ${txt}</div>`);
+      });
+      const chipEl = document.getElementById('pd-amenity-chips');
+      if (chips.length) {
+        chipEl.innerHTML = chips.join('');
+        document.getElementById('amenities-header').style.display = '';
+      } else {
+        chipEl.parentElement && (document.getElementById('amenities-header').style.display = 'none');
+      }
+
+      // Description
+      document.getElementById('pd-desc').textContent = desc || tr('detailNotProvided');
+      if (hood) {
+        document.getElementById('pd-hood-section').style.display = 'block';
+        document.getElementById('pd-hood').textContent = hood;
+      } else {
+        document.getElementById('pd-hood-section').style.display = 'none';
+        document.getElementById('pd-hood').textContent = '';
+      }
+
+      // Energy
+      const grade = energyRatingRaw ? String(energyRatingRaw).trim().toUpperCase() : 'N/A';
+      const gradeNormalized = normalizeEnergyGrade(grade);
+      const gradeColors = {
+        'A+': '#008000',
+        'A': '#00b050',
+        'B': '#92d050',
+        'C': '#ffff00',
+        'D': '#ffc000',
+        'E': '#ff0000',
+        'F': '#c00000',
+        'G': '#7f1d1d'
+      };
+      const gradeColor = gradeColors[gradeNormalized] || '#94a3b8';
+      const eBox = document.getElementById('pd-e-box');
+      eBox.style.background = gradeColor;
+      document.getElementById('pd-e-grade').textContent = grade;
+      document.getElementById('pd-e-label').textContent = energyRatingRaw
+        ? (tr('detailEnergyClassPrefix') + ' ' + grade)
+        : tr('detailEnergyRatingNotProvided');
+      document.getElementById('pd-e-kwh').textContent = energyKwhValue !== null
+        ? (tr('detailConsumptionPrefix') + ' ' + Number(energyKwhValue).toLocaleString(undefined, { maximumFractionDigits: 1 }) + ' kWh/m²/year')
+        : tr('detailConsumptionNotProvided');
+      // Highlight active segment
+      document.querySelectorAll('.energy-seg').forEach((seg) => {
+        seg.classList.toggle('active', seg.dataset.grade === gradeNormalized);
+      });
+
+      // WhatsApp
+      const waNum = '351918445899';
+      const waMsg = encodeURIComponent(tr('detailWhatsappInterestPrefix') + title + ' (ID: ' + prop.id + ')');
+      document.getElementById('pd-whatsapp').href = 'https://wa.me/' + waNum + '?text=' + waMsg;
+
+      // Mortgage calc seed
+      document.getElementById('mc-price').value = priceValue || 0;
+      calcMortgage();
+
+      // Map
+      renderPropertyMap(prop);
+    }
+
+    function setMainPhoto(idx, imgs) {
+      currentThumbIdx = idx;
+      document.getElementById('gallery-main-img').style.opacity = 0;
+      setTimeout(() => {
+        document.getElementById('gallery-main-img').src = imgs[idx];
+        document.getElementById('gallery-main-img').style.opacity = 1;
+      }, 150);
+      document.querySelectorAll('.gallery-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
+    }
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        if (btn.dataset.tab === 'map' && map) {
+          setTimeout(() => {
+            map.invalidateSize();
+            if (prop && prop.lat && prop.lng) {
+              map.setView([Number(prop.lat), Number(prop.lng)], 19);
+            }
+          }, 200);
+        }
+      });
+    });
+
+    // Map
+    function initMap(lat, lng, zoom) {
+      const latNum = Number(lat);
+      const lngNum = Number(lng);
+      const finalZoom = Number.isFinite(Number(zoom)) ? Number(zoom) : 19;
+      if (!isValidLatLng(latNum, lngNum)) return;
+
+      // Fix Leaflet marker icons not showing
+      delete L.Icon.Default.prototype._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png'
+      });
+
+      if (!map) {
+        map = L.map('property-map', {
+          zoomControl: true,
+          scrollWheelZoom: true,
+          dragging: true,
+          touchZoom: true
+        }).setView([latNum, lngNum], finalZoom);
+        
+        // Use Google Maps Hybrid (Satellite + Labels) for a premium/photorealistic view
+        L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+          attribution: 'Imagery &copy; Google'
+        }).addTo(map);
+        
+        mapMarker = L.marker([latNum, lngNum]).addTo(map);
+        return;
+      }
+
+      map.setView([latNum, lngNum], finalZoom);
+      if (mapMarker) {
+        mapMarker.setLatLng([latNum, lngNum]);
+      } else {
+        mapMarker = L.marker([latNum, lngNum]).addTo(map);
+      }
+      setTimeout(() => map.invalidateSize(), 50);
+    }
+
+    // Fullscreen gallery
+    function openModal(idx) {
+      const imgs = getPropImages();
+      if (!imgs.length) return;
+      fsIdx = idx;
+      updateModal(imgs);
+      document.getElementById('fs-modal').classList.add('open');
+    }
+    function updateModal(imgs) {
+      document.getElementById('fs-img').src = imgs[fsIdx];
+      document.getElementById('fs-counter').textContent = (fsIdx + 1) + ' / ' + imgs.length;
+    }
+    document.getElementById('fs-close').onclick = () => document.getElementById('fs-modal').classList.remove('open');
+    document.getElementById('fs-modal').onclick = (e) => {
+      if (e.target === document.getElementById('fs-modal')) {
+        document.getElementById('fs-modal').classList.remove('open');
+      }
+    };
+    document.getElementById('fs-prev').onclick = () => {
+      const imgs = getPropImages();
+      if (!imgs.length) return;
+      fsIdx = (fsIdx - 1 + imgs.length) % imgs.length;
+      updateModal(imgs);
+    };
+    document.getElementById('fs-next').onclick = () => {
+      const imgs = getPropImages();
+      if (!imgs.length) return;
+      fsIdx = (fsIdx + 1) % imgs.length;
+      updateModal(imgs);
+    };
+    document.addEventListener('keydown', e => {
+      if (!document.getElementById('fs-modal').classList.contains('open')) return;
+      if (e.key === 'Escape') document.getElementById('fs-modal').classList.remove('open');
+      if (e.key === 'ArrowLeft') document.getElementById('fs-prev').click();
+      if (e.key === 'ArrowRight') document.getElementById('fs-next').click();
+    });
+
+    // Mortgage
+    function calcMortgage() {
+      const p = Number(document.getElementById('mc-price').value) || 0;
+      const d = Number(document.getElementById('mc-down').value) || 0;
+      const r = (Number(document.getElementById('mc-rate').value) || 0) / 100 / 12;
+      const n = (Number(document.getElementById('mc-years').value) || 0) * 12;
+      const pv = p - d;
+      let m = 0;
+      if (pv > 0 && n > 0) m = r ? (pv * r * Math.pow(1+r,n)) / (Math.pow(1+r,n)-1) : pv/n;
+      document.getElementById('mc-result').textContent = '€' + Math.round(m).toLocaleString();
+    }
+    ['mc-price','mc-down','mc-rate','mc-years'].forEach(id => document.getElementById(id).addEventListener('input', calcMortgage));
+
+    window.addEventListener('DOMContentLoaded', () => {
+      bindInquiryForm();
+      prefillInquiryFromAuth();
+      loadProp();
+    });
+
+    window.addEventListener('exo:languageChanged', () => {
+      if (prop) {
+        renderProp();
+      }
+    });
+
+    /* Image Modal Functions */
+    window.openImageModal = function(imgSrc) {
+      var modal = document.getElementById('imageModal');
+      var img = document.getElementById('modalImage');
+      img.src = imgSrc;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeImageModal = function() {
+      var modal = document.getElementById('imageModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    };
+
+    document.getElementById('imageModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        window.closeImageModal();
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        window.closeImageModal();
+      }
+    });
+
+    /* Make property images clickable */
+    function makeImagesClickable() {
+      document.querySelectorAll('.property-card-image, .property-card-img, .gallery-main, [data-image-modal]').forEach(function(el) {
+        if (el.classList.contains('image-clickable')) return;
+        var bgImage = window.getComputedStyle(el).backgroundImage;
+        var imgElement = el.querySelector('img');
+        
+        if (bgImage && bgImage !== 'none') {
+          var match = bgImage.match(/url\(["']?([^"']*)["']?\)/);
+          if (match && match[1]) {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', function(e) {
+              e.stopPropagation();
+              window.openImageModal(match[1]);
+            });
+            el.classList.add('image-clickable');
+          }
+        } else if (imgElement && imgElement.src) {
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            window.openImageModal(imgElement.src);
+          });
+          el.classList.add('image-clickable');
+        }
+      });
+    }
+
+    makeImagesClickable();
+    var observer = new MutationObserver(function(mutations) {
+      makeImagesClickable();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  </script>
+  <script src="js/site-chatbot.js"></script>
+
+  <!-- Image Modal -->
+  <div id="imageModal" class="image-modal-overlay">
+    <div class="image-modal-container" onclick="event.stopPropagation()">
+      <button class="image-modal-close" onclick="closeImageModal()" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+      <img id="modalImage" class="image-modal-img" src="" alt="Enlarged property image" />
+    </div>
+  </div>
+</body>
+</html>

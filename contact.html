@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="pageTitleContact">Contact | Exo Real Estate</title>
+  <meta name="description"
+    content="Contact Exo Real Estate for premium property advisory and investment opportunities in Portugal." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: #1e293b;
+      background: #f8fafc;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .hero {
+      background: linear-gradient(130deg, #0f172a, #1e293b 55%, #334155);
+      color: #fff;
+      padding: 88px 0 72px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      left: -120px;
+      bottom: -140px;
+      background: radial-gradient(circle, rgba(79, 110, 247, 0.28), transparent 70%);
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      line-height: 1.1;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero p {
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 16px;
+      line-height: 1.75;
+      max-width: 720px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section {
+      padding: 70px 0;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+      padding: 28px;
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      color: #0f172a;
+      font-size: 30px;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+
+    .sub {
+      color: #64748b;
+      margin-bottom: 18px;
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      width: 100%;
+      border: 1.5px solid #dbe4f3;
+      border-radius: 14px;
+      padding: 13px 16px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      margin-bottom: 12px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .field:focus {
+      border-color: #4f6ef7;
+      box-shadow: 0 0 0 4px rgba(79, 110, 247, 0.12);
+    }
+
+    .field.textarea {
+      min-height: 136px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 18px;
+      background: #0f172a;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+
+    .btn:hover {
+      background: #1e293b;
+      transform: translateY(-1px);
+    }
+
+    .status {
+      margin-top: 12px;
+      font-size: 13px;
+      display: none;
+      font-weight: 600;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+
+    .status.pending {
+      display: block;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .status.success {
+      display: block;
+      color: #047857;
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+
+    .status.error {
+      display: block;
+      color: #b91c1c;
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    .info-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .info-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .info-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: #475569;
+      line-height: 1.7;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .info-line i {
+      color: #4f6ef7;
+      margin-top: 4px;
+      width: 16px;
+      text-align: center;
+    }
+
+    .map-wrap iframe {
+      width: 100%;
+      height: 286px;
+      border: 0;
+      border-radius: 14px;
+    }
+
+    .socials {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .social {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-decoration: none;
+      transition: transform 0.18s ease;
+    }
+
+    .social:hover {
+      transform: translateY(-2px);
+    }
+
+    .ig {
+      background: #0f172a;
+    }
+
+    .yt {
+      background: #dc2626;
+    }
+
+    .wa {
+      background: #059669;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 24px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 76px 0 58px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <script src="js/i18n.js"></script>
+  <script src="js/navbar.js"></script>
+
+  <section class="hero">
+    <div class="container">
+      <h1 data-i18n="contactHeroTitle">Contact Exo Real Estate</h1>
+      <p data-i18n="contactHeroSubtitle">Speak with an advisor about buying, investing, or listing premium property
+        across Portugal.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container layout">
+      <article class="card">
+        <h2 class="title" data-i18n="contactFormTitle">Send A Message</h2>
+        <p class="sub" data-i18n="contactFormSubtitle">Tell us your objective and preferred locations. Our team will
+          respond with relevant options and timelines.</p>
+        <form id="contact-form">
+          <div class="row">
+            <input name="firstName" required data-i18n-placeholder="contactName" placeholder="First Name"
+              class="field" />
+            <input name="lastName" required data-i18n-placeholder="contactName" placeholder="Last Name" class="field" />
+          </div>
+          <input type="email" name="email" required data-i18n-placeholder="contactEmail" placeholder="Email Address"
+            class="field" />
+          <input type="tel" name="phone" required data-i18n-placeholder="contactPhone" placeholder="Phone Number"
+            class="field" />
+          <textarea name="message" rows="5" required data-i18n-placeholder="contactMessage"
+            placeholder="Your message..." class="field textarea"></textarea>
+          <button class="btn" type="submit" data-i18n="contactSubmit">Submit Inquiry</button>
+        </form>
+        <p id="contact-status" class="status" aria-live="polite"></p>
+      </article>
+
+      <aside class="info-stack">
+        <div class="card">
+          <h3 class="info-title" data-i18n="contactOfficeTitle">Office Details</h3>
+          <div class="info-line"><i class="fas fa-location-dot"></i><span data-i18n="contactOfficeAddress">Av. da Liberdade 144 2 DTO, 1250-146 Lisboa, Portugal</span></div>
+          <div class="info-line"><i class="fas fa-phone"></i><span>+351 918 445 899</span></div>
+          <div class="info-line"><i class="fas fa-envelope"></i><span
+              data-i18n="contactOfficeEmail">info@exorealestate.com</span></div>
+        </div>
+
+          <div class="card map-wrap">
+          <iframe loading="lazy" allowfullscreen
+            src="https://www.google.com/maps?q=EXO%20REAL%20ESTATE%20Av.%20da%20Liberdade%20144%20Lisboa&t=&z=16&ie=UTF8&iwloc=&output=embed"></iframe>
+        </div>
+
+        <div class="card">
+          <h3 class="info-title" data-i18n="contactConnectTitle">Connect With Us</h3>
+          <div class="socials">
+            <a href="https://www.instagram.com/exorealestate1/" target="_blank" class="social ig" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.youtube.com/@EXORealEstate1" target="_blank" class="social yt" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="https://wa.me/351918445899" class="social wa" target="_blank" aria-label="WhatsApp"><i
+                class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase.js"></script>
+  <script>
+    const contactForm = document.getElementById('contact-form');
+    const contactStatus = document.getElementById('contact-status');
+
+    function setContactStatus(type, message) {
+      contactStatus.className = 'status ' + type;
+      contactStatus.textContent = message;
+    }
+
+    contactForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const fd = new FormData(contactForm);
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+
+      setContactStatus('pending', window.t('contactSending'));
+      submitBtn.disabled = true;
+      submitBtn.textContent = window.t('contactSending');
+
+      try {
+        if (!window.db) throw new Error('Database unavailable');
+        await window.db.collection('inquiries').add({
+          source: 'contact',
+          name: (String(fd.get('firstName') || '') + ' ' + String(fd.get('lastName') || '')).trim(),
+          email: String(fd.get('email') || ''),
+          phone: String(fd.get('phone') || ''),
+          message: String(fd.get('message') || ''),
+          status: 'new',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        contactForm.reset();
+        setContactStatus('success', window.t('contactSuccessFull'));
+        setTimeout(() => {
+          contactStatus.className = 'status';
+          contactStatus.textContent = '';
+        }, 5000);
+      } catch (err) {
+        setContactStatus('error', window.t('contactErrorFull'));
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = window.t('contactSubmit');
+      }
+    });
+  </script>
+  <!-- Footer Section -->
+  <footer id="contact" class="bg-[#0B1120] text-slate-300 pt-24 pb-4 relative overflow-hidden">
+    <!-- Decorative background elements -->
+    <div
+      class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-gold to-transparent opacity-70">
+    </div>
+    <div
+      class="absolute -top-[500px] -right-[500px] w-[1000px] h-[1000px] bg-brand-gold/5 rounded-full blur-3xl pointer-events-none">
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-16 relative z-10 mb-20">
+
+      <!-- Brand & About -->
+      <div class="lg:col-span-1 flex flex-col items-start pr-4">
+        <img src="logo.png" alt="Exo Real Estate Logo"
+          class="w-64 md:w-80 lg:w-96 h-auto object-contain object-left mb-10"
+          style="filter: invert(1) hue-rotate(180deg) brightness(1.5); mix-blend-mode: screen;"
+          onerror="this.src='https://via.placeholder.com/400x150?text=Exo+Real+Estate';" />
+        <p class="text-slate-400 text-sm leading-relaxed mb-8" data-i18n="aboutBrandJourneyText">
+          Take your first step towards an exciting international journey. Whether you’re an aspiring investor, an
+          entrepreneur with global ambitions, or someone seeking a new adventure, Exo Real Estate guides you through each
+          stage.
+        </p>
+        <div class="flex gap-4">
+          <a href="#"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/exorealestate1/" target="_blank"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-instagram"></i></a>
+          <a href="#"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-tiktok"></i></a>
+          <a href="https://www.youtube.com/@EXORealEstate1" target="_blank"
+            class="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-brand-gold hover:text-[#0B1120] hover:border-brand-gold transition-all"><i
+              class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="flex flex-col gap-10">
+        <div>
+          <h4 class="text-white font-serif font-bold text-xl mb-6 relative inline-block"><span
+              data-i18n="footerQuickLinksTitle">Quick Links</span><span
+              class="absolute -bottom-2 left-0 w-8 h-0.5 bg-brand-gold"></span></h4>
+          <ul class="space-y-4 text-sm mt-4">
+            <li><a href="about.html"
+                class="hover:text-brand-gold hover:translate-x-1 inline-block transition-transform duration-300"
+                data-i18n="footerAbout">About
+                Us</a></li>
+            <li><a href="team.html"
+                class="hover:text-brand-gold hover:translate-x-1 inline-block transition-transform duration-300"
+                data-i18n="footerTeamLink">Team</a>
+            </li>
+            <li><a href="#"
+                class="hover:text-brand-gold hover:translate-x-1 inline-block transition-transform duration-300"
+                data-i18n="footerBlogLink">Blog</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div>
+        <h4 class="text-white font-serif font-bold text-xl mb-6 relative inline-block"><span
+            data-i18n="footerFurtherQueries">For Further Queries</span><span
+            class="absolute -bottom-2 left-0 w-8 h-0.5 bg-brand-gold"></span></h4>
+
+        <div class="space-y-6 mt-4 opacity-90">
+          <div class="flex items-start gap-4 group cursor-pointer">
+            <div
+              class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center group-hover:bg-brand-gold transition-colors">
+              <i class="fa-solid fa-envelope text-brand-gold group-hover:text-white transition-colors"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="footerEmailUs">Email Us</p>
+              <p class="text-white font-medium text-sm transition-colors group-hover:text-brand-gold">
+                info@exorealestate.com
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4 group cursor-pointer">
+            <div
+              class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center group-hover:bg-brand-gold transition-colors">
+              <i class="fa-solid fa-phone text-brand-gold group-hover:text-white transition-colors"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="footerCallInfo">Call To Get
+                More Info</p>
+              <p class="text-white font-medium text-sm transition-colors group-hover:text-brand-gold">+351 918 445 899
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4 group cursor-pointer">
+            <div
+              class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center group-hover:bg-green-500 transition-colors">
+              <i class="fa-brands fa-whatsapp text-green-400 group-hover:text-white transition-colors"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="footerWhatsApp">WhatsApp</p>
+              <p class="text-white font-medium text-sm transition-colors group-hover:text-green-400">+351 918 445 899
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4 pt-2">
+            <div class="w-10 h-10 rounded-full bg-slate-800 flex flex-shrink-0 items-center justify-center">
+              <i class="fa-solid fa-id-card text-brand-gold"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 uppercase tracking-wider mb-1" data-i18n="License Number">License
+                Number</p>
+              <p class="text-white font-medium text-sm" data-i18n="licenseAmiValue"> AMI 18166</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Offices & Map -->
+      <div>
+        <h4 class="text-white font-serif font-bold text-xl mb-6 relative inline-block"><span
+            data-i18n="footerOurOffices">Our Offices</span><span
+            class="absolute -bottom-2 left-0 w-8 h-0.5 bg-brand-gold"></span></h4>
+
+        <div class="space-y-6 mt-4">
+          <div class="group">
+            <p class="text-brand-gold font-semibold text-sm mb-2 uppercase tracking-wide"
+              data-i18n="footerHeadOfficePortugal">Head Office (Portugal)</p>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4 group-hover:text-slate-300 transition-colors">
+              Av. da Liberdade 144 2 DTO,<br />1250-146 Lisboa, Portugal
+            </p>
+            <div
+              class="h-32 w-full rounded-xl overflow-hidden ring-1 ring-white/10 shadow-lg group-hover:ring-brand-gold/50 transition-all">
+              <iframe
+                src="https://www.google.com/maps?q=EXO%20REAL%20ESTATE%20Av.%20da%20Liberdade%20144%20Lisboa&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="relative z-10 border-t border-slate-800/80 pt-8 text-center">
+      <p class="text-slate-500 text-sm" data-i18n="footerCopyright2023">
+        ©2023 Exo Real Estate. All Rights Reserved.
+      </p>
+    </div>
+  </footer>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-gold': '#D4AF37',
+          },
+          fontFamily: {
+            'serif': ['Playfair Display', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <script src="js/site-chatbot.js"></script>
+</body>
+
+</html>

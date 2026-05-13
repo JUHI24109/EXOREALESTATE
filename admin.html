@@ -1,0 +1,3246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="pageTitleAdmin">Admin Dashboard | Exo Real Estate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    :root {
+      --bg: #f1f3f8;
+      --white: #ffffff;
+      --sidebar-bg: #fafbfe;
+      --sidebar-width: 260px;
+      --header-height: 62px;
+
+      --text-primary: #1e2235;
+      --text-secondary: #64698a;
+      --text-muted: #9599b3;
+      --text-white: #ffffff;
+
+      --border: #e2e5ef;
+      --border-light: #eef0f6;
+
+      --accent: #4f6ef7;
+      --accent-hover: #3b5de7;
+      --accent-light: #eef1fe;
+
+      --green: #22c55e;
+      --green-bg: #ecfdf5;
+      --green-text: #166534;
+
+      --red: #ef4444;
+      --red-bg: #fef2f2;
+      --red-text: #991b1b;
+
+      --amber: #f59e0b;
+      --amber-bg: #fffbeb;
+      --amber-text: #92400e;
+
+      --violet: #8b5cf6;
+      --violet-bg: #f5f3ff;
+      --violet-text: #5b21b6;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.1);
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 999px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* ==================== SIDEBAR ==================== */
+    .sidebar {
+      position: fixed; left: 0; top: 0;
+      width: var(--sidebar-width); height: 100vh;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      z-index: 40;
+    }
+    .sidebar-logo {
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .sidebar-logo .logo-icon {
+      width: 38px; height: 38px; border-radius: var(--radius-sm);
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 14px; color: var(--text-white);
+      letter-spacing: -0.5px;
+    }
+    .sidebar-logo .logo-text {
+      font-weight: 700; font-size: 15px; color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .sidebar-logo .logo-sub {
+      font-size: 11px; color: var(--text-muted); font-weight: 400;
+    }
+
+    .sidebar-nav {
+      flex: 1; padding: 16px 12px; overflow-y: auto;
+    }
+    .sidebar-nav .nav-label {
+      font-size: 10px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 1.2px;
+      padding: 8px 14px 6px; margin-top: 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 500; color: var(--text-secondary);
+      cursor: pointer; transition: all 0.18s ease;
+      text-decoration: none; margin-bottom: 2px;
+    }
+    .nav-item:hover { background: var(--bg); color: var(--text-primary); }
+    .nav-item.active {
+      background: var(--accent-light); color: var(--accent); font-weight: 600;
+    }
+    .nav-item i { width: 18px; text-align: center; font-size: 14px; }
+
+    .sidebar-profile {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-light);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar-profile .avatar {
+      width: 36px; height: 36px; border-radius: var(--radius-full);
+      background: var(--accent-light); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px; flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(79, 110, 247, 0.15);
+    }
+    .sidebar-profile .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .sidebar-profile .avatar.has-photo img { display: block; }
+    .sidebar-profile .avatar.has-photo .avatar-initial { display: none; }
+    .admin-brand-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border-light);
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      padding: 5px;
+    }
+    .admin-brand-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .sidebar-profile .profile-name {
+      font-size: 13px; font-weight: 600; color: var(--text-primary);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .sidebar-profile .profile-role {
+      font-size: 11px; color: var(--text-muted); font-weight: 400;
+    }
+
+    /* ==================== MAIN AREA ==================== */
+    .main-area {
+      margin-left: var(--sidebar-width);
+      height: 100vh; display: flex; flex-direction: column;
+    }
+    .top-bar {
+      height: var(--header-height); min-height: var(--header-height);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px;
+      position: sticky; top: 0; z-index: 30;
+    }
+    .top-bar h1 {
+      font-size: 18px; font-weight: 700; color: var(--text-primary);
+    }
+    .top-bar-right {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .lang-select-dashboard {
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      color: var(--text-primary);
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .top-bar-right .admin-label {
+      font-size: 13px; color: var(--text-secondary); font-weight: 500;
+    }
+
+    .content-scroll {
+      flex: 1; overflow-y: auto; padding: 28px 32px 40px;
+    }
+    .content-scroll::-webkit-scrollbar { width: 5px; }
+    .content-scroll::-webkit-scrollbar-track { background: transparent; }
+    .content-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+    /* ==================== SECTIONS ==================== */
+    .dash-section { display: none; }
+    .dash-section.active { display: block; animation: fadeUp 0.28s ease; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==================== STAT CARDS ==================== */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--white); border-radius: var(--radius-md);
+      padding: 22px 24px; box-shadow: var(--shadow-card);
+      border-top: 3px solid transparent;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px); box-shadow: var(--shadow-md);
+    }
+    .stat-card:nth-child(1) { border-top-color: var(--accent); }
+    .stat-card:nth-child(2) { border-top-color: var(--green); }
+    .stat-card:nth-child(3) { border-top-color: var(--amber); }
+    .stat-card:nth-child(4) { border-top-color: var(--violet); }
+
+    .stat-card .stat-label {
+      font-size: 12px; font-weight: 600; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px;
+    }
+    .stat-card .stat-value {
+      font-size: 32px; font-weight: 700; color: var(--text-primary);
+      line-height: 1;
+    }
+    .stat-card .stat-sub {
+      font-size: 12px; color: var(--text-muted); margin-top: 6px;
+    }
+
+    /* ==================== CARD CONTAINER ==================== */
+    .card {
+      background: var(--white); border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card); overflow: hidden;
+    }
+    .card-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-header h3 {
+      font-size: 15px; font-weight: 700; color: var(--text-primary);
+    }
+    .card-body { padding: 0; }
+
+    /* ==================== DATA TABLE ==================== */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table thead th {
+      text-align: left; padding: 12px 24px;
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--text-muted); background: #fafbfc;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .data-table tbody td {
+      padding: 14px 24px; font-size: 14px; color: var(--text-primary);
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: middle;
+    }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover { background: #f9fafb; }
+
+    .agent-cell {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .agent-avatar {
+      width: 34px; height: 34px; border-radius: var(--radius-full);
+      background: var(--accent-light); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px; flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .agent-name { font-weight: 600; color: var(--text-primary); }
+
+    /* ==================== BADGES ==================== */
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 14px; border-radius: var(--radius-full);
+      font-size: 12px; font-weight: 600;
+    }
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+    .badge-active { background: var(--green-bg); color: var(--green-text); }
+    .badge-active .badge-dot { background: var(--green); }
+    .badge-inactive { background: var(--red-bg); color: var(--red-text); }
+    .badge-inactive .badge-dot { background: var(--red); }
+
+    /* ==================== BUTTONS ==================== */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 8px 18px; border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; border: none;
+      transition: all 0.18s ease;
+    }
+    .btn-primary { background: var(--accent); color: var(--text-white); }
+    .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 4px 14px rgba(79,110,247,0.25); }
+    .btn-outline {
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { background: var(--bg); color: var(--text-primary); }
+    .btn-danger-soft { background: var(--red-bg); color: var(--red-text); }
+    .btn-danger-soft:hover { background: #fecaca; }
+    .btn-success-soft { background: var(--green-bg); color: var(--green-text); }
+    .btn-success-soft:hover { background: #bbf7d0; }
+    .btn-sm { padding: 6px 14px; font-size: 12px; }
+
+    /* ==================== MODAL ==================== */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(4px); z-index: 60;
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .modal-backdrop.open { display: flex; animation: modalFadeIn 0.2s ease; }
+    .modal-box {
+      background: var(--white); border-radius: var(--radius-lg);
+      width: 100%; max-width: 460px; padding: 28px 32px 32px;
+      box-shadow: var(--shadow-lg);
+      animation: modalSlideUp 0.3s cubic-bezier(0.16,1,0.3,1);
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+    @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes modalSlideUp {
+      from { opacity: 0; transform: translateY(12px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .modal-header h3 { font-size: 18px; font-weight: 700; }
+    .modal-close {
+      width: 32px; height: 32px; border-radius: var(--radius-sm);
+      border: none; background: transparent; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 16px;
+      transition: background 0.15s;
+    }
+    .modal-close:hover { background: var(--bg); color: var(--text-primary); }
+
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--text-primary); margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-primary);
+      outline: none; transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      background: var(--white);
+    }
+    .form-textarea {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-primary);
+      outline: none; transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      background: var(--white); resize: vertical;
+      min-height: 90px;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79,110,247,0.1);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .form-file-input {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px dashed var(--border); border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      color: var(--text-secondary); cursor: pointer; transition: border-color 0.18s;
+      background: var(--white);
+    }
+    .form-file-input:hover { border-color: var(--accent); }
+
+    #admin-property-form > div {
+      background: linear-gradient(180deg, #ffffff, #fbfcff);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: 0 2px 10px rgba(30, 34, 53, 0.04);
+    }
+    #admin-property-form > div > h3 {
+      margin-bottom: 14px !important;
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+    .dynamic-add-row {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .dynamic-add-row .form-input { flex: 1; }
+    .dynamic-add-row .btn { white-space: nowrap; }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+
+    /* ==================== PROPERTY CARDS ==================== */
+    .props-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .prop-card {
+      background: var(--white); border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card); overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .prop-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .prop-card-img {
+      height: 170px; background-size: cover; background-position: center;
+      background-color: #e5e7eb; position: relative;
+    }
+    .prop-card-img .price-tag {
+      position: absolute; bottom: 12px; left: 12px;
+      background: var(--text-primary); color: var(--text-white);
+      padding: 5px 14px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 700;
+    }
+    .prop-card-body { padding: 16px 18px 18px; }
+    .prop-card-body h4 {
+      font-size: 14px; font-weight: 700; color: var(--text-primary);
+      margin-bottom: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .prop-card-body .prop-addr {
+      font-size: 12px; color: var(--text-muted); margin-bottom: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .prop-card-body .prop-agent {
+      font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;
+    }
+    .status-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid transparent;
+      box-shadow: 0 8px 18px rgba(15,23,42,0.08);
+      text-transform: uppercase;
+    }
+    .status-for-sale { background: rgba(79,110,247,0.92); color: #fff; border-color: rgba(191,219,254,0.6); }
+    .status-for-rent { background: rgba(16,185,129,0.92); color: #fff; border-color: rgba(167,243,208,0.6); }
+    .status-sold { background: rgba(244,63,94,0.92); color: #fff; border-color: rgba(254,202,202,0.6); }
+    .status-new-development { background: rgba(245,158,11,0.92); color: #fff; border-color: rgba(253,230,138,0.65); }
+    .status-investment { background: rgba(139,92,246,0.92); color: #fff; border-color: rgba(221,214,254,0.7); }
+    .status-default { background: rgba(15,23,42,0.88); color: #fff; border-color: rgba(226,232,240,0.55); }
+    .prop-card.loading,
+    .stat-card.loading,
+    .card.loading {
+      position: relative;
+      overflow: hidden;
+    }
+    .prop-card.loading::after,
+    .stat-card.loading::after,
+    .card.loading::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+      animation: loadingShimmer 1.15s infinite;
+    }
+    @keyframes loadingShimmer {
+      100% { transform: translateX(100%); }
+    }
+
+    /* ==================== MESSAGES ==================== */
+    .msg-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-light);
+      transition: background 0.15s;
+    }
+    .msg-item:hover { background: #fafbfc; }
+    .msg-item:last-child { border-bottom: none; }
+    .msg-avatar {
+      width: 38px; height: 38px; border-radius: var(--radius-full);
+      background: var(--accent-light); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .msg-body { flex: 1; min-width: 0; }
+    .msg-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+    .msg-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .msg-time { font-size: 11px; color: var(--text-muted); }
+    .msg-preview { font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .msg-contact { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .enquiry-list {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+    .enquiry-card {
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #ffffff, #f9fbff);
+      padding: 14px;
+      box-shadow: 0 4px 14px rgba(15,23,42,0.05);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .enquiry-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(15,23,42,0.08);
+      border-color: #d7def1;
+    }
+    .enquiry-card.expanded { border-color: #c7d2fe; box-shadow: 0 10px 24px rgba(79,110,247,0.15); }
+    .enquiry-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .enquiry-person {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .enquiry-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent-light);
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .enquiry-name { font-size: 13px; font-weight: 800; color: var(--text-primary); }
+    .enquiry-time { font-size: 11px; color: var(--text-muted); font-weight: 700; }
+    .enquiry-prop { font-size: 12px; font-weight: 800; color: var(--text-secondary); margin-bottom: 6px; }
+    .enquiry-message {
+      margin-top: 6px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f8faff;
+      color: var(--text-secondary);
+      font-size: 12.8px;
+      line-height: 1.62;
+      border: 1px solid #e7ebf7;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .enquiry-card.expanded .enquiry-message {
+      display: block;
+      -webkit-line-clamp: unset;
+      overflow: visible;
+    }
+    .enquiry-meta {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 700;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .enquiry-meta span {
+      background: #f1f5ff;
+      border: 1px solid #dbe3ff;
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+    .enquiry-bottom {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .enquiry-toggle {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text-secondary);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .enquiry-toggle:hover { border-color: #c7d2fe; color: var(--accent); }
+    .enquiry-toggle.hidden { display: none; }
+    .enquiry-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .enquiry-action-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text-secondary);
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .enquiry-action-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .enquiry-action-btn.delete:hover { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
+
+    /* ==================== RECENT ACTIVITY ==================== */
+    .activity-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot {
+      width: 34px; height: 34px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 13px;
+    }
+    .activity-dot-blue { background: var(--accent-light); color: var(--accent); }
+    .activity-text { flex: 1; min-width: 0; }
+    .activity-title {
+      font-size: 13px; font-weight: 500; color: var(--text-primary);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .activity-sub { font-size: 12px; color: var(--text-muted); }
+    .activity-price { font-size: 14px; font-weight: 700; color: var(--green-text); white-space: nowrap; }
+
+    /* ==================== SECTION HEADER ==================== */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 22px;
+    }
+    .section-header h2 { font-size: 18px; font-weight: 700; }
+    .section-header p { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+    /* ==================== TOAST ==================== */
+    .toast-container {
+      position: fixed; bottom: 24px; right: 24px; z-index: 100;
+      display: flex; flex-direction: column-reverse; gap: 10px;
+    }
+    .toast {
+      padding: 14px 22px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      display: flex; align-items: center; gap: 10px;
+      animation: toastSlideIn 0.35s cubic-bezier(0.16,1,0.3,1);
+      min-width: 300px;
+    }
+    .toast-success { background: var(--green-bg); color: var(--green-text); border: 1px solid #bbf7d0; }
+    .toast-error { background: var(--red-bg); color: var(--red-text); border: 1px solid #fecaca; }
+    .toast-info { background: var(--accent-light); color: var(--accent); border: 1px solid #c7d2fe; }
+    @keyframes toastSlideIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ==================== EMPTY STATE ==================== */
+    .empty-state {
+      text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px;
+    }
+    .empty-state i { font-size: 32px; margin-bottom: 12px; display: block; color: var(--border); }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 1100px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .props-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-area { margin-left: 0; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .props-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="Exo Real Estate" style="height: 32px; width: auto;" />
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label" data-i18n="dashboardMenu">Menu</div>
+      <a class="nav-item active" data-section="sec-dashboard">
+        <i class="fas fa-chart-pie"></i> <span data-i18n="adminOverview">Overview</span>
+      </a>
+      <a class="nav-item" data-section="sec-agents">
+        <i class="fas fa-user-tie"></i> <span data-i18n="adminAgents">Agents</span>
+      </a>
+      <a class="nav-item" data-section="sec-properties">
+        <i class="fas fa-building"></i> <span data-i18n="adminProperties">Properties</span>
+      </a>
+      <a class="nav-item" data-section="sec-messages">
+        <i class="fas fa-envelope"></i> <span data-i18n="adminMessages">Messages</span>
+      </a>
+      <a class="nav-item" data-section="sec-users">
+        <i class="fas fa-users"></i> <span data-i18n="adminUsers">Users</span>
+      </a>
+      <a class="nav-item" data-section="sec-content">
+        <i class="fas fa-wand-magic-sparkles"></i> <span data-i18n="adminContent">Content</span>
+      </a>
+
+      <div class="nav-label" style="margin-top: 24px;" data-i18n="agentQuickActions">Quick Links</div>
+      <a class="nav-item" href="index.html">
+        <i class="fas fa-external-link-alt"></i> <span data-i18n="agentViewSite">View Website</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-profile">
+      <div class="admin-brand-avatar" aria-label="Exo Real Estate brand logo" data-i18n-aria-label="ariaBrandLogo">
+        <img src="logo.png" alt="Exo Real Estate" />
+      </div>
+      <div style="min-width:0; flex:1;">
+        <div class="profile-name" id="admin-name-sidebar" data-i18n="adminLabelAdministrator">Administrator</div>
+        <div class="profile-role" id="admin-role-sidebar" data-i18n="navAdmin">Admin</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <h1 id="page-title" data-i18n="adminOverview">Overview</h1>
+      <div class="top-bar-right">
+        <select id="dashboard-lang" class="lang-select-dashboard" aria-label="Language selector" data-i18n-aria-label="ariaLanguageSelector">
+          <option value="en" data-i18n="langEn">EN</option>
+          <option value="pt" data-i18n="langPt">PT</option>
+          <option value="fr" data-i18n="langFr">FR</option>
+          <option value="nl" data-i18n="langNl">NL</option>
+        </select>
+        <span class="admin-label" id="admin-name-header" data-i18n="adminLabelAdministrator">Administrator</span>
+        <button id="logout-btn" class="btn btn-outline btn-sm">
+          <i class="fas fa-arrow-right-from-bracket"></i> <span data-i18n="navLogout">Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content-scroll">
+
+      <!-- ===== OVERVIEW ===== -->
+      <section id="sec-dashboard" class="dash-section active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label" data-i18n="adminTotalProps">Total Properties</div>
+            <div class="stat-value" id="stat-properties">0</div>
+            <div class="stat-sub" data-i18n="adminListedOnPlatform">Listed on platform</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label" data-i18n="adminActiveAgents">Active Agents</div>
+            <div class="stat-value" id="stat-agents">0</div>
+            <div class="stat-sub" data-i18n="adminRegisteredAgents">Registered agents</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label" data-i18n="adminMessages">Messages</div>
+            <div class="stat-value" id="stat-messages">0</div>
+            <div class="stat-sub" data-i18n="adminContactRequests">Contact requests</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label" data-i18n="adminTotalUsers">Total Users</div>
+            <div class="stat-value" id="stat-users">0</div>
+            <div class="stat-sub" data-i18n="adminAllRegisteredAccounts">All registered accounts</div>
+          </div>
+        </div>
+
+        <!-- Two-column overview grid -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+          <!-- Left: Recent Properties -->
+          <div class="card">
+            <div class="card-header">
+              <h3 data-i18n="adminRecentProperties">Recent Properties</h3>
+              <span style="font-size:12px; color:var(--text-muted);" data-i18n="adminLast5Listed">Last 5 listed</span>
+            </div>
+            <div class="card-body" id="recent-activity">
+              <div class="empty-state">
+                <i class="fas fa-clock-rotate-left"></i>
+                <span data-i18n="adminActivityWillAppear">Activity will appear here.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: New Agents -->
+          <div class="card">
+            <div class="card-header">
+              <h3 data-i18n="adminNewAgents">New Agents</h3>
+              <span style="font-size:12px; color:var(--text-muted);" data-i18n="adminRecentlyAdded">Recently added</span>
+            </div>
+            <div class="card-body" id="overview-agents">
+              <div class="empty-state">
+                <i class="fas fa-user-tie"></i>
+                <span data-i18n="adminNoAgentsYet">No agents yet.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Left: Portfolio Summary -->
+          <div class="card">
+            <div class="card-header">
+              <h3 data-i18n="adminPortfolioSummary">Portfolio Summary</h3>
+            </div>
+            <div class="card-body" id="overview-portfolio" style="padding: 20px 24px;">
+              <div class="empty-state"><i class="fas fa-chart-bar"></i><span data-i18n="adminNoDataYet">No data yet.</span></div>
+            </div>
+          </div>
+
+          <!-- Right: Latest Messages -->
+          <div class="card">
+            <div class="card-header">
+              <h3 data-i18n="adminLatestMessages">Latest Messages</h3>
+              <span style="font-size:12px; color:var(--text-muted);" data-i18n="adminRecentEnquiries">Recent enquiries</span>
+            </div>
+            <div class="card-body" id="overview-messages">
+              <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <span data-i18n="adminNoMessages">No messages yet.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===== AGENTS ===== -->
+      <section id="sec-agents" class="dash-section">
+        <div class="section-header">
+          <div>
+            <h2 data-i18n="adminAgentManagement">Agent Management</h2>
+            <p data-i18n="adminManageAgentsSub">Create and manage property agents</p>
+          </div>
+          <button class="btn btn-primary" id="open-agent-modal">
+            <i class="fas fa-plus"></i> <span data-i18n="adminAddAgent">Add Agent</span>
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-body" id="agents-list">
+            <table class="data-table">
+              <thead><tr><th data-i18n="tableName">Name</th><th data-i18n="tablePhone">Phone</th><th data-i18n="tableEmail">Email</th><th data-i18n="tableStatus">Status</th><th data-i18n="tableAction">Action</th></tr></thead>
+              <tbody><tr><td colspan="5" class="empty-state" data-i18n="loadingAgents">Loading agents...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PROPERTIES ===== -->
+      <section id="sec-properties" class="dash-section">
+        <div class="section-header">
+          <div>
+            <h2 data-i18n="adminAllProperties">All Properties</h2>
+            <p data-i18n="adminManagePropertiesSub">Browse and manage listed properties</p>
+          </div>
+          <button class="btn btn-primary" id="open-property-form-admin">
+            <i class="fas fa-plus"></i> <span data-i18n="agentAddProperty">Add Property</span>
+          </button>
+        </div>
+        <div id="properties-list" class="props-grid">
+          <div class="empty-state" style="grid-column:1/-1;">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span data-i18n="loadingProperties">Loading properties...</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="sec-property-form-admin" class="dash-section">
+        <div class="section-header">
+          <div>
+            <h2 id="admin-form-page-title" data-i18n="agentAddProperty">Add Property</h2>
+            <p data-i18n="adminEnterDetailsBelow">Enter complete property details</p>
+          </div>
+          <button class="btn btn-outline" id="cancel-admin-property-form">
+            <i class="fas fa-arrow-left"></i> <span data-i18n="adminBackToProperties">Back to Properties</span>
+          </button>
+        </div>
+
+        <div class="card" style="padding: 24px;">
+          <form id="admin-property-form" style="display:flex; flex-direction:column; gap:18px;">
+            <div>
+              <h3 style="margin-bottom:12px; font-size:16px; border-bottom:1px solid var(--border-light); padding-bottom:8px;" data-i18n="formBasicInfo">1. Basic Info</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="fTitle">Title *</label>
+                  <input id="af-title" required class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="fStatus">Status *</label>
+                  <select id="af-status" required class="form-input">
+                    <option value="For Sale" data-i18n="cardForSale">For Sale</option>
+                    <option value="For Rent" data-i18n="cardForRent">For Rent</option>
+                    <option value="Sold" data-i18n="cardSold">Sold</option>
+                    <option value="New Development" data-i18n="cardNewDev">New Development</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="fType">Type *</label>
+                  <select id="af-type" required class="form-input">
+                    <option value="Apartment" data-i18n="optApartment">Apartment</option>
+                    <option value="Villa" data-i18n="optVilla">Villa</option>
+                    <option value="House" data-i18n="optHouse">House</option>
+                    <option value="Penthouse" data-i18n="optPenthouse">Penthouse</option>
+                    <option value="Duplex" data-i18n="optDuplex">Duplex</option>
+                    <option value="Commercial" data-i18n="optCommercial">Commercial</option>
+                    <option value="Land" data-i18n="optLand">Land</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="fCondition">Condition</label>
+                  <select id="af-condition" class="form-input">
+                    <option value="" data-i18n="formSelectCondition">Select Condition...</option>
+                    <option value="New" data-i18n="filterNew">New</option>
+                    <option value="Excellent" data-i18n="filterExcellent">Excellent</option>
+                    <option value="Good" data-i18n="filterGood">Good</option>
+                    <option value="Needs Renovation" data-i18n="filterRenovation">Needs Renovation</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="fNiche">Niche</label>
+                  <select id="af-niche" class="form-input">
+                    <option value="" data-i18n="formNone">None</option>
+                    <option value="luxury" data-i18n="luxuryBadge">Luxury</option>
+                    <option value="golden-visa" data-i18n="goldenVisaBadge">Golden Visa</option>
+                    <option value="beachfront" data-i18n="beachfrontBadge">Beachfront</option>
+                    <option value="investment" data-i18n="investmentBadge">Investment</option>
+                  </select>
+                </div>
+                <div class="form-group" style="display:flex; align-items:center; gap:10px; padding-top:28px;">
+                  <input type="checkbox" id="af-featured" style="width:18px; height:18px;" />
+                  <label class="form-label" style="margin:0;" data-i18n="adminFeaturedProperty">Featured Property</label>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 style="margin-bottom:12px; font-size:16px; border-bottom:1px solid var(--border-light); padding-bottom:8px;" data-i18n="formPricing">2. Pricing</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="fPrice">Price (€) *</label>
+                  <input id="af-price" required type="number" class="form-input" />
+                </div>
+                <div class="form-group" style="display:flex; align-items:center; gap:10px; padding-top:28px;">
+                  <input type="checkbox" id="af-priceOnRequest" style="width:18px; height:18px;" />
+                  <label class="form-label" style="margin:0;" data-i18n="formPriceOnRequest">Price on Request</label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label" data-i18n="fCommunityFees">Community Fees (€/mo)</label><input id="af-communityFees" type="number" class="form-input" /></div>
+                <div class="form-group"><label class="form-label" data-i18n="fIBITax">IBI Tax (€/yr)</label><input id="af-ibiTax" type="number" class="form-input" /></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label" data-i18n="fYield">Investment Yield (%)</label><input id="af-investmentYield" type="number" step="0.1" class="form-input" /></div>
+              </div>
+
+              <div id="admin-rental-specs-section" style="padding:16px; background:var(--bg); border-radius:var(--radius-sm); margin-top:8px;">
+                <h4 style="margin-bottom:10px; font-size:14px; color:var(--text-primary);" data-i18n="formRentalDetails">Rental Specifics</h4>
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label" data-i18n="fAvailableFrom">Available From</label><input type="date" id="af-availableFrom" class="form-input" /></div>
+                  <div class="form-group"><label class="form-label" data-i18n="fMinRental">Minimum Term</label><input id="af-minimumTerm" class="form-input" data-i18n-placeholder="formMinimumTermExample" placeholder="e.g. 1 year" /></div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group" style="display:flex; align-items:center; gap:10px; padding-top:10px;"><input type="checkbox" id="af-longTermRent" style="width:18px; height:18px;" /><label class="form-label" style="margin:0;" data-i18n="formLongTermRent">Long Term Rent</label></div>
+                  <div class="form-group" style="display:flex; align-items:center; gap:10px; padding-top:10px;"><input type="checkbox" id="af-shortTermRent" style="width:18px; height:18px;" /><label class="form-label" style="margin:0;" data-i18n="formShortTermRent">Short Term Rent</label></div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 style="margin-bottom:12px; font-size:16px; border-bottom:1px solid var(--border-light); padding-bottom:8px;" data-i18n="formAreasRooms">3. Areas & Rooms</h3>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label" data-i18n="fInternalArea">Internal Area (m²)</label><input id="af-areaInternal" type="number" class="form-input" /></div>
+                <div class="form-group"><label class="form-label" data-i18n="fTerrace">External Area (m²)</label><input id="af-areaExternal" type="number" class="form-input" /></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label" data-i18n="fBedrooms">Bedrooms</label><input id="af-bedrooms" type="number" class="form-input" /></div>
+                <div class="form-group"><label class="form-label" data-i18n="fBathrooms">Bathrooms</label><input id="af-bathrooms" type="number" class="form-input" /></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label" data-i18n="fSuites">Suites</label><input id="af-suites" type="number" class="form-input" /></div>
+                <div class="form-group"><label class="form-label" data-i18n="fStorage">Storage Rooms</label><input id="af-storageRooms" type="number" class="form-input" /></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label" data-i18n="fParking">Parking Spaces</label><input id="af-parking" type="number" class="form-input" /></div>
+                <div class="form-group"><label class="form-label" data-i18n="fFloor">Floor</label><input id="af-floor" class="form-input" data-i18n-placeholder="formFloorExample" placeholder="e.g. Ground, 4th" /></div>
+              </div>
+            </div>
+
+            <div>
+              <h3 style="margin-bottom:12px; font-size:16px; border-bottom:1px solid var(--border-light); padding-bottom:8px;" data-i18n="formBuildingEnergy">4. Building & Energy</h3>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label" data-i18n="fYearBuilt">Year Built</label><input id="af-yearBuilt" type="number" class="form-input" /></div>
+                <div class="form-group"><label class="form-label" data-i18n="fTotalFloors">Total Floors in Building</label><input id="af-totalFloors" type="number" class="form-input" /></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="fFurnishing">Furnishing</label>
+                  <select id="af-furnishing" class="form-input">
+                    <option value="" data-i18n="furnishedOptionUnfurnished">Unfurnished</option>
+                    <option value="Furnished" data-i18n="furnishedOptionFurnished">Furnished</option>
+                    <option value="Partially Furnished" data-i18n="furnishedOptionPartiallyFurnished">Partially Furnished</option>
+                    <option value="Negotiable" data-i18n="furnishedOptionNegotiable">Negotiable</option>
+                  </select>
+                </div>
+                <div class="form-group"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="fEnergyRating">Energy Rating</label>
+                  <select id="af-energyRating" class="form-input">
+                    <option value="" data-i18n="formNotApplicable">N/A</option><option value="A+">A+</option><option value="A">A</option><option value="B">B</option><option value="B-">B-</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label" data-i18n="fEnergyConsumption">Energy Consumption (kWh/m²)</label><input id="af-energyKwh" type="number" class="form-input" /></div>
+              </div>
+
+              <div style="padding-top:10px; margin-top:10px; border-top:1px solid var(--border-light);">
+                <h4 style="margin-bottom:10px; font-size:14px; color:var(--text-primary);" data-i18n="formTechnical">Technical</h4>
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label" data-i18n="formBasement">Basement</label><input id="af-basement" type="number" class="form-input" data-i18n-placeholder="formBasementExample" placeholder="e.g. 1" /></div>
+                  <div class="form-group"><label class="form-label" data-i18n="formFloors">Floors</label><input id="af-floors" type="number" class="form-input" data-i18n-placeholder="formFloorsExample" placeholder="e.g. 2" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label" data-i18n="formTechnicalNotesLabel">Technical Notes</label><input id="af-technicalNotes" class="form-input" data-i18n-placeholder="formTechnicalNotesPlaceholder" placeholder="Optional notes for engineers/contractors..." /></div>
+                  <div class="form-group"></div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 style="margin-bottom:12px; font-size:16px; border-bottom:1px solid var(--border-light); padding-bottom:8px;" data-i18n="adminSectionAmenitiesViews">5. Amenities & Views</h3>
+              <div id="af-amenities-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:12px;">
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-elevator" /> <span data-i18n="detailElevator">Elevator</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-carCharging" /> <span data-i18n="fEVCharging">Car Charging</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-pool" /> <span data-i18n="amenityPool">Pool</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-garden" /> <span data-i18n="detailGarden">Garden</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-terrace" /> <span data-i18n="amenityTerraceBalcony">Terrace/Balcony</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-garage" /> <span data-i18n="amenityGarage">Garage</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-condominium" /> <span data-i18n="detailCondominium">Condominium</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-ac" /> <span data-i18n="detailAC">Air Conditioning</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-heating" /> <span data-i18n="amenityCentralHeating">Central Heating</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-fireplace" /> <span data-i18n="detailFireplace">Fireplace</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-security" /> <span data-i18n="detailSecurity">Security System</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-smartHome" /> <span data-i18n="detailSmartHome">Smart Home</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-gym" /> <span data-i18n="detailGym">Gym</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-tennis" /> <span data-i18n="detailTennis">Tennis Court</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afb-solarPanels" /> <span data-i18n="detailSolarPanels">Solar Panels</span></label>
+              </div>
+              <div class="dynamic-add-row">
+                <input id="af-custom-amenity-input" class="form-input" data-i18n-placeholder="formAddCustomAmenity" placeholder="Add custom amenity" />
+                <button type="button" class="btn btn-outline btn-sm" id="af-add-amenity-btn"><i class="fas fa-plus"></i> <span data-i18n="formAddAction">Add</span></button>
+              </div>
+              <div id="af-views-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:12px; margin-top: 12px;">
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afv-sea" /> <span data-i18n="detailSeaView">Sea View</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afv-river" /> <span data-i18n="detailRiverView">River View</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afv-city" /> <span data-i18n="detailCityView">City View</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afv-mountain" /> <span data-i18n="detailMountainView">Mountain View</span></label>
+                <label style="display:flex; gap:8px;"><input type="checkbox" id="afv-countryside" /> <span data-i18n="viewCountrysideView">Countryside View</span></label>
+              </div>
+              <div class="dynamic-add-row">
+                <input id="af-custom-view-input" class="form-input" data-i18n-placeholder="formAddCustomView" placeholder="Add custom view" />
+                <button type="button" class="btn btn-outline btn-sm" id="af-add-view-btn"><i class="fas fa-plus"></i> <span data-i18n="formAddAction">Add</span></button>
+              </div>
+            </div>
+
+            <div>
+              <h3 style="margin-bottom:12px; font-size:16px; border-bottom:1px solid var(--border-light); padding-bottom:8px;" data-i18n="adminSectionFeaturesEquipment">6. Features & Equipment</h3>
+              <div class="form-group">
+                <label class="form-label" data-i18n="formFeaturesList">Features</label>
+                <div id="af-features-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:12px;">
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Swimming Pool" /> <span data-i18n="detailSwimmingPool">Swimming Pool</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Parking" /> <span data-i18n="detailParking">Parking</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Terrace / Balcony" /> <span data-i18n="amenityTerraceBalcony">Terrace / Balcony</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Garden" /> <span data-i18n="detailGarden">Garden</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Air Conditioning" /> <span data-i18n="detailAC">Air Conditioning</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Furnished" /> <span data-i18n="furnishedOptionFurnished">Furnished</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Central Heating" /> <span data-i18n="amenityCentralHeating">Central Heating</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Fireplace" /> <span data-i18n="detailFireplace">Fireplace</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Security System" /> <span data-i18n="detailSecurity">Security System</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Smart Home" /> <span data-i18n="detailSmartHome">Smart Home</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Solar Panels" /> <span data-i18n="detailSolarPanels">Solar Panels</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Gym" /> <span data-i18n="detailGym">Gym</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-features" value="Tennis Court" /> <span data-i18n="detailTennis">Tennis Court</span></label>
+                </div>
+                <div class="dynamic-add-row">
+                  <input id="af-custom-feature-input" class="form-input" data-i18n-placeholder="formAddCustomFeature" placeholder="Add custom feature" />
+                  <button type="button" class="btn btn-outline btn-sm" id="af-add-feature-btn"><i class="fas fa-plus"></i> <span data-i18n="formAddAction">Add</span></button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="formEquipmentList">Equipment</label>
+                <div id="af-equipment-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:12px;">
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-equipment" value="Smoke Extractor" /> <span data-i18n="equipmentSmokeExtractor">Smoke Extractor</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-equipment" value="Window Coverings" /> <span data-i18n="equipmentWindowCoverings">Window Coverings</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-equipment" value="Built-in Wardrobes" /> <span data-i18n="equipmentBuiltInWardrobes">Built-in Wardrobes</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-equipment" value="Security Cameras" /> <span data-i18n="equipmentSecurityCameras">Security Cameras</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-equipment" value="Video Intercom" /> <span data-i18n="equipmentVideoIntercom">Video Intercom</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-equipment" value="Thermal Insulation" /> <span data-i18n="equipmentThermalInsulation">Thermal Insulation</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-equipment" value="Smart Lighting" /> <span data-i18n="equipmentSmartLighting">Smart Lighting</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-equipment" value="Parking Gate System" /> <span data-i18n="equipmentParkingGateSystem">Parking Gate System</span></label>
+                  <label style="display:flex; gap:8px;"><input type="checkbox" name="af-equipment" value="Solar Thermal Setup" /> <span data-i18n="equipmentSolarThermalSetup">Solar Thermal Setup</span></label>
+                </div>
+                <div class="dynamic-add-row">
+                  <input id="af-custom-equipment-input" class="form-input" data-i18n-placeholder="formAddCustomEquipment" placeholder="Add custom equipment" />
+                  <button type="button" class="btn btn-outline btn-sm" id="af-add-equipment-btn"><i class="fas fa-plus"></i> <span data-i18n="formAddAction">Add</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 style="margin-bottom:12px; font-size:16px; border-bottom:1px solid var(--border-light); padding-bottom:8px;" data-i18n="formLocation">7. Location</h3>
+              <div class="form-group"><label class="form-label" data-i18n="fAddress">Full Address *</label><input id="af-address" required class="form-input" /></div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label" data-i18n="fCity">City</label><input id="af-city" class="form-input" /></div>
+                <div class="form-group"><label class="form-label" data-i18n="fNeighbourhood">Neighbourhood</label><input id="af-neighbourhood" class="form-input" /></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label" data-i18n="fLatitude">Latitude *</label><input id="af-lat" required type="number" step="any" class="form-input" /></div>
+                <div class="form-group"><label class="form-label" data-i18n="fLongitude">Longitude *</label><input id="af-lng" required type="number" step="any" class="form-input" /></div>
+              </div>
+
+              <!-- Map Preview -->
+              <div id="admin-prop-map" style="height: 250px; border-radius: var(--radius-md); border: 1px solid var(--border); margin: 15px 0;"></div>
+              <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">
+                <i class="fas fa-info-circle"></i> Drag the marker to fine-tune the exact location.
+              </p>
+
+              <div style="margin-top: 12px; margin-bottom: 12px;">
+                <button type="button" class="btn btn-outline btn-sm" id="btn-admin-get-coords" style="width: 100%; justify-content: center; background: #f8fafc;">
+                  <i class="fas fa-crosshairs"></i> <span data-i18n="formGetCoordinates">Fetch precise coordinates from Address</span>
+                </button>
+              </div>
+            </div>
+
+
+            <div>
+              <h3 style="margin-bottom:12px; font-size:16px; border-bottom:1px solid var(--border-light); padding-bottom:8px;" data-i18n="formDescriptionMedia">8. Description & Media</h3>
+              <div class="form-group"><label class="form-label" data-i18n="fDescription">Description *</label><textarea id="af-description" required class="form-textarea"></textarea></div>
+              <div class="form-group"><label class="form-label" data-i18n="fNeighbourhoodDescription">Neighbourhood Description</label><textarea id="af-neighbourhoodDesc" class="form-textarea"></textarea></div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="fPhotos">Property Images (Multiple)</label>
+                <input type="file" id="af-images" multiple accept="image/*" class="form-file-input" />
+              </div>
+            </div>
+
+            <hr style="border:none; border-top:1px solid var(--border); margin:10px 0;" />
+            <div style="display:flex; justify-content:flex-end; gap:16px;">
+              <button type="button" class="btn btn-outline" id="bottom-cancel-admin-property-form" data-i18n="btnCancel">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="padding:12px 24px; font-size:15px;">
+                <i class="fas fa-check"></i> <span data-i18n="formSubmit">Save Property</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ===== MESSAGES ===== -->
+      <section id="sec-messages" class="dash-section">
+        <div class="section-header">
+          <div>
+            <h2 data-i18n="adminMessages">Contact Messages</h2>
+            <p data-i18n="adminMessagesVisitorsSub">Enquiries from website visitors</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" id="messages-list">
+            <div class="empty-state">
+              <i class="fas fa-inbox"></i>
+              <span data-i18n="adminNoMessages">No messages yet.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== USERS ===== -->
+      <section id="sec-users" class="dash-section">
+        <div class="section-header">
+          <div>
+            <h2 data-i18n="adminRegisteredUsers">Registered Users</h2>
+            <p data-i18n="adminManageUsersSub">All users signed up on the platform</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" id="users-list">
+            <table class="data-table">
+              <thead><tr><th data-i18n="tableName">Name</th><th data-i18n="tableEmail">Email</th><th data-i18n="tableRole">Role</th><th data-i18n="tableStatus">Status</th><th data-i18n="tableJoined">Joined</th></tr></thead>
+              <tbody><tr><td colspan="5" class="empty-state" data-i18n="loadingUsers">Loading users...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CONTENT ===== -->
+      <section id="sec-content" class="dash-section">
+        <div class="section-header">
+          <div>
+            <h2 data-i18n="adminHomepageContent">Homepage Content</h2>
+            <p data-i18n="adminHomepageContentSub">Manage featured properties and blog posts</p>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr; gap: 20px;">
+          <div class="card">
+            <div class="card-header">
+              <h3 data-i18n="adminFeaturedProperties">Featured Properties</h3>
+              <span style="font-size:12px; color:var(--text-muted);" data-i18n="adminFeaturedPropertiesSub">Toggle homepage featured picks</span>
+            </div>
+            <div class="card-body" id="featured-properties-list" style="padding: 16px 24px;">
+              <div class="empty-state"><i class="fas fa-building"></i><span data-i18n="loadingProperties">Loading properties...</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 data-i18n="adminBlogPosts">Blog Posts</h3>
+              <button class="btn btn-primary btn-sm" id="open-blog-modal">
+                <i class="fas fa-plus"></i> <span data-i18n="adminAddBlog">Add Blog</span>
+              </button>
+            </div>
+            <div class="card-body" id="blogs-list">
+              <table class="data-table">
+                <thead><tr><th data-i18n="tableTitle">Title</th><th data-i18n="tableAuthor">Author</th><th data-i18n="tableDate">Date</th><th data-i18n="tableStatus">Status</th><th data-i18n="tableAction">Action</th></tr></thead>
+                <tbody><tr><td colspan="5" class="empty-state" data-i18n="loadingBlogPosts">Loading blog posts...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Create Agent Modal -->
+  <div class="modal-backdrop" id="agent-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 data-i18n="adminCreateAgentTitle">Create New Agent</h3>
+        <button class="modal-close" id="close-agent-modal"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="agent-form">
+        <div class="form-group">
+          <label class="form-label" data-i18n="fName">Full Name</label>
+          <input name="name" required data-i18n-placeholder="fName" placeholder="e.g. Joao Silva" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="fPhone">Phone Number</label>
+          <input name="phone" required data-i18n-placeholder="fPhone" placeholder="e.g. +351 918 445 899" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="fEmail">Email Address</label>
+          <input name="email" type="email" required data-i18n-placeholder="fEmail" placeholder="e.g. joao@agent.com" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="fPassword">Password</label>
+          <input name="password" type="password" required data-i18n-placeholder="fPassword" placeholder="Min 6 characters" class="form-input" minlength="6" />
+        </div>
+        <p id="agent-msg" style="font-size:13px; margin-bottom: 8px;"></p>
+        <button type="submit" class="btn btn-primary" style="width:100%; padding: 12px;">
+          <i class="fas fa-user-plus"></i> <span data-i18n="adminCreateAgentAccount">Create Agent Account</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="blog-modal">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 id="blog-modal-title" data-i18n="adminAddBlog">Add Blog Post</h3>
+        <button class="modal-close" id="close-blog-modal"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="blog-form">
+        <input type="hidden" id="blog-id" />
+        <div class="form-group">
+          <label class="form-label" data-i18n="tableTitle">Title</label>
+          <input id="blog-title" required class="form-input" maxlength="180" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="blogExcerpt">Excerpt</label>
+          <input id="blog-excerpt" required class="form-input" maxlength="320" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="blogImageUrlOptional">Image URL (Optional)</label>
+          <input id="blog-image" class="form-input" placeholder="https://..." />
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="blogUploadImage">Upload Image</label>
+          <input id="blog-image-file" type="file" accept="image/*" class="form-file-input" />
+          <div style="font-size:12px; color:var(--text-muted); margin-top:6px;" data-i18n="blogUploadHint">Upload an image or paste a URL above.</div>
+          <img id="blog-image-preview" alt="Blog preview" style="display:none; margin-top:10px; width:100%; max-height:180px; object-fit:cover; border-radius:8px; border:1px solid var(--border-light);" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" data-i18n="tableAuthor">Author</label>
+            <input id="blog-author" class="form-input" value="Exo Real Estate" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="blogDateLabel">Date Label</label>
+            <input id="blog-date" class="form-input" value="2026" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="blogContent">Content</label>
+          <textarea id="blog-content" required class="form-input" style="min-height:140px; resize:vertical;"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" data-i18n="blogOrder">Order</label>
+            <input id="blog-order" type="number" min="0" class="form-input" value="0" />
+          </div>
+          <div class="form-group" style="display:flex; align-items:center; gap:10px; padding-top:28px;">
+            <input type="checkbox" id="blog-active" checked style="width:18px; height:18px;" />
+            <label class="form-label" style="margin:0;" data-i18n="formPublished">Published</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:12px;">
+          <i class="fas fa-check"></i> <span data-i18n="blogSavePost">Save Blog Post</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Firebase + Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/i18n.js"></script>
+
+  <script src="js/firebase.js"></script>
+  <script src="js/app-data.js"></script>
+  <script>
+    /* ====== Sidebar Navigation ====== */
+    const navItems = document.querySelectorAll('.nav-item[data-section]');
+    const sections = document.querySelectorAll('.dash-section');
+    const pageTitle = document.getElementById('page-title');
+    const dashboardLangSelect = document.getElementById('dashboard-lang');
+    const adminRoleSidebarEl = document.getElementById('admin-role-sidebar');
+
+    let currentAdminUid = '';
+    let currentAdminProfile = null;
+    const ADMIN_BRAND_LOGO_PATH = 'logo.png';
+
+    function __t(key) {
+      return window.t(key);
+    }
+
+    function escapeHtmlAttr(value) {
+      return String(value || '').replace(/[&<>"']/g, function (ch) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch] || ch;
+      });
+    }
+
+    function getAdminRoleLabel(role) {
+      const raw = String(role || '').trim().toLowerCase();
+      if (!raw || raw === 'admin') return 'Admin';
+      return raw.charAt(0).toUpperCase() + raw.slice(1);
+    }
+
+    function setAdminIdentityUi(name, role) {
+      const resolvedName = String(name || 'Administrator').trim() || 'Administrator';
+      document.getElementById('admin-name-sidebar').textContent = resolvedName;
+      document.getElementById('admin-name-header').textContent = resolvedName;
+      if (adminRoleSidebarEl) adminRoleSidebarEl.textContent = getAdminRoleLabel(role);
+    }
+
+    const SECTION_TITLE_KEYS = {
+      'sec-dashboard': 'adminOverview',
+      'sec-agents': 'adminAgents',
+      'sec-properties': 'adminProperties',
+      'sec-property-form-admin': 'agentAddProperty',
+      'sec-messages': 'adminMessages',
+      'sec-users': 'adminUsers',
+      'sec-content': 'adminContent'
+    };
+
+    function syncDashboardLang() {
+      if (!dashboardLangSelect || !window.getLang) return;
+      dashboardLangSelect.value = window.getLang();
+    }
+
+    if (dashboardLangSelect && window.setLang) {
+      dashboardLangSelect.addEventListener('change', (e) => {
+        window.setLang(e.target.value);
+      });
+      syncDashboardLang();
+    }
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        navItems.forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+        sections.forEach(s => s.classList.remove('active'));
+        document.getElementById(item.dataset.section).classList.add('active');
+        const key = SECTION_TITLE_KEYS[item.dataset.section];
+        pageTitle.textContent = key ? __t(key) : item.textContent.trim();
+
+        // Fix map rendering when switching to property form
+        if (item.dataset.section === 'sec-property-form-admin') {
+          setTimeout(() => {
+            if (typeof initAdminPropertyMap === 'function') initAdminPropertyMap();
+          }, 300);
+          setTimeout(() => {
+            if (adminPreviewMap) adminPreviewMap.invalidateSize();
+          }, 600);
+        }
+      });
+    });
+
+    /* ====== Modal ====== */
+    const agentModal = document.getElementById('agent-modal');
+    const blogModal = document.getElementById('blog-modal');
+    const openPropertyFormBtn = document.getElementById('open-property-form-admin');
+    const cancelAdminPropertyFormBtn = document.getElementById('cancel-admin-property-form');
+    const bottomCancelAdminPropertyFormBtn = document.getElementById('bottom-cancel-admin-property-form');
+    const adminPropertyForm = document.getElementById('admin-property-form');
+    let adminEditingPropertyId = '';
+
+    function activateSection(sectionId, title, activeNavSection, titleKey) {
+      sections.forEach(s => s.classList.remove('active'));
+      const el = document.getElementById(sectionId);
+      if (el) el.classList.add('active');
+      if (titleKey) pageTitle.textContent = __t(titleKey);
+      else if (title) pageTitle.textContent = title;
+      if (activeNavSection) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const nav = document.querySelector('.nav-item[data-section="' + activeNavSection + '"]');
+        if (nav) nav.classList.add('active');
+      }
+    }
+
+    function addDynamicCheckbox(gridId, checkboxName, value, checked) {
+      const grid = document.getElementById(gridId);
+      if (!grid) return;
+      const clean = String(value || '').trim();
+      if (!clean) return;
+
+      const exists = Array.from(grid.querySelectorAll('input[type="checkbox"]')).some((cb) => String(cb.value || '').toLowerCase() === clean.toLowerCase());
+      if (exists) {
+        const existing = Array.from(grid.querySelectorAll('input[type="checkbox"]')).find((cb) => String(cb.value || '').toLowerCase() === clean.toLowerCase());
+        if (existing && checked) existing.checked = true;
+        return;
+      }
+
+      const label = document.createElement('label');
+      label.style.display = 'flex';
+      label.style.gap = '8px';
+      label.dataset.customOption = '1';
+
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.name = checkboxName;
+      input.value = clean;
+      input.checked = !!checked;
+      input.dataset.customOption = '1';
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(' ' + clean));
+      grid.appendChild(label);
+    }
+
+    function bindDynamicAdder(inputId, buttonId, gridId, checkboxName) {
+      const input = document.getElementById(inputId);
+      const button = document.getElementById(buttonId);
+      if (!input || !button) return;
+
+      const submit = () => {
+        const value = input.value.trim();
+        if (!value) return;
+        addDynamicCheckbox(gridId, checkboxName, value, true);
+        input.value = '';
+      };
+
+      button.addEventListener('click', submit);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          submit();
+        }
+      });
+    }
+
+    bindDynamicAdder('af-custom-amenity-input', 'af-add-amenity-btn', 'af-amenities-grid', 'af-customAmenities');
+    bindDynamicAdder('af-custom-view-input', 'af-add-view-btn', 'af-views-grid', 'af-customViews');
+    bindDynamicAdder('af-custom-feature-input', 'af-add-feature-btn', 'af-features-grid', 'af-features');
+    bindDynamicAdder('af-custom-equipment-input', 'af-add-equipment-btn', 'af-equipment-grid', 'af-equipment');
+
+    function clearAdminDynamicAddedOptions() {
+      document.querySelectorAll('label[data-custom-option="1"]').forEach((el) => el.remove());
+    }
+
+    function setAdminPropertyFormMode() {
+      const titleEl = document.getElementById('admin-form-page-title');
+      if (!titleEl) return;
+      const addTitle = __t('agentAddProperty');
+      const editTitle = __t('actionEdit') + ' ' + __t('adminAddPropertyTitle');
+      titleEl.textContent = adminEditingPropertyId ? editTitle : addTitle;
+    }
+
+    function resetAdminPropertyFormForCreate() {
+      adminEditingPropertyId = '';
+      if (adminPropertyForm) adminPropertyForm.reset();
+      clearAdminDynamicAddedOptions();
+      setAdminPropertyFormMode();
+    }
+
+    function setFormValue(id, value) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.value = value == null ? '' : String(value);
+    }
+
+    function setFormCheckbox(id, value) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.checked = !!value;
+    }
+
+    function setNamedCheckboxValues(name, values, gridId) {
+      const arr = Array.isArray(values) ? values : [];
+      const normalized = new Map();
+      arr.forEach((v) => {
+        const clean = String(v || '').trim();
+        if (clean) normalized.set(clean.toLowerCase(), clean);
+      });
+
+      const checkboxes = Array.from(document.querySelectorAll('input[name="' + name + '"]'));
+      checkboxes.forEach((cb) => {
+        const key = String(cb.value || '').trim().toLowerCase();
+        const exists = normalized.has(key);
+        cb.checked = exists;
+        if (exists) normalized.delete(key);
+      });
+
+      normalized.forEach((cleanValue) => {
+        addDynamicCheckbox(gridId, name, cleanValue, true);
+      });
+    }
+
+    function setCustomCheckboxValues(gridId, checkboxName, values) {
+      const arr = Array.isArray(values) ? values : [];
+      arr.forEach((v) => {
+        const clean = String(v || '').trim();
+        if (clean) addDynamicCheckbox(gridId, checkboxName, clean, true);
+      });
+    }
+
+    function isPropertyOwnedByCurrentAdmin(prop) {
+      // In the admin dashboard, administrators should be able to edit ALL properties.
+      // This function previously restricted edits to only properties "owned" by the admin UID.
+      // We'll allow all admins to edit any property.
+      return true;
+    }
+
+
+    document.getElementById('open-agent-modal').addEventListener('click', () => agentModal.classList.add('open'));
+    if (openPropertyFormBtn) {
+      openPropertyFormBtn.addEventListener('click', () => {
+        resetAdminPropertyFormForCreate();
+        activateSection('sec-property-form-admin', __t('agentAddProperty'), 'sec-properties', 'agentAddProperty');
+      });
+    }
+    if (cancelAdminPropertyFormBtn) {
+      cancelAdminPropertyFormBtn.addEventListener('click', () => {
+        resetAdminPropertyFormForCreate();
+        activateSection('sec-properties', 'Properties', 'sec-properties', 'adminProperties');
+      });
+    }
+    if (bottomCancelAdminPropertyFormBtn) {
+      bottomCancelAdminPropertyFormBtn.addEventListener('click', () => {
+        resetAdminPropertyFormForCreate();
+        activateSection('sec-properties', 'Properties', 'sec-properties', 'adminProperties');
+      });
+    }
+    document.getElementById('open-blog-modal').addEventListener('click', () => {
+      document.getElementById('blog-form').reset();
+      document.getElementById('blog-id').value = '';
+      document.getElementById('blog-modal-title').textContent = __t('adminAddBlogPost');
+      document.getElementById('blog-active').checked = true;
+      document.getElementById('blog-image-file').value = '';
+      setImagePreview(document.getElementById('blog-image-preview'), '');
+      blogModal.classList.add('open');
+    });
+
+    document.getElementById('blog-image').addEventListener('input', (e) => {
+      setImagePreview(document.getElementById('blog-image-preview'), e.target.value.trim());
+    });
+    document.getElementById('blog-image-file').addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      setImagePreview(document.getElementById('blog-image-preview'), URL.createObjectURL(file));
+    });
+    document.getElementById('close-agent-modal').addEventListener('click', () => {
+      agentModal.classList.remove('open');
+      document.getElementById('agent-msg').textContent = '';
+    });
+    document.getElementById('close-blog-modal').addEventListener('click', () => blogModal.classList.remove('open'));
+    agentModal.addEventListener('click', e => {
+      if (e.target === agentModal) {
+        agentModal.classList.remove('open');
+        document.getElementById('agent-msg').textContent = '';
+      }
+    });
+    blogModal.addEventListener('click', e => { if (e.target === blogModal) blogModal.classList.remove('open'); });
+
+    /* ====== Toast ====== */
+    function showToast(message, type) {
+      const container = document.getElementById('toast-container');
+      const icons = { success: 'fa-circle-check', error: 'fa-circle-exclamation', info: 'fa-circle-info' };
+      const toast = document.createElement('div');
+      toast.className = 'toast toast-' + (type || 'info');
+      toast.innerHTML = '<i class="fas ' + (icons[type] || icons.info) + '"></i> ' + message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(16px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function showConfirmDialog(message, confirmText, cancelText) {
+      return new Promise((resolve) => {
+        const cancelLabel = (typeof cancelText === 'string' && cancelText.trim()) ? cancelText : __t('btnCancel');
+        const confirmLabel = (typeof confirmText === 'string' && confirmText.trim()) ? confirmText : __t('actionDelete');
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop open';
+        backdrop.style.zIndex = '2000';
+        backdrop.innerHTML =
+          '<div class="modal-box" style="max-width:420px;padding:22px;">' +
+            '<div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:10px;">' + __t('actionConfirm') + '</div>' +
+            '<div style="font-size:14px;color:var(--text-secondary);line-height:1.6;">' + message + '</div>' +
+            '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;">' +
+              '<button type="button" class="btn btn-outline" data-cancel>' + cancelLabel + '</button>' +
+              '<button type="button" class="btn btn-danger-soft" data-confirm>' + confirmLabel + '</button>' +
+            '</div>' +
+          '</div>';
+
+        const close = (result) => {
+          backdrop.remove();
+          resolve(result);
+        };
+
+        backdrop.querySelector('[data-cancel]').addEventListener('click', () => close(false));
+        backdrop.querySelector('[data-confirm]').addEventListener('click', () => close(true));
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) close(false);
+        });
+        document.body.appendChild(backdrop);
+      });
+    }
+
+    window.addEventListener('exo:languageChanged', () => {
+      syncDashboardLang();
+      const activeNav = document.querySelector('.nav-item.active[data-section]');
+      if (activeNav) {
+        const key = SECTION_TITLE_KEYS[activeNav.dataset.section];
+        if (key) pageTitle.textContent = __t(key);
+      }
+      setAdminPropertyFormMode();
+      renderAgents();
+      renderUsers();
+      renderBlogs();
+      renderPropsAndMessages();
+      updateStats();
+    });
+
+    const CLOUDINARY_CLOUD_NAME = String(window.CLOUDINARY_CLOUD_NAME || '').trim();
+    const CLOUDINARY_UPLOAD_PRESET = String(window.CLOUDINARY_UPLOAD_PRESET || '').trim();
+
+    async function uploadSingleToCloudinary(file, folderPath) {
+      if (!file) return '';
+      if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
+        throw new Error('Cloudinary is not configured.');
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      if (folderPath) formData.append('folder', folderPath);
+
+      const endpoint = 'https://api.cloudinary.com/v1_1/' + encodeURIComponent(CLOUDINARY_CLOUD_NAME) + '/image/upload';
+      const res = await fetch(endpoint, { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (!res.ok || !data || !data.secure_url) {
+        const msg = data && data.error && data.error.message ? data.error.message : 'Image upload failed.';
+        throw new Error(msg);
+      }
+
+      return data.secure_url;
+    }
+
+    async function uploadContentImage(file, section) {
+      if (!file) return '';
+      const folder = section || 'blog';
+      const safeName = (Date.now() + '-' + (file.name || 'image')).replace(/[^a-zA-Z0-9_.-]/g, '_');
+      return await uploadSingleToCloudinary(file, 'content/' + folder + '/' + safeName);
+    }
+
+    async function uploadPropertyFiles(fileList, folder) {
+      const files = Array.from(fileList || []);
+      const urls = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const safeName = (Date.now() + '-' + i + '-' + (file.name || 'image')).replace(/[^a-zA-Z0-9_.-]/g, '_');
+        const cloudinaryFolder = 'properties/' + (folder || 'images') + '/' + safeName;
+        urls.push(await uploadSingleToCloudinary(file, cloudinaryFolder));
+      }
+      return urls;
+    }
+
+    async function syncAdminBrandIdentityAcrossProperties(adminName, adminRole) {
+      if (!currentAdminUid || !db) return;
+
+      try {
+        const snap = await db.collection('properties').where('agentId', '==', currentAdminUid).get();
+        if (!snap || snap.empty) return;
+
+        const cleanName = String(adminName || 'Admin').trim() || 'Admin';
+        const cleanRole = String(adminRole || 'admin').trim() || 'admin';
+        const updates = snap.docs.map((doc) => doc.ref.set({
+          agentName: cleanName,
+          agentRole: cleanRole,
+          agentPhoto: ADMIN_BRAND_LOGO_PATH
+        }, { merge: true }));
+        await Promise.all(updates);
+      } catch (err) {
+        console.error('syncAdminBrandIdentityAcrossProperties error:', err);
+      }
+    }
+
+    function setImagePreview(el, url) {
+      if (!el) return;
+      if (url) {
+        el.src = url;
+        el.style.display = 'block';
+      } else {
+        el.removeAttribute('src');
+        el.style.display = 'none';
+      }
+    }
+
+    /* ====== Stats & Overview ====== */
+    function updateStats() {
+      const st = window.ExoStore.getState();
+      const props = st.properties || [];
+      const msgs = adminInquiries || [];
+
+      document.getElementById('stat-properties').textContent = props.length;
+      document.getElementById('stat-agents').textContent = allAgents.filter(a => a.active !== false).length;
+      document.getElementById('stat-messages').textContent = msgs.length;
+      document.getElementById('stat-users').textContent = allUsers.length;
+
+      /* --- Recent Properties --- */
+      const recentEl = document.getElementById('recent-activity');
+      const recentProps = props.slice(0, 5);
+      if (recentProps.length > 0) {
+        recentEl.innerHTML = recentProps.map(p => `
+          <div class="activity-item">
+            <div class="activity-dot activity-dot-blue"><i class="fas fa-building"></i></div>
+            <div class="activity-text">
+              <div class="activity-title">${p.title}</div>
+              <div class="activity-sub">${p.address ? p.address.split(',')[0] : __t('formNoAddress')}</div>
+            </div>
+            <div class="activity-price">€${Number(p.price||0).toLocaleString()}</div>
+          </div>
+        `).join('');
+      } else {
+        recentEl.innerHTML = '<div class="empty-state"><i class="fas fa-clock-rotate-left"></i>' + __t('adminNoRecentActivity') + '</div>';
+      }
+
+      /* --- New agents --- */
+      const agentsEl = document.getElementById('overview-agents');
+      const recentagents = allAgents.slice(0, 5);
+      if (recentagents.length > 0) {
+        agentsEl.innerHTML = recentagents.map(a => {
+          const initials = (a.name || '??').split(' ').map(w => w[0]).join('').slice(0,2);
+          const isActive = a.active !== false;
+          const photoUrl = String(a.profilePhoto || a.photoURL || '').trim();
+          const photoStyle = photoUrl
+            ? ('background-image:url(\'' + escapeHtmlAttr(photoUrl) + '\');background-size:cover;background-position:center;color:transparent;')
+            : '';
+          return `
+          <div class="activity-item">
+            <div class="agent-avatar" style="width:34px;height:34px;font-size:12px;${photoStyle}">${initials}</div>
+            <div class="activity-text">
+              <div class="activity-title">${a.name}</div>
+              <div class="activity-sub">${a.email}</div>
+            </div>
+            <span class="badge ${isActive ? 'badge-active' : 'badge-inactive'}" style="font-size:11px;">
+              <span class="badge-dot"></span> ${isActive ? __t('statusActive') : __t('statusInactive')}
+            </span>
+          </div>`;
+        }).join('');
+      } else {
+        agentsEl.innerHTML = '<div class="empty-state"><i class="fas fa-user-tie"></i>' + __t('adminNoAgentsYet') + '</div>';
+      }
+
+      /* --- Portfolio Summary --- */
+      const portfolioEl = document.getElementById('overview-portfolio');
+      if (props.length > 0) {
+        const totalValue = props.reduce((s, p) => s + (Number(p.price) || 0), 0);
+        const avgPrice = Math.round(totalValue / props.length);
+        const forSale = props.filter(p => (p.status || '').toLowerCase().includes('sale')).length;
+        const forRent = props.filter(p => (p.status || '').toLowerCase().includes('rent')).length;
+
+        const typeCounts = {};
+        props.forEach(p => { const t = p.type || 'Other'; typeCounts[t] = (typeCounts[t] || 0) + 1; });
+        const typeRows = Object.entries(typeCounts).sort((a,b) => b[1]-a[1]).slice(0, 5);
+
+        portfolioEl.innerHTML = `
+          <div style="display:grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 20px;">
+            <div style="background:var(--bg); border-radius:var(--radius-sm); padding:14px 16px;">
+              <div style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">${__t('adminTotalValue')}</div>
+              <div style="font-size:22px; font-weight:700; color:var(--text-primary);">€${totalValue.toLocaleString()}</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; margin-bottom:16px;">
+            <div style="flex:1; background:var(--accent-light); border-radius:var(--radius-sm); padding:10px 14px; text-align:center;">
+              <div style="font-size:20px; font-weight:700; color:var(--accent);">${forSale}</div>
+              <div style="font-size:11px; color:var(--accent); font-weight:500;">${__t('statusForSale')}</div>
+            </div>
+            <div style="flex:1; background:var(--green-bg); border-radius:var(--radius-sm); padding:10px 14px; text-align:center;">
+              <div style="font-size:20px; font-weight:700; color:var(--green-text);">${forRent}</div>
+              <div style="font-size:11px; color:var(--green-text); font-weight:500;">${__t('statusForRent')}</div>
+            </div>
+            <div style="flex:1; background:var(--amber-bg); border-radius:var(--radius-sm); padding:10px 14px; text-align:center;">
+              <div style="font-size:20px; font-weight:700; color:var(--amber-text);">${props.length - forSale - forRent}</div>
+              <div style="font-size:11px; color:var(--amber-text); font-weight:500;">${__t('labelOther')}</div>
+            </div>
+          </div>
+          <div style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">${__t('adminPropertyTypes')}</div>
+          ${typeRows.map(([type, count]) => {
+            const pct = Math.round((count / props.length) * 100);
+            return `
+            <div style="margin-bottom:10px;">
+              <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+                <span style="font-weight:500; color:var(--text-primary);">${type}</span>
+                <span style="color:var(--text-muted);">${count} (${pct}%)</span>
+              </div>
+              <div style="height:6px; background:var(--border-light); border-radius:3px; overflow:hidden;">
+                <div style="width:${pct}%; height:100%; background:var(--accent); border-radius:3px; transition: width 0.5s ease;"></div>
+              </div>
+            </div>`;
+          }).join('')}
+        `;
+      } else {
+        portfolioEl.innerHTML = '<div class="empty-state"><i class="fas fa-chart-bar"></i>' + __t('adminNoDataYet') + '</div>';
+      }
+
+      /* --- Latest Messages preview --- */
+      const msgsEl = document.getElementById('overview-messages');
+      const recentMsgs = msgs.slice(0, 4);
+      if (recentMsgs.length > 0) {
+        msgsEl.innerHTML = recentMsgs.map(m => {
+          const initial = (m.name || '?').charAt(0).toUpperCase();
+          return `
+          <div class="msg-item">
+            <div class="msg-avatar">${initial}</div>
+            <div class="msg-body">
+              <div class="msg-name" style="font-size:13px;">${m.name}</div>
+              <div class="msg-preview">${m.message || ''}</div>
+            </div>
+          </div>`;
+        }).join('');
+      } else {
+        msgsEl.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i>' + __t('adminNoMessages') + '</div>';
+      }
+    }
+
+    /* ====== Auth Guard ====== */
+    auth.onAuthStateChanged(async user => {
+      if (!user) return location.href = "login.html";
+      const doc = await db.collection("users").doc(user.uid).get();
+      if (!doc.exists || doc.data().role !== "admin") {
+        location.href = "login.html";
+        return;
+      }
+      currentAdminUid = user.uid;
+      const data = doc.data() || {};
+      const name = String(data.name || user.displayName || user.email || 'Administrator').trim() || 'Administrator';
+      const role = String(data.role || 'admin').trim() || 'admin';
+      const photo = ADMIN_BRAND_LOGO_PATH;
+      currentAdminProfile = {
+        ...data,
+        name,
+        role,
+        profilePhoto: photo,
+        email: String(data.email || user.email || '').trim()
+      };
+      setAdminIdentityUi(name, role);
+      syncAdminBrandIdentityAcrossProperties(name, role);
+      fetchAdminInquiries();
+    });
+
+    /* ====== Agents ====== */
+    let allAgents = [];
+    let allBlogs = [];
+    let adminInquiries = [];
+    const pendingPropertyDeletes = new Set();
+    const pendingInquiryDeletes = new Set();
+
+    async function fetchAdminInquiries() {
+      if (!currentAdminUid) {
+        adminInquiries = [];
+        updateStats();
+        renderPropsAndMessages();
+        return;
+      }
+
+      try {
+        const snap = await db.collection('inquiries')
+          .where('agentId', '==', currentAdminUid)
+          .orderBy('createdAt', 'desc')
+          .get();
+        adminInquiries = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (err) {
+        try {
+          const snap = await db.collection('inquiries')
+            .where('agentId', '==', currentAdminUid)
+            .get();
+          adminInquiries = snap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => {
+              const at = a && a.createdAt && typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : 0;
+              const bt = b && b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : 0;
+              return bt - at;
+            });
+        } catch (innerErr) {
+          adminInquiries = [];
+        }
+      }
+
+      updateStats();
+      renderPropsAndMessages();
+    }
+
+    async function fetchAgents() {
+      const snap = await db.collection("users").where("role", "in", ["agent", "dealer"]).get();
+      allAgents = snap.docs.map(d => d.data());
+      renderAgents();
+      updateStats();
+    }
+
+    function renderAgents() {
+      const container = document.getElementById("agents-list");
+      const emptyRow = '<tr><td colspan="5" class="empty-state"><i class="fas fa-user-slash"></i>' + __t('adminNoAgentsRegistered') + '</td></tr>';
+      const rows = allAgents.length === 0 ? emptyRow : allAgents.map(a => {
+        const initials = (a.name || '??').split(' ').map(w => w[0]).join('').slice(0,2);
+        const isActive = a.active !== false;
+        const photoUrl = String(a.profilePhoto || a.photoURL || '').trim();
+        const photoStyle = photoUrl
+          ? ('background-image:url(\'' + escapeHtmlAttr(photoUrl) + '\');background-size:cover;background-position:center;color:transparent;')
+          : '';
+        return `
+          <tr>
+            <td>
+              <div class="agent-cell">
+                <div class="agent-avatar" style="${photoStyle}">${initials}</div>
+                <span class="agent-name">${a.name}</span>
+              </div>
+            </td>
+            <td>${a.phone || '\u2014'}</td>
+            <td style="color: var(--text-secondary);">${a.email}</td>
+            <td>
+              <span class="badge ${isActive ? 'badge-active' : 'badge-inactive'}">
+                <span class="badge-dot"></span> ${isActive ? __t('statusActive') : __t('statusInactive')}
+              </span>
+            </td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button onclick="toggleActive('${a.uid}', ${!isActive})"
+                  class="btn btn-sm ${isActive ? 'btn-danger-soft' : 'btn-success-soft'}">
+                  ${isActive ? __t('actionDeactivate') : __t('actionActivate')}
+                </button>
+                <button onclick="deleteAgent('${a.uid}', '${a.name.replace(/'/g, "\\'")}')"
+                  class="btn btn-sm" style="background:#fee2e2; color:#991b1b;">
+                  <i class="fas fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+
+      container.innerHTML = `
+        <table class="data-table">
+          <thead><tr><th>${__t('tableName')}</th><th>${__t('tablePhone')}</th><th>${__t('tableEmail')}</th><th>${__t('tableStatus')}</th><th>${__t('tableAction')}</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    window.toggleActive = async function(uid, val) {
+      try {
+        await db.collection("users").doc(uid).update({ active: val });
+        showToast(val ? __t('toastAgentActivated') : __t('toastAgentDeactivated'), val ? 'success' : 'info');
+        fetchAgents();
+        fetchUsers();
+      } catch (e) {
+        showToast(__t('toastFailedAgentStatus'), 'error');
+      }
+    }
+
+    window.deleteAgent = async function(uid, name) {
+      const ok = await showConfirmDialog(__t('adminDeleteAgentConfirm').replace('{name}', name), __t('actionDelete'), __t('btnCancel'));
+      if (!ok) return;
+      try {
+        await db.collection("users").doc(uid).delete();
+        showToast(__t('toastAgentDeleted').replace('{name}', name), 'info');
+        fetchAgents();
+        fetchUsers();
+      } catch (e) {
+        showToast(__t('toastUnableDeleteAgent'), 'error');
+      }
+    }
+
+    /* ====== Create Agent ====== */
+    document.getElementById("agent-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const submitBtn = e.target.querySelector("button[type='submit']");
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + __t('actionCreating');
+
+      const fd = new FormData(e.target);
+      const name = fd.get("name");
+      const phone = fd.get("phone");
+      const email = fd.get("email");
+      const password = fd.get("password");
+
+      try {
+        const secondaryApp = firebase.initializeApp(window.firebaseConfig, "Secondary");
+        const res = await secondaryApp.auth().createUserWithEmailAndPassword(email, password);
+        await db.collection("users").doc(res.user.uid).set({
+          uid: res.user.uid,
+          name: name,
+          phone: phone,
+          email: email,
+          role: "agent",
+          active: true,
+          createdAt: Date.now()
+        });
+        await secondaryApp.auth().signOut();
+        secondaryApp.delete();
+        document.getElementById("agent-msg").textContent = "";
+        showToast(__t('toastAgentCreated') + ': ' + email, 'success');
+        e.target.reset();
+        agentModal.classList.remove('open');
+        fetchAgents();
+      } catch (err) {
+        document.getElementById("agent-msg").textContent = "Error: " + err.message;
+        document.getElementById("agent-msg").style.color = 'var(--red-text)';
+      }
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> ' + __t('adminCreateAgentAccount');
+    });
+
+    /* ====== Logout ====== */
+    document.getElementById("logout-btn").addEventListener("click", async function() {
+      await auth.signOut();
+      location.href = "login.html";
+    });
+
+    /* ====== Properties & Messages ====== */
+    function renderPropsAndMessages() {
+      const st = window.ExoStore.getState();
+
+      /* Messages */
+      const messages = adminInquiries || [];
+      const msgContainer = document.getElementById("messages-list");
+      if (messages.length === 0) {
+        msgContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i>' + __t('adminNoMessages') + '</div>';
+      } else {
+        function esc(str) {
+          return String(str || '').replace(/[&<>"']/g, function(c) {
+            return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+          });
+        }
+
+        msgContainer.innerHTML = '<div class="enquiry-list">' + messages.map(m => {
+          const safeId = String(m.id || '').replace(/'/g, "\\'");
+          const isDeletingInquiry = pendingInquiryDeletes.has(String(m.id || ''));
+          const initial = (m.name || '?').charAt(0).toUpperCase();
+          const ts = m.createdAt && typeof m.createdAt.toDate === 'function'
+            ? m.createdAt.toDate().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+            : '';
+          const propertyTitle = (typeof m.propertyTitle === 'string' && m.propertyTitle.trim())
+            ? m.propertyTitle
+            : ((typeof m.propertyId === 'string' && m.propertyId.trim()) ? m.propertyId : __t('adminGeneralEnquiry'));
+          const messageText = (typeof m.message === 'string' && m.message.trim()) ? m.message : __t('adminNoMessageContent');
+          const message = esc(messageText);
+          return `
+            <div class="enquiry-card" data-expand="1">
+              <div class="enquiry-top">
+                <div class="enquiry-person">
+                  <div class="enquiry-avatar">${esc(initial)}</div>
+                  <div style="min-width:0;">
+                    <div class="enquiry-name">${esc((typeof m.name === 'string' && m.name.trim()) ? m.name : __t('labelUnknown'))}</div>
+                    <div class="enquiry-time">${esc(ts)}</div>
+                  </div>
+                </div>
+                <div class="enquiry-actions">
+                  <button type="button" class="enquiry-action-btn delete" title="${__t('actionDelete')}" onclick="event.stopPropagation(); deleteInquiryAdmin('${safeId}')" ${isDeletingInquiry ? 'disabled style="opacity:.6;pointer-events:none;"' : ''}><i class="fas fa-trash"></i></button>
+                </div>
+              </div>
+              <div class="enquiry-prop">${esc(propertyTitle)}</div>
+              <div class="enquiry-message">${message}</div>
+              <div class="enquiry-bottom">
+                <div class="enquiry-meta">
+                  <span>${esc(m.email || '')}</span>
+                  ${m.phone ? '<span>' + esc(m.phone) + '</span>' : ''}
+                </div>
+                <button type="button" class="enquiry-toggle">${__t('actionReadFull')}</button>
+              </div>
+            </div>`;
+        }).join('') + '</div>';
+
+        // Only show expand/collapse when the message is actually clamped.
+        requestAnimationFrame(() => {
+          msgContainer.querySelectorAll('.enquiry-card[data-expand="1"]').forEach((el) => {
+            const msgEl = el.querySelector('.enquiry-message');
+            const btn = el.querySelector('.enquiry-toggle');
+            if (!msgEl || !btn) return;
+
+            const isOverflowing = msgEl.scrollHeight > (msgEl.clientHeight + 2);
+            if (!isOverflowing) {
+              btn.classList.add('hidden');
+              el.dataset.expand = '0';
+              return;
+            }
+
+            const syncLabel = () => {
+              btn.textContent = el.classList.contains('expanded') ? __t('actionCollapse') : __t('actionReadFull');
+            };
+
+            const toggleExpanded = () => {
+              el.classList.toggle('expanded');
+              syncLabel();
+            };
+
+            el.addEventListener('click', toggleExpanded);
+            btn.addEventListener('click', (evt) => {
+              evt.stopPropagation();
+              toggleExpanded();
+            });
+            syncLabel();
+          });
+        });
+      }
+
+      /* Properties */
+      const props = st.properties || [];
+      const propsContainer = document.getElementById("properties-list");
+      if (props.length === 0) {
+        propsContainer.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-building-circle-xmark"></i>' + __t('adminNoProperties') + '</div>';
+      } else {
+        propsContainer.innerHTML = props.map(p => {
+          const img = (p.images && p.images.length > 0) ? p.images[0] : '';
+          const safeId = String(p.id || '').replace(/'/g, "\\'");
+          const canEditOwnPost = isPropertyOwnedByCurrentAdmin(p);
+          const isDeletingProp = pendingPropertyDeletes.has(String(p.id || ''));
+
+          // View insights
+          const totalViews = Number(p.views || 0);
+          const today = new Date().toISOString().slice(0, 10);
+          const todayViews = Number((p.viewsByDate && p.viewsByDate[today]) || 0);
+
+           const status = String(p.status || 'For Sale');
+           const statusClass = status.replace(/\s+/g, '-').toLowerCase();
+           const currentLang = typeof window.getLang === 'function' ? window.getLang() : 'en';
+           const translatedStatus = (typeof window.translateListingStatus === 'function') 
+             ? window.translateListingStatus(status, currentLang) 
+             : status;
+
+           return `
+             <div class="prop-card">
+               <div class="prop-card-img" style="background-image: url('${img}')">
+                 <div class="status-badge status-${statusClass}">${translatedStatus}</div>
+                 <div class="price-tag">€${Number(p.price||0).toLocaleString()}</div>
+                 <div style="position:absolute;top:10px;right:10px;background:rgba(15,23,42,0.78);backdrop-filter:blur(6px);border-radius:8px;padding:5px 10px;display:flex;gap:12px;align-items:center;">
+                   <span style="color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;">
+                     <i class="fas fa-eye" style="color:#a5b4fc;"></i> ${totalViews.toLocaleString()}
+                   </span>
+                   <span style="color:#86efac;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;" title="Views today">
+                     <i class="fas fa-arrow-trend-up"></i> +${todayViews}
+                   </span>
+                 </div>
+               </div>
+               <div class="prop-card-body">
+                 <h4>${p.title}</h4>
+                 <div class="prop-addr"><i class="fas fa-map-marker-alt" style="margin-right:4px;"></i>${p.address || ''}</div>
+                 <div class="prop-agent">${p.agentName ? '<i class="fas fa-user" style="margin-right:4px;"></i>' + p.agentName : ''}${p.featured ? ' · <span style="color:var(--accent);font-weight:700;">' + __t('featuredBadge') + '</span>' : ''}</div>
+                 <div style="display:flex; gap:8px;">
+                   ${canEditOwnPost ? '<button onclick="editPropAdmin(\'' + safeId + '\')" class="btn btn-amber-soft btn-sm" style="flex:1;"><i class="fas fa-pen"></i> ' + __t('actionEdit') + '</button>' : ''}
+                   <button onclick="deleteProp('${p.id}')" class="btn btn-danger-soft btn-sm" style="flex:1;${isDeletingProp ? 'opacity:.6;pointer-events:none;' : ''}" ${isDeletingProp ? 'disabled' : ''}>
+                     <i class="fas fa-trash-can"></i> ${__t('actionDelete')}
+                   </button>
+                 </div>
+               </div>
+             </div>`;
+        }).join('');
+
+      }
+
+      renderFeaturedManager(props);
+
+      updateStats();
+    }
+
+    window.deleteInquiryAdmin = async function(id) {
+      if (!id) return;
+      const normalizedId = String(id || '').trim();
+      if (!normalizedId || pendingInquiryDeletes.has(normalizedId)) return;
+      const ok = await showConfirmDialog(__t('adminDeleteEnquiryConfirm'), __t('actionDelete'), __t('btnCancel'));
+      if (!ok) return;
+
+      const prevInquiries = Array.isArray(adminInquiries) ? adminInquiries.slice() : [];
+      pendingInquiryDeletes.add(normalizedId);
+      adminInquiries = prevInquiries.filter((m) => String((m && m.id) || '') !== normalizedId);
+      renderPropsAndMessages();
+
+      try {
+        await db.collection('inquiries').doc(normalizedId).delete();
+        showToast(__t('toastEnquiryDeleted'), 'success');
+      } catch (err) {
+        adminInquiries = prevInquiries;
+        showToast(__t('toastUnableDeleteEnquiry'), 'error');
+      } finally {
+        pendingInquiryDeletes.delete(normalizedId);
+        renderPropsAndMessages();
+      }
+    };
+
+    window.editPropAdmin = function(id) {
+      if (!id) return;
+      const st = window.ExoStore.getState();
+      const prop = (st.properties || []).find((p) => String((p && p.id) || '') === String(id));
+      if (!prop) {
+        showToast(__t('toastPropertyNotFound'), 'error');
+        return;
+      }
+
+      if (!isPropertyOwnedByCurrentAdmin(prop)) {
+        showToast(__t('toastOnlyEditOwnProperty'), 'error');
+        return;
+      }
+
+      adminEditingPropertyId = String(prop.id || id);
+      if (adminPropertyForm) adminPropertyForm.reset();
+      clearAdminDynamicAddedOptions();
+
+      setFormValue('af-title', prop.title);
+      setFormValue('af-price', prop.price);
+      setFormValue('af-type', prop.type || 'Apartment');
+      setFormValue('af-status', prop.status || 'For Sale');
+      setFormValue('af-condition', prop.condition || '');
+      setFormValue('af-niche', prop.niche || '');
+      setFormCheckbox('af-featured', !!prop.featured);
+      setFormCheckbox('af-priceOnRequest', !!prop.priceOnRequest);
+
+      setFormValue('af-communityFees', prop.communityFees || 0);
+      setFormValue('af-ibiTax', prop.ibiTax || 0);
+      setFormValue('af-investmentYield', prop.investmentYield || 0);
+      setFormValue('af-availableFrom', prop.availableFrom || '');
+      setFormValue('af-minimumTerm', prop.minimumTerm || '');
+      setFormCheckbox('af-longTermRent', !!prop.longTermRent);
+      setFormCheckbox('af-shortTermRent', !!prop.shortTermRent);
+      setFormValue('af-areaInternal', prop.areaInternal || 0);
+      setFormValue('af-areaExternal', prop.areaExternal || 0);
+      setFormValue('af-floor', prop.floor || '');
+      setFormValue('af-bedrooms', prop.bedrooms || 0);
+      setFormValue('af-bathrooms', prop.bathrooms || 0);
+      setFormValue('af-suites', prop.suites || 0);
+      setFormValue('af-storageRooms', prop.storageRooms || 0);
+      setFormValue('af-parking', prop.parking || 0);
+      setFormValue('af-yearBuilt', prop.yearBuilt || 0);
+      setFormValue('af-totalFloors', prop.totalFloors || 0);
+      setFormValue('af-furnishing', prop.furnishing || '');
+      setFormValue('af-energyRating', prop.energyRating || '');
+      setFormValue('af-energyKwh', prop.energyKwh || 0);
+      setFormValue('af-basement', prop.basement || 0);
+      setFormValue('af-floors', prop.floors || 0);
+      setFormValue('af-technicalNotes', prop.technicalNotes || '');
+
+      setFormValue('af-address', prop.address || '');
+      setFormValue('af-city', prop.city || '');
+      setFormValue('af-neighbourhood', prop.neighbourhood || '');
+      setFormValue('af-lat', prop.lat || 0);
+      setFormValue('af-lng', prop.lng || 0);
+      setFormValue('af-description', prop.description || '');
+      setFormValue('af-neighbourhoodDesc', prop.neighbourhoodDesc || '');
+
+      setFormCheckbox('afb-elevator', !!prop.elevator);
+      setFormCheckbox('afb-carCharging', !!prop.carCharging);
+      setFormCheckbox('afb-pool', !!prop.pool);
+      setFormCheckbox('afb-garden', !!prop.garden);
+      setFormCheckbox('afb-terrace', !!prop.terrace);
+      setFormCheckbox('afb-garage', !!prop.garage);
+      setFormCheckbox('afb-condominium', !!prop.condominium);
+      setFormCheckbox('afb-ac', !!prop.ac);
+      setFormCheckbox('afb-heating', !!prop.heating);
+      setFormCheckbox('afb-fireplace', !!prop.fireplace);
+      setFormCheckbox('afb-security', !!prop.security);
+      setFormCheckbox('afb-smartHome', !!prop.smartHome);
+      setFormCheckbox('afb-gym', !!prop.gym);
+      setFormCheckbox('afb-tennis', !!prop.tennis);
+      setFormCheckbox('afb-solarPanels', !!prop.solarPanels);
+
+      setFormCheckbox('afv-sea', !!prop.seaView);
+      setFormCheckbox('afv-river', !!prop.riverView);
+      setFormCheckbox('afv-city', !!prop.cityView);
+      setFormCheckbox('afv-mountain', !!prop.mountainView);
+      setFormCheckbox('afv-countryside', !!prop.countrysideView);
+
+      setNamedCheckboxValues('af-features', prop.features, 'af-features-grid');
+      setNamedCheckboxValues('af-equipment', prop.equipment, 'af-equipment-grid');
+      setCustomCheckboxValues('af-amenities-grid', 'af-customAmenities', prop.customAmenities);
+      setCustomCheckboxValues('af-views-grid', 'af-customViews', prop.customViews);
+
+      setAdminPropertyFormMode();
+      activateSection('sec-property-form-admin', __t('actionEdit') + ' ' + __t('adminAddPropertyTitle'), 'sec-properties');
+    };
+
+    function renderFeaturedManager(props) {
+      const container = document.getElementById('featured-properties-list');
+      if (!container) return;
+      if (!Array.isArray(props) || !props.length) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-building"></i>' + __t('adminNoPropertiesFound') + '</div>';
+        return;
+      }
+
+      const sorted = props.slice().sort((a, b) => Number(!!b.featured) - Number(!!a.featured));
+      container.innerHTML = sorted.map(p => {
+        const checked = p.featured ? 'checked' : '';
+        const rawAddr = (typeof p.address === 'string') ? p.address : '';
+        const firstAddr = rawAddr.split(',')[0].trim();
+        const addr = firstAddr ? firstAddr : __t('formNoAddress');
+        const titleText = (typeof p.title === 'string' && p.title.trim()) ? p.title : __t('labelUntitled');
+        return '<label style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--border-light);">' +
+          '<div style="min-width:0;">' +
+            '<div style="font-size:13px; font-weight:700; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + titleText + '</div>' +
+            '<div style="font-size:12px; color:var(--text-muted);">' + addr + '</div>' +
+          '</div>' +
+          '<div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">' +
+            '<span style="font-size:11px; color:var(--text-secondary); font-weight:700;">' + __t('badgeFeatured') + '</span>' +
+            '<input type="checkbox" data-featured-toggle="' + String(p.id || '').replace(/"/g, '&quot;') + '" ' + checked + ' style="width:18px; height:18px;" />' +
+          '</div>' +
+        '</label>';
+      }).join('');
+    }
+
+    document.getElementById('featured-properties-list').addEventListener('change', async function(e) {
+      const target = e.target;
+      const id = target && target.getAttribute ? target.getAttribute('data-featured-toggle') : null;
+      if (!id) return;
+      const nextVal = !!target.checked;
+      const st = window.ExoStore.getState();
+      const prevProps = Array.isArray(st.properties) ? st.properties.slice() : [];
+
+      st.properties = prevProps.map(p => p.id === id ? { ...p, featured: nextVal } : p);
+      window.ExoStore.setState(st);
+      renderPropsAndMessages();
+
+      try {
+        await db.collection('properties').doc(id).set({ featured: nextVal }, { merge: true });
+      } catch (err) {
+        target.checked = !nextVal;
+        const rollback = window.ExoStore.getState();
+        rollback.properties = prevProps;
+        window.ExoStore.setState(rollback);
+        renderPropsAndMessages();
+        showToast(__t('toastUnableUpdateFeatured'), 'error');
+      }
+    });
+
+    window.deleteProp = async function(id) {
+      const normalizedId = String(id || '').trim();
+      if (!normalizedId || pendingPropertyDeletes.has(normalizedId)) return;
+
+      const st = window.ExoStore.getState();
+      const prevProps = Array.isArray(st.properties) ? st.properties.slice() : [];
+
+      pendingPropertyDeletes.add(normalizedId);
+      st.properties = prevProps.filter((p) => String((p && p.id) || '') !== normalizedId);
+      window.ExoStore.setState(st);
+      renderPropsAndMessages();
+
+      if (typeof window.deletePropertyFromFirebase === "function") {
+        try {
+          await window.deletePropertyFromFirebase(normalizedId);
+        } catch (err) {
+          const rollback = window.ExoStore.getState();
+          rollback.properties = prevProps;
+          window.ExoStore.setState(rollback);
+          renderPropsAndMessages();
+          showToast(__t('toastErrorDeleting') + ' ' + (err && err.message ? err.message : ''), 'error');
+          pendingPropertyDeletes.delete(normalizedId);
+          return;
+        }
+      }
+      showToast(__t('toastPropertyDeleted'), 'info');
+      pendingPropertyDeletes.delete(normalizedId);
+      renderPropsAndMessages();
+    }
+
+    /* ====== Users ====== */
+    let allUsers = [];
+
+    async function fetchUsers() {
+      const snap = await db.collection("users").get();
+      allUsers = snap.docs.map(d => d.data());
+      renderUsers();
+    }
+
+    function renderUsers() {
+      const container = document.getElementById("users-list");
+      const emptyRow = '<tr><td colspan="5" class="empty-state"><i class="fas fa-user-slash"></i>' + __t('adminNoUsersRegistered') + '</td></tr>';
+      const rows = allUsers.length === 0 ? emptyRow : allUsers.map(u => {
+        const initials = (u.name || '??').split(' ').map(w => w[0]).join('').slice(0,2);
+        const isActive = u.active !== false;
+        const roleBadge = u.role === 'admin'
+          ? '<span class="badge" style="background:var(--violet-bg);color:var(--violet-text);"><span class="badge-dot" style="background:var(--violet);"></span> ' + __t('navAdmin') + '</span>'
+          : (u.role === 'agent' || u.role === 'dealer')
+            ? '<span class="badge" style="background:var(--amber-bg);color:var(--amber-text);"><span class="badge-dot" style="background:var(--amber);"></span> ' + __t('navAgent') + '</span>'
+            : '<span class="badge" style="background:var(--accent-light);color:var(--accent);"><span class="badge-dot" style="background:var(--accent);"></span> ' + __t('labelUserRole') + '</span>';
+        const joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '\u2014';
+        return `
+          <tr>
+            <td>
+              <div class="agent-cell">
+                <div class="agent-avatar">${initials}</div>
+                <span class="agent-name">${u.name || '\u2014'}</span>
+              </div>
+            </td>
+            <td style="color: var(--text-secondary);">${u.email}</td>
+            <td>${roleBadge}</td>
+            <td>
+              <span class="badge ${isActive ? 'badge-active' : 'badge-inactive'}">
+                <span class="badge-dot"></span> ${isActive ? __t('statusActive') : __t('statusInactive')}
+              </span>
+            </td>
+            <td style="color: var(--text-muted); font-size:13px;">${joined}</td>
+          </tr>`;
+      }).join('');
+
+      container.innerHTML = `
+        <table class="data-table">
+          <thead><tr><th>${__t('tableName')}</th><th>${__t('tableEmail')}</th><th>${__t('tableRole')}</th><th>${__t('tableStatus')}</th><th>${__t('tableJoined')}</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    async function fetchBlogs() {
+      try {
+        const snap = await db.collection('blogPosts').get();
+        allBlogs = snap.docs.map(d => ({ docId: d.id, ...d.data() }))
+          .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+        renderBlogs();
+      } catch (err) {
+        document.getElementById('blogs-list').innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i>' + __t('toastUnableLoadBlogPosts') + '</div>';
+      }
+    }
+
+    function getLocalizedBlogField(blog, field) {
+      const lang = (typeof window.getLang === 'function' ? window.getLang() : (localStorage.getItem('exo-lang') || 'en'));
+      const translated = blog && blog.translations && blog.translations[lang] && blog.translations[lang][field];
+      if (typeof translated === 'string' && translated.trim()) return translated.trim();
+      const base = blog && blog[field];
+      return typeof base === 'string' ? base.trim() : (base || '');
+    }
+
+    function renderBlogs() {
+      const container = document.getElementById('blogs-list');
+      const rows = allBlogs.length === 0
+        ? '<tr><td colspan="6" class="empty-state"><i class="fas fa-newspaper"></i>' + __t('adminNoBlogPostsFound') + '</td></tr>'
+        : allBlogs.map(b => {
+          const isActive = b.active !== false;
+          const img = b.image || '';
+          const titleField = getLocalizedBlogField(b, 'title');
+          const localizedTitle = (typeof titleField === 'string' && titleField.trim()) ? titleField : __t('labelUntitled');
+          return '<tr>' +
+            '<td style="width:84px;">' + (img ? ('<img src="' + img + '" alt="blog" style="width:68px;height:46px;object-fit:cover;border-radius:6px;border:1px solid var(--border-light);" />') : '<span style="font-size:12px;color:var(--text-muted);">' + __t('labelNoImage') + '</span>') + '</td>' +
+            '<td style="max-width:300px;">' + localizedTitle + '</td>' +
+            '<td>' + (b.author || 'Exo Real Estate') + '</td>' +
+            '<td>' + (b.date || '—') + '</td>' +
+            '<td><span class="badge ' + (isActive ? 'badge-active' : 'badge-inactive') + '"><span class="badge-dot"></span>' + (isActive ? __t('statusPublished') : __t('statusDraft')) + '</span></td>' +
+            '<td><div style="display:flex; gap:6px;">' +
+              '<button class="btn btn-sm btn-outline" onclick="editBlogPost(\'' + b.docId + '\')"><i class="fas fa-pen"></i> ' + __t('actionEdit') + '</button>' +
+              '<button class="btn btn-sm ' + (isActive ? 'btn-danger-soft' : 'btn-success-soft') + '" onclick="toggleBlogActive(\'' + b.docId + '\',' + (!isActive) + ')">' + (isActive ? __t('actionUnpublish') : __t('actionPublish')) + '</button>' +
+              '<button class="btn btn-sm" style="background:#fee2e2; color:#991b1b;" onclick="deleteBlogPost(\'' + b.docId + '\')"><i class="fas fa-trash"></i> ' + __t('actionDelete') + '</button>' +
+            '</div></td>' +
+          '</tr>';
+        }).join('');
+
+      container.innerHTML = '<table class="data-table"><thead><tr><th>' + __t('tableImage') + '</th><th>' + __t('tableTitle') + '</th><th>' + __t('tableAuthor') + '</th><th>' + __t('tableDate') + '</th><th>' + __t('tableStatus') + '</th><th>' + __t('tableAction') + '</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    }
+
+    window.editBlogPost = function(docId) {
+      const b = allBlogs.find(x => x.docId === docId);
+      if (!b) return;
+      document.getElementById('blog-id').value = docId;
+      document.getElementById('blog-title').value = b.title || '';
+      document.getElementById('blog-excerpt').value = b.excerpt || '';
+      document.getElementById('blog-image').value = b.image || '';
+      document.getElementById('blog-image-file').value = '';
+      setImagePreview(document.getElementById('blog-image-preview'), b.image || '');
+      document.getElementById('blog-author').value = b.author || 'Exo Real Estate';
+      document.getElementById('blog-date').value = b.date || '2026';
+      document.getElementById('blog-content').value = b.content || '';
+      document.getElementById('blog-order').value = Number(b.order) || 0;
+      document.getElementById('blog-active').checked = b.active !== false;
+      document.getElementById('blog-modal-title').textContent = __t('adminEditBlogPost');
+      blogModal.classList.add('open');
+    };
+
+    window.toggleBlogActive = async function(docId, nextVal) {
+      try {
+        await db.collection('blogPosts').doc(docId).set({ active: !!nextVal }, { merge: true });
+        fetchBlogs();
+      } catch (err) {
+        showToast(__t('toastUnableUpdateBlogStatus'), 'error');
+      }
+    };
+
+    window.deleteBlogPost = async function(docId) {
+      const ok = await showConfirmDialog(__t('adminDeleteBlogConfirm'), __t('actionDelete'), __t('btnCancel'));
+      if (!ok) return;
+      try {
+        await db.collection('blogPosts').doc(docId).delete();
+        showToast(__t('toastBlogDeleted'), 'info');
+        fetchBlogs();
+      } catch (err) {
+        showToast(__t('toastUnableDeleteBlog'), 'error');
+      }
+    };
+
+    document.getElementById('blog-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const docId = document.getElementById('blog-id').value || db.collection('blogPosts').doc().id;
+      const existingBlog = allBlogs.find((x) => x.docId === docId) || null;
+      let imageUrl = document.getElementById('blog-image').value.trim();
+      const uploadFile = document.getElementById('blog-image-file').files[0];
+      if (uploadFile) {
+        try {
+          imageUrl = await uploadContentImage(uploadFile, 'blog');
+          document.getElementById('blog-image').value = imageUrl;
+        } catch (e) {
+          showToast(__t('toastUnableUploadBlogImage'), 'error');
+          return;
+        }
+      }
+      if (!imageUrl) {
+        showToast(__t('adminProvideOrUploadImage'), 'error');
+        return;
+      }
+
+      const nextTitle = document.getElementById('blog-title').value.trim();
+      const nextExcerpt = document.getElementById('blog-excerpt').value.trim();
+      const nextContent = document.getElementById('blog-content').value.trim();
+
+      const payload = {
+        id: docId,
+        title: nextTitle,
+        excerpt: nextExcerpt,
+        image: imageUrl,
+        author: document.getElementById('blog-author').value.trim() || 'Exo Real Estate',
+        date: document.getElementById('blog-date').value.trim() || '2026',
+        content: nextContent,
+        order: Number(document.getElementById('blog-order').value) || 0,
+        active: document.getElementById('blog-active').checked
+      };
+
+      const needsTranslationRefresh = !existingBlog
+        || String(existingBlog.title || '') !== nextTitle
+        || String(existingBlog.excerpt || '') !== nextExcerpt
+        || String(existingBlog.content || '') !== nextContent;
+
+      if (needsTranslationRefresh) {
+        const translated = await buildInitialBlogTranslations(payload);
+        payload.sourceLang = translated.sourceLang;
+        payload.translations = translated.translations;
+      } else {
+        payload.sourceLang = existingBlog.sourceLang || 'pt';
+        payload.translations = existingBlog.translations || {};
+      }
+
+      try {
+        await db.collection('blogPosts').doc(docId).set(payload, { merge: true });
+        blogModal.classList.remove('open');
+        showToast(__t('toastBlogSaved'), 'success');
+        fetchBlogs();
+      } catch (err) {
+        showToast(__t('toastUnableSaveBlog'), 'error');
+      }
+    });
+
+    async function detectSourceLanguageForProperty(text) {
+      const sourceText = String(text || '').trim();
+      if (!sourceText) return 'pt';
+      try {
+        const url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(sourceText) + '&langpair=autodetect|en';
+        const res = await fetch(url);
+        const data = await res.json();
+        const fields = [
+          data && data.responseData && data.responseData.detectedSourceLanguage,
+          data && data.responseData && data.responseData.match,
+          data && data.detectedLanguage,
+          data && data.responseStatus
+        ];
+        const joined = JSON.stringify(fields).toLowerCase();
+        if (joined.includes('french') || joined.includes(' fr')) return 'fr';
+        if (joined.includes('dutch') || joined.includes(' nl')) return 'nl';
+        if (joined.includes('english') || joined.includes(' en')) return 'en';
+        if (joined.includes('portuguese') || joined.includes(' pt')) return 'pt';
+      } catch (e) {
+        // fall through to heuristics
+      }
+
+      const lower = sourceText.toLowerCase();
+      if (/\b(que|não|para|com|uma|mais|imovel|moradia|apartamento)\b/.test(lower)) return 'pt';
+      if (/\b(the|with|and|property|house|apartment|bedroom|bathroom)\b/.test(lower)) return 'en';
+      if (/\b(le|la|les|avec|pour|maison|appartement|chambre|salle)\b/.test(lower)) return 'fr';
+      if (/\b(de|het|een|met|woning|huis|appartement|slaapkamer|badkamer)\b/.test(lower)) return 'nl';
+      return 'pt';
+    }
+
+    async function translateChunkViaMyMemory(sourceText, targetLang) {
+      const input = String(sourceText == null ? '' : sourceText).trim();
+      if (!input) return '';
+      if (!targetLang) return input;
+
+      const isErrorText = (value) => {
+        const s = String(value || '').toUpperCase();
+        return s.includes('PLEASE SELECT') || s.includes('QUERY LENGTH') || s.includes('MAX ALLOWED') || s.includes('MYMEMORY');
+      };
+
+      const translateChunk = async (chunkText) => {
+        const chunk = String(chunkText == null ? '' : chunkText).trim();
+        if (!chunk) return chunk;
+
+        const langPairs = [
+          `autodetect|${targetLang}`,
+          `en|${targetLang}`,
+          `pt|${targetLang}`,
+          `fr|${targetLang}`,
+          `nl|${targetLang}`,
+          `zh|${targetLang}`,
+          `ar|${targetLang}`
+        ];
+
+        for (const langpair of langPairs) {
+          const sourceLang = String(langpair.split('|')[0] || '').toLowerCase();
+          if (sourceLang === String(targetLang).toLowerCase()) continue;
+          try {
+            const url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(chunk) + '&langpair=' + encodeURIComponent(langpair);
+            const res = await fetch(url);
+            const data = await res.json();
+            const translated = data && data.responseData ? data.responseData.translatedText : '';
+            if (
+              data && data.responseStatus === 200 &&
+              translated && String(translated).trim() &&
+              String(translated) !== chunk &&
+              !isErrorText(translated)
+            ) {
+              return String(translated);
+            }
+          } catch (e) {
+            continue;
+          }
+        }
+
+        return chunk;
+      };
+
+      return await translateChunk(input);
+    }
+
+    async function translateLongTextViaMyMemory(sourceText, targetLang) {
+      const input = String(sourceText == null ? '' : sourceText).trim();
+      if (!input) return '';
+      if (!targetLang) return input;
+
+      if (input.length <= 450) return await translateChunkViaMyMemory(input, targetLang);
+
+      const chunks = [];
+      let i = 0;
+      while (i < input.length) {
+        let end = Math.min(i + 450, input.length);
+        if (end < input.length) {
+          const lastPeriod = input.lastIndexOf('.', end);
+          const lastNewline = input.lastIndexOf('\n', end);
+          const splitAt = Math.max(lastPeriod, lastNewline);
+          if (splitAt > i) end = splitAt + 1;
+        }
+        chunks.push(input.slice(i, end).trim());
+        i = end;
+      }
+
+      const translatedParts = [];
+      for (const chunk of chunks) {
+        if (!chunk) continue;
+        translatedParts.push(await translateChunkViaMyMemory(chunk, targetLang));
+      }
+      return translatedParts.join(' ').trim() || input;
+    }
+
+    async function buildInitialTranslations(payload) {
+      const supported = ['en', 'pt', 'fr', 'nl', 'zh', 'ar'];
+      const title = String(payload.title || '').trim();
+      const description = String(payload.description || '').trim();
+      const neighbourhood = String(payload.neighbourhoodDesc || payload.neighbourhood || '').trim();
+      const probeText = [title, description, neighbourhood].filter(Boolean).join(' ').trim();
+      const sourceLang = await detectSourceLanguageForProperty(probeText || title || description || neighbourhood);
+
+      const translations = {};
+      translations[sourceLang] = {
+        title,
+        description,
+        neighbourhood
+      };
+
+      for (const lang of supported) {
+        if (lang === sourceLang) continue;
+        translations[lang] = {
+          title: await translateChunkViaMyMemory(title, lang),
+          description: await translateLongTextViaMyMemory(description, lang),
+          neighbourhood: await translateLongTextViaMyMemory(neighbourhood, lang)
+        };
+      }
+
+      return translations;
+    }
+
+    async function buildInitialBlogTranslations(payload) {
+      const supported = ['en', 'pt', 'fr', 'nl', 'zh', 'ar'];
+      const title = String(payload.title || '').trim();
+      const excerpt = String(payload.excerpt || '').trim();
+      const content = String(payload.content || '').trim();
+      const probeText = [title, excerpt, content].filter(Boolean).join(' ').trim();
+      const sourceLang = await detectSourceLanguageForProperty(probeText || title || excerpt || content);
+
+      const translations = {};
+      translations[sourceLang] = {
+        title,
+        excerpt,
+        content
+      };
+
+      for (const lang of supported) {
+        if (lang === sourceLang) continue;
+        translations[lang] = {
+          title: await translateChunkViaMyMemory(title, lang),
+          excerpt: await translateLongTextViaMyMemory(excerpt, lang),
+          content: await translateLongTextViaMyMemory(content, lang)
+        };
+      }
+
+      return { sourceLang, translations };
+    }
+
+    document.getElementById('admin-property-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      if (window.__adminPropertySubmitInFlight) {
+        showToast(__t('loading'), 'info');
+        return;
+      }
+
+      const submitBtn = e.target && typeof e.target.querySelector === 'function'
+        ? e.target.querySelector('button[type="submit"]')
+        : null;
+      const submitOriginalHtml = submitBtn ? submitBtn.innerHTML : '';
+      window.__adminPropertySubmitInFlight = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + __t('loading');
+      }
+
+      const finishAdminPropertySubmit = function () {
+        window.__adminPropertySubmitInFlight = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = submitOriginalHtml;
+        }
+      };
+
+      const title = document.getElementById('af-title').value.trim();
+      const price = Number(document.getElementById('af-price').value) || 0;
+      const type = document.getElementById('af-type').value || 'Apartment';
+      const status = document.getElementById('af-status').value || 'For Sale';
+      const condition = document.getElementById('af-condition').value || '';
+      const niche = document.getElementById('af-niche').value || '';
+      const featured = document.getElementById('af-featured').checked;
+      const priceOnRequest = document.getElementById('af-priceOnRequest').checked;
+      const communityFees = Number(document.getElementById('af-communityFees').value) || 0;
+      const ibiTax = Number(document.getElementById('af-ibiTax').value) || 0;
+      const investmentYield = Number(document.getElementById('af-investmentYield').value) || 0;
+      const availableFrom = document.getElementById('af-availableFrom').value || '';
+      const minimumTerm = document.getElementById('af-minimumTerm').value.trim();
+      const longTermRent = !!document.getElementById('af-longTermRent').checked;
+      const shortTermRent = !!document.getElementById('af-shortTermRent').checked;
+      const areaInternal = Number(document.getElementById('af-areaInternal').value) || 0;
+      const areaExternal = Number(document.getElementById('af-areaExternal').value) || 0;
+      const floor = document.getElementById('af-floor').value.trim();
+      const bedrooms = Number(document.getElementById('af-bedrooms').value) || 0;
+      const bathrooms = Number(document.getElementById('af-bathrooms').value) || 0;
+      const suites = Number(document.getElementById('af-suites').value) || 0;
+      const storageRooms = Number(document.getElementById('af-storageRooms').value) || 0;
+      const parking = Number(document.getElementById('af-parking').value) || 0;
+      const yearBuilt = Number(document.getElementById('af-yearBuilt').value) || 0;
+      const totalFloors = Number(document.getElementById('af-totalFloors').value) || 0;
+      const furnishing = document.getElementById('af-furnishing').value || '';
+      const energyRating = document.getElementById('af-energyRating').value || '';
+      const energyKwh = Number(document.getElementById('af-energyKwh').value) || 0;
+      const basement = Number(document.getElementById('af-basement').value) || 0;
+      const floors = Number(document.getElementById('af-floors').value) || 0;
+      const technicalNotes = document.getElementById('af-technicalNotes').value.trim();
+      const address = document.getElementById('af-address').value.trim();
+      const city = document.getElementById('af-city').value.trim();
+      const neighbourhood = document.getElementById('af-neighbourhood').value.trim();
+      let lat = parseFloat(document.getElementById('af-lat').value);
+      let lng = parseFloat(document.getElementById('af-lng').value);
+      const isLatValid = !isNaN(lat) && lat >= -90 && lat <= 90;
+      const isLngValid = !isNaN(lng) && lng >= -180 && lng <= 180;
+      if (!isLatValid || !isLngValid || (Math.abs(lat) < 1e-7 && Math.abs(lng) < 1e-7)) {
+        lat = null;
+        lng = null;
+      }
+      const description = document.getElementById('af-description').value.trim();
+      const neighbourhoodDesc = document.getElementById('af-neighbourhoodDesc').value.trim();
+
+      const elevator = !!document.getElementById('afb-elevator')?.checked;
+      const carCharging = !!document.getElementById('afb-carCharging')?.checked;
+      const pool = !!document.getElementById('afb-pool')?.checked;
+      const garden = !!document.getElementById('afb-garden')?.checked;
+      const terrace = !!document.getElementById('afb-terrace')?.checked;
+      const garage = !!document.getElementById('afb-garage')?.checked;
+      const condominium = !!document.getElementById('afb-condominium')?.checked;
+      const ac = !!document.getElementById('afb-ac')?.checked;
+      const heating = !!document.getElementById('afb-heating')?.checked;
+      const fireplace = !!document.getElementById('afb-fireplace')?.checked;
+      const security = !!document.getElementById('afb-security')?.checked;
+      const smartHome = !!document.getElementById('afb-smartHome')?.checked;
+      const gym = !!document.getElementById('afb-gym')?.checked;
+      const tennis = !!document.getElementById('afb-tennis')?.checked;
+      const solarPanels = !!document.getElementById('afb-solarPanels')?.checked;
+      const seaView = !!document.getElementById('afv-sea')?.checked;
+      const riverView = !!document.getElementById('afv-river')?.checked;
+      const cityView = !!document.getElementById('afv-city')?.checked;
+      const mountainView = !!document.getElementById('afv-mountain')?.checked;
+      const countrysideView = !!document.getElementById('afv-countryside')?.checked;
+
+      const features = Array.from(document.querySelectorAll('input[name="af-features"]:checked')).map(el => el.value);
+      const equipment = Array.from(document.querySelectorAll('input[name="af-equipment"]:checked')).map(el => el.value);
+      const customAmenities = Array.from(document.querySelectorAll('input[name="af-customAmenities"]:checked')).map(el => el.value);
+      const customViews = Array.from(document.querySelectorAll('input[name="af-customViews"]:checked')).map(el => el.value);
+
+      if (!title || !address || !price) {
+        showToast(__t('toastTitleAddressPriceRequired'), 'error');
+        finishAdminPropertySubmit();
+        return;
+      }
+
+      const isEditing = !!adminEditingPropertyId;
+      const stateBeforeSave = window.ExoStore.getState();
+      const existingProp = isEditing
+        ? (stateBeforeSave.properties || []).find((p) => String((p && p.id) || '') === String(adminEditingPropertyId))
+        : null;
+
+      if (isEditing && (!existingProp || !isPropertyOwnedByCurrentAdmin(existingProp))) {
+        showToast(__t('toastOnlyEditOwnProperty'), 'error');
+        finishAdminPropertySubmit();
+        return;
+      }
+
+      let imageUrls = isEditing
+        ? (Array.isArray(existingProp.images) && existingProp.images.length
+            ? existingProp.images.slice()
+            : (existingProp.image ? [existingProp.image] : []))
+        : [];
+
+      const newImagesFiles = document.getElementById('af-images').files;
+      try {
+        if (newImagesFiles && newImagesFiles.length > 0) {
+          imageUrls = await uploadPropertyFiles(newImagesFiles, 'images');
+        }
+      } catch (uploadErr) {
+        showToast(__t('toastFailedUploadMedia'), 'error');
+        finishAdminPropertySubmit();
+        return;
+      }
+
+      // Generate sequential EXO ID: EXO2601, EXO2602, ...
+      let newDocId;
+      if (isEditing) {
+        newDocId = adminEditingPropertyId;
+      } else {
+        // Use a transaction on a central counter to ensure sequential, unique IDs
+        const counterRef = db.collection('metadata').doc('property_counter');
+        newDocId = await db.runTransaction(async (transaction) => {
+          const counterDoc = await transaction.get(counterRef);
+          let nextNum = 2601;
+          if (counterDoc.exists) {
+            const lastId = parseInt(counterDoc.data().lastId);
+            if (!isNaN(lastId)) nextNum = lastId + 1;
+          }
+          transaction.set(counterRef, { lastId: nextNum }, { merge: true });
+          return 'EXO' + nextNum;
+        }).catch(() => 'EXO' + (2601 + Math.floor(Math.random() * 10000)));
+      }
+      const docRef = isEditing
+        ? db.collection('properties').doc(adminEditingPropertyId)
+        : db.collection('properties').doc(newDocId);
+      const adminDisplayName = String((currentAdminProfile && currentAdminProfile.name) || document.getElementById('admin-name-sidebar').textContent || 'Admin').trim() || 'Admin';
+      const adminRole = String((currentAdminProfile && currentAdminProfile.role) || 'admin').trim() || 'admin';
+      const adminPhoto = ADMIN_BRAND_LOGO_PATH;
+      const newProp = {
+        id: newDocId,
+        title,
+        price,
+        type,
+        status,
+        condition,
+        niche,
+        featured,
+        priceOnRequest,
+        communityFees,
+        ibiTax,
+        investmentYield,
+        availableFrom,
+        minimumTerm,
+        longTermRent,
+        shortTermRent,
+        areaInternal,
+        areaExternal,
+        suites,
+        storageRooms,
+        parking,
+        yearBuilt,
+        totalFloors,
+        furnishing,
+        energyRating,
+        energyKwh,
+        basement,
+        floors,
+        technicalNotes,
+        address,
+        city,
+        neighbourhood,
+        bedrooms,
+        bathrooms,
+        floor,
+        sizeSqFt: areaInternal,
+        lat,
+        lng,
+        description,
+        neighbourhoodDesc,
+        videoUrl: '',
+        virtualTourUrl: '',
+        image: imageUrls[0] || '',
+        images: imageUrls,
+        floorPlanImages: [],
+        features,
+        equipment,
+        customAmenities,
+        customViews,
+        elevator,
+        carCharging,
+        pool,
+        garden,
+        terrace,
+        garage,
+        condominium,
+        ac,
+        heating,
+        fireplace,
+        security,
+        smartHome,
+        gym,
+        tennis,
+        solarPanels,
+        seaView,
+        riverView,
+        cityView,
+        mountainView,
+        countrysideView,
+        agentId: isEditing
+          ? String((existingProp && existingProp.agentId) || currentAdminUid || (auth.currentUser ? auth.currentUser.uid : ''))
+          : (auth.currentUser ? auth.currentUser.uid : ''),
+        agentName: adminDisplayName,
+        agentRole: adminRole,
+        agentPhoto: adminPhoto,
+        createdAt: isEditing
+          ? ((existingProp && existingProp.createdAt) || Date.now())
+          : Date.now(),
+        updatedAt: Date.now()
+      };
+
+      const needsTranslationRefresh = !isEditing ||
+        !existingProp ||
+        !existingProp.translations ||
+        !existingProp.translations.zh ||
+        !existingProp.translations.ar ||
+        String(existingProp.title || '') !== title ||
+        String(existingProp.description || '') !== description ||
+        String((existingProp.neighbourhoodDesc || existingProp.neighbourhood || '')) !== String((neighbourhoodDesc || neighbourhood || ''));
+
+      if (needsTranslationRefresh) {
+        // Add timeout to translation
+        const translationPromise = buildInitialTranslations(newProp);
+        const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 8000));
+        
+        try {
+          const results = await Promise.race([translationPromise, timeoutPromise]);
+          newProp.translations = results || (existingProp ? (existingProp.translations || {}) : {});
+        } catch (trErr) {
+          console.error('Admin translation error:', trErr);
+          newProp.translations = existingProp ? (existingProp.translations || {}) : {};
+        }
+      } else {
+        newProp.translations = existingProp ? existingProp.translations : {};
+      }
+
+      try {
+        const firestore = firebase.firestore();
+        await firestore.collection('properties').doc(newProp.id).set(newProp, { merge: true });
+        const st = window.ExoStore.getState();
+        if (isEditing) {
+          st.properties = (st.properties || []).map((p) => String((p && p.id) || '') === String(docRef.id) ? { ...p, ...newProp } : p);
+        } else {
+          st.properties = [newProp].concat(st.properties || []);
+        }
+        window.ExoStore.setState(st);
+        renderPropsAndMessages();
+        resetAdminPropertyFormForCreate();
+        activateSection('sec-properties', __t('adminProperties'), 'sec-properties');
+        showToast(isEditing ? __t('toastPropertyUpdated') : __t('toastPropertyAddedAdmin'), 'success');
+      } catch (err) {
+        showToast(isEditing ? __t('toastFailedUpdateProperty') : __t('toastFailedAddProperty'), 'error');
+      }
+
+      finishAdminPropertySubmit();
+    });
+
+    /* ====== Map and Coordinate logic ====== */
+    let adminPreviewMap, adminPreviewMarker;
+
+    function initAdminPropertyMap() {
+      const mapEl = document.getElementById('admin-prop-map');
+      if (!mapEl) return;
+
+      if (adminPreviewMap && mapEl._leaflet_id) {
+        setTimeout(() => { 
+          adminPreviewMap.invalidateSize(); 
+          // Re-center if we have values
+          const lat = parseFloat(document.getElementById('af-lat').value);
+          const lng = parseFloat(document.getElementById('af-lng').value);
+          if (!isNaN(lat) && !isNaN(lng)) {
+              adminPreviewMap.setView([lat, lng], 19);
+              if (adminPreviewMarker) adminPreviewMarker.setLatLng([lat, lng]);
+          }
+        }, 200);
+        return;
+      }
+
+      // Leaflet marker fix
+      if (typeof L !== 'undefined' && L.Icon && L.Icon.Default) {
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png'
+        });
+      }
+
+      const defaultPos = [38.7223, -9.1393]; // Lisbon
+      adminPreviewMap = L.map('admin-prop-map').setView(defaultPos, 19);
+      // Standardize map layers across all dashboards
+      L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: 'Imagery &copy; Google'
+      }).addTo(adminPreviewMap);
+
+      adminPreviewMarker = L.marker(defaultPos, { draggable: true }).addTo(adminPreviewMap);
+
+      adminPreviewMarker.on('dragend', () => {
+        const pos = adminPreviewMarker.getLatLng();
+        document.getElementById('af-lat').value = pos.lat.toFixed(7);
+        document.getElementById('af-lng').value = pos.lng.toFixed(7);
+      });
+
+      ['af-lat', 'af-lng'].forEach(id => {
+        document.getElementById(id).addEventListener('change', () => {
+          const lat = parseFloat(document.getElementById('af-lat').value);
+          const lng = parseFloat(document.getElementById('af-lng').value);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            const newPos = [lat, lng];
+            adminPreviewMarker.setLatLng(newPos);
+            adminPreviewMap.setView(newPos, 19);
+            setTimeout(() => adminPreviewMap.invalidateSize(), 50);
+          }
+        });
+      });
+    }
+
+    document.getElementById('btn-admin-get-coords')?.addEventListener('click', async () => {
+      const address = document.getElementById('af-address').value.trim();
+      const city = document.getElementById('af-city').value.trim();
+      if (!address) {
+        showToast('Please enter an address first.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('btn-admin-get-coords');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching...';
+      btn.disabled = true;
+
+      try {
+        const query = [address, city, 'Portugal'].filter(Boolean).join(', ');
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+        const res = await fetch(url, { headers: { 'User-Agent': 'ExoRealEstate/1.2' } });
+        const data = await res.json();
+        
+        if (data && data.length > 0) {
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+          document.getElementById('af-lat').value = lat.toFixed(7);
+          document.getElementById('af-lng').value = lon.toFixed(7);
+          const newPos = [lat, lon];
+          if (adminPreviewMarker) {
+            adminPreviewMarker.setLatLng(newPos);
+            adminPreviewMap.setView(newPos, 19);
+            setTimeout(() => adminPreviewMap.invalidateSize(), 50);
+          }
+          showToast('Location updated!', 'success');
+        } else {
+          showToast('Location not found.', 'error');
+        }
+      } catch (err) {
+        showToast('Connection error.', 'error');
+        console.error(err);
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    });
+
+    const adminMapObserver = new MutationObserver(() => {
+      const addSection = document.getElementById('sec-property-form-admin');
+      if (addSection && addSection.classList.contains('active')) {
+        setTimeout(initAdminPropertyMap, 300);
+      }
+    });
+    adminMapObserver.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class'] });
+
+    /* ====== Init ====== */
+
+    async function initAdmin() {
+      fetchAgents();
+      fetchUsers();
+      fetchBlogs();
+      const cachedState = window.ExoStore && typeof window.ExoStore.getState === 'function' ? window.ExoStore.getState() : null;
+      if (cachedState && Array.isArray(cachedState.properties) && cachedState.properties.length > 0) {
+        renderPropsAndMessages();
+      }
+      if (typeof window.loadPropertiesFromFirebase === "function") {
+        document.getElementById("properties-list").innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-spinner fa-spin"></i>' + __t('loadingPropertiesFromFirebase') + '</div>';
+        window.loadPropertiesFromFirebase()
+          .then((fbProps) => {
+            if (fbProps && fbProps.length > 0) {
+              const state = window.ExoStore.getState();
+              state.properties = fbProps;
+              window.ExoStore.setState(state);
+            }
+          })
+          .catch((err) => {
+            console.error('Admin property refresh error:', err);
+          })
+          .finally(() => {
+            renderPropsAndMessages();
+          });
+        return;
+      }
+      renderPropsAndMessages();
+    }
+
+    initAdmin();
+  </script>
+  <script src="js/site-chatbot.js"></script>
+</body>
+</html>
